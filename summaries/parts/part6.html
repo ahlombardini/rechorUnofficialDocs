@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 6 - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .class-card .card-title {
+            margin: 0;
+        }
+
+        .class-card, .concept-card {
+            min-height: 100px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .concept-card {
+            margin-bottom: 1rem;
+        }
+
+        .concept-card:hover, .class-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .concept-content {
+            font-size: 0.95em;
+            color: var(--text-color);
+            overflow: auto;
+            max-height: 300px;
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 0.5rem 0;
+        }
+
+        .concept-content ol, .concept-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+            list-style: none;
+            padding: 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+
+        .concepts-section {
+            margin: 2rem 0;
+        }
+
+        .concepts-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .class-card a {
+            text-decoration: none;
+        }
+
+        .introduction {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin: 1rem 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h2>Étape 6 - Profil et extraction de voyage</h2>
+<p class="subtitle">ReCHor – étape 6</p>
+            <div class="introduction">
+                <div class="outline-text-2" id="text-1">
+<p>
+Le but de cette sixième étape — la dernière de la première partie du projet — est d'une part de terminer la rédaction des classes représentant l'horaire aplati, et d'autre part d'écrire celles permettant de représenter ce que nous appellerons un <i>profil</i>, et d'en extraire des voyages.
+</p>
+<div class="cs108warning" id="orga24b9f6">
+<p>
+Notez que cette étape devra être rendue deux fois :
+</p>
+<ol class="org-ol">
+<li>pour le rendu testé habituel (délai : le <b>28/3</b> à <b>18h00</b>),</li>
+<li>pour le rendu intermédiaire (délai : le <b>4/4</b> à <b>18h00</b>).</li>
+</ol>
+<p>
+Le deuxième de ces rendus sera corrigé par lecture du code de vos étapes 1 à 6, et il vous faudra donc soigner sa qualité et sa documentation. Il est fortement conseillé de lire <a href="../g/style.html">notre guide à ce sujet</a>.
+</p>
+</div>
+</div>
+            </div>
+        
+                <div class="concepts-section">
+                    <h3>Concepts clés</h3>
+                    <div class="concept-grid">
+            
+        <div class="concept-card">
+            <h3 class="card-title">« Mappage » de fichiers en mémoire</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-1">
+<p>
+Les deux étapes précédentes ont été consacrées à la rédaction de classes permettant de manipuler les différents éléments de l'horaire aplati — gares, voies/quais, liaisons, etc. — se trouvant dans des tableaux d'octets. Il reste à savoir comment obtenir ces tableaux d'octets.
+</p>
+<p>
+Comme expliqué à la §<a href="#sec/implementation">3</a>, nous mettons à votre disposition un certain nombre de fichiers dont le contenu correspond exactement à celui des tableaux d'octets attendus. Par exemple, un des fichiers que nous vous fournissons, nommé <code>stations.bin</code>, contient la totalité des gares aplaties au format décrit à <a href="04.html#sec/stations">la §2.3 de l'étape 4</a>.
+</p>
+<p>
+Il serait donc techniquement possible de charger le contenu de ce fichier et de le placer dans un tableau d'octets — de type <code>ByteBuffer</code> — passé ensuite à la classe <code>BufferedStations</code>.  Cette solution aurait toutefois l'inconvénient de ralentir le démarrage du programme, la quantité de données à charger étant relativement grande.
+</p>
+<p>
+Heureusement, une autre solution existe, le « mappage » de fichier en mémoire (<i>memory mapping</i>). Cet anglicisme désigne la possibilité de faire apparaître le contenu d'un fichier en mémoire, comme s'il avait effectivement été chargé, mais sans qu'il ne le soit réellement. Au lieu de cela, le contenu du fichier n'est chargé que lorsqu'on accède aux données, et seules les parties effectivement nécessaires de ce contenu sont chargées.
+</p>
+<p>
+Cette possibilité est intéressante, car elle nous permet d'écrire le programme comme si la totalité des données de l'horaire était chargée en mémoire au démarrage du programme, alors qu'en réalité seules les parties effectivement utilisées le sont, au moment de leur première utilisation.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Profil</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-2">
+<p>
+Comme nous le verrons à l'étape suivante, l'algorithme de recherche de voyage optimaux produit en résultat une table donnant, pour chaque gare du réseau, la frontière de Pareto des critères d'optimisation — heure de départ et d'arrivée, nombre de changements — des voyages permettant d'atteindre la destination choisie, le jour choisi. Nous nommerons cette table un <b>profil</b> (<i>profile</i>).
+</p>
+<p>
+Par exemple, si on utilise l'algorithme de recherche pour trouver les voyages optimaux permettant de se rendre à Gruyères le 18 février 2025, il produit un profil associant une frontière de Pareto à <i>chacune</i> des plus de 30 000 gares existantes. Parmi ces frontières figure celle correspondant à la gare <i>Ecublens VD, EPFL</i> et contenant, entre autres, les tuples suivant :
+</p>
+<p>
+\[
+\ldots,
+(\textrm{15h55}, \textrm{17h57}, 3),
+(\textrm{16h13}, \textrm{17h57}, 4),
+(\textrm{16h38}, \textrm{18h21}, 3),
+(\textrm{16h38}, \textrm{18h28}, 2),
+\ldots
+\]
+</p>
+<p>
+qui correspondent aux quatre premiers voyages visibles dans la copie d'écran de l'interface graphique finale du programme ci-dessous, déjà présentée dans l'introduction au projet.
+</p>
+<figure id="org946948d">
+<img alt="rechor-gui.png" class="shadowed" src="../i/rechor-gui.png" width="100%"/>
+<figcaption><span class="figure-number">Figure 1 : </span>Voyages de <i>Ecublens VD, EPFL</i> à <i>Gruyères</i></figcaption>
+</figure>
+<p>
+Il est important de comprendre qu'un profil contient la frontière de Pareto de <i>chacune</i> des gares pour une destination et un jour de voyage donnés, et n'est donc pas lié à une gare de départ particulière.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Profil augmenté</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-3">
+<p>
+Un profil contient, pour chaque gare, la frontière de Pareto de tous les voyages optimaux permettant de se rendre de cette gare-là à la gare de destination, à la date de voyage donnée. Il permet donc à un voyageur se trouvant dans une gare quelconque du réseau ce jour-là de déterminer quand il peut arriver à la destination, et au prix de combien de changements.
+</p>
+<p>
+Lors du calcul des voyages optimaux, il se trouve qu'il est utile d'avoir cette information-là non seulement pour toutes les <i>gares</i> du réseau, mais aussi pour toutes les <i>courses</i> circulant ce jour-là. En d'autres termes, d'offrir un profil permettant également à un voyageur se trouvant à bord d'un véhicule effectuant une course donnée de déterminer quand il peut arriver à destination, et au prix de combien de changements. Contrairement aux frontières de Pareto associées aux gares, celles associées aux courses ne comportent que deux critères d'optimisation (l'heure d'arrivée et le nombre de changements), car l'heure de départ d'une course ne peut pas être choisie.
+</p>
+<p>
+Nous appellerons <b>profil augmenté</b> un profil possédant non seulement les frontières de Pareto correspondant aux gares, mais aussi celles correspondant aux courses.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Extraction de voyages</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-4">
+<p>
+À eux seuls, les tuples associés à une gare dans un profil ne contiennent pas assez d'information pour permettre à un voyageur de déterminer comment se rendre à destination. Par exemple, le tuple \((\textrm{15h55}, \textrm{17h57}, 3)\) de la frontière de Pareto donnée en exemple plus haut permet uniquement de savoir qu'il est possible de partir de l'EPFL à 15h55 pour arriver à Gruyères à 17h57 après avoir effectué 3 changements, mais sans savoir comment. Ainsi, si deux métros partent de l'EPFL à 15h55, l'un en direction de Renens, l'autre en direction de Lausanne, il est impossible de savoir lequel prendre sans autre information que le tuple.
+</p>
+<p>
+Dès lors, pour pouvoir extraire d'un profil la totalité des voyages optimaux pour un arrêt de départ donné, des informations supplémentaires sont nécessaires. Ces informations seront calculées par l'algorithme de recherche des voyages optimaux, et stockées dans ce que nous avons appelé la charge utile (<i>payload</i>) associée aux tuples.
+</p>
+<p>
+Pour les tuples des frontières de Pareto des gares, contenant trois critères (heure de départ et d'arrivée, nombre de changements), la charge utile contient deux informations :
+</p>
+<ul class="org-ul">
+<li>l'identité de la première liaison à emprunter pour débuter le voyage,</li>
+<li>le nombre d'arrêts intermédiaires à laisser passer avant de descendre du véhicule.</li>
+</ul>
+<p>
+Ces deux informations sont empaquetées dans les 32 bits de la charge utile, les 24 bits de poids fort contenant l'identité de la liaison, les 8 bits de poids faible contenant le nombre d'arrêts intermédiaires.
+</p>
+<p>
+Par exemple, au tuple \((\textrm{15h55}, \textrm{17h57}, 3)\) mentionné plus haut pourrait être associée une charge utile contenant :
+</p>
+<ul class="org-ul">
+<li>l'identité de la liaison partant à 15h55 de <i>Ecublens VD, EPFL</i> pour arriver à 15h56 à <i>Ecublens VD, Bassenges</i>,</li>
+<li>un nombre d'arrêts intermédiaires valant 4.</li>
+</ul>
+<p>
+Grâce à cette information, on peut déterminer que la première étape du voyage part à 15h55 de <i>Ecublens VD, EPFL</i> pour arriver à 16h01 à <i>Renens VD, gare</i>, simplement en consultant les liaisons qui suivent la première dans la course à laquelle elle appartient.
+</p>
+<p>
+Une fois la première étape déterminée, on peut consulter la frontière de Pareto de sa gare d'arrivée (<i>Renens VD, gare</i>) pour déterminer comment continuer le voyage. En effet, on sait que le tuple qui nous intéresse est celui permettant d'arriver à destination à 17h57 en effectuant encore 2 changements supplémentaires — étant donné que le premier des 3 changements totaux vient d'être fait.
+</p>
+<p>
+En consultant la frontière de Pareto de <i>Renens VD, gare</i>, on y trouve le tuple \((\textrm{16h08}, \textrm{17h57}, 2)\) dont la charge utile contient :
+</p>
+<ul class="org-ul">
+<li>l'identité de la liaison partant à 16h08 de <i>Renens VD</i> pour arriver à 16h14 à <i>Lausanne</i>,</li>
+<li>un nombre d'arrêts intermédiaires valant 0.</li>
+</ul>
+<p>
+On peut en déterminer :
+</p>
+<ol class="org-ol">
+<li>la prochaine étape du voyage, qui <i>doit</i> être une étape à pied allant de <i>Renens VD, gare</i> à <i>Renens VD</i>, car pour qu'un voyage soit valide il doit alterner les étapes en véhicule et à pied,</li>
+<li>la prochaine étape en véhicule du voyage, qui part de <i>Renens VD</i> à 16h08 et arrive à <i>Lausanne</i> à 16h14.</li>
+</ol>
+<p>
+Pour continuer, il suffit de rechercher dans la frontière de Pareto associée à l'arrêt <i>Lausanne</i> le tuple permettant d'arriver à destination à 17h57 en effectuant encore 1 changement, puis de procéder comme ci-dessus. Et ainsi de suite jusqu'à ce qu'il ne reste plus de changements à effectuer.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Étapes initiales et finales</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-5">
+<p>
+La technique d'extraction de voyage présentée à la section précédente produit toujours des voyages dont la première et la dernière étape se font en véhicule et non à pied. Or parfois, l'une ou l'autre, ou les deux, de ces étapes doivent se faire à pied.
+</p>
+<p>
+Par exemple, si au lieu de partir depuis l'arrêt <i>Ecublens VD, EPFL</i>, on désire partir depuis l'arrêt <i>Ecublens VD, EPFL (bus)</i> — l'arrêt de bus se trouvant juste à côté de l'arrêt du m1 —, la première étape consiste à marcher jusqu'à l'arrêt du m1. Bien entendu, une situation similaire peut se produire pour la dernière étape d'un voyage.
+</p>
+<p>
+Dès lors, la technique d'extraction mentionnée précédemment doit être légèrement augmentée afin d'ajouter une étape à pied initiale si la première liaison part d'un arrêt différent de l'arrêt de départ choisi. De même, une étape à pied finale doit être ajoutée si, après avoir effectué tous les changements requis, on se trouve à un arrêt qui n'est pas encore l'arrêt de destination.
+</p>
+</div></div>
+        </div>
+    
+                    </div>
+                </div>
+            
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+        
+        <div class="class-card">
+            <a href="classes/FileTimeTable.html">
+                <h3 class="card-title">FileTimeTable</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Enregistrement FileTimeTable</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Profile.html">
+                <h3 class="card-title">Profile</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Enregistrement Profile</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Profile.Builder.html">
+                <h3 class="card-title">Profile.Builder</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe Profile.Builder</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/JourneyExtractor.html">
+                <h3 class="card-title">JourneyExtractor</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Classe JourneyExtractor</p>
+        </div>
+    
+                </div>
+            </div>
+        
+            </div>
+        </body>
+        </html>
+        

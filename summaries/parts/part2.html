@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 2 - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .class-card .card-title {
+            margin: 0;
+        }
+
+        .class-card, .concept-card {
+            min-height: 100px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .concept-card {
+            margin-bottom: 1rem;
+        }
+
+        .concept-card:hover, .class-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .concept-content {
+            font-size: 0.95em;
+            color: var(--text-color);
+            overflow: auto;
+            max-height: 300px;
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 0.5rem 0;
+        }
+
+        .concept-content ol, .concept-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+            list-style: none;
+            padding: 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+
+        .concepts-section {
+            margin: 2rem 0;
+        }
+
+        .concepts-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .class-card a {
+            text-decoration: none;
+        }
+
+        .introduction {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin: 1rem 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h2>Étape 2 - iCalendar et valeurs empaquetées</h2>
+<p class="subtitle">ReCHor – étape 2</p>
+            <div class="introduction">
+                <div class="outline-text-2" id="text-1">
+<p>
+Le but de cette seconde étape est double : premièrement, écrire le code permettant d'exporter un voyage au format iCalendar, et deuxièmement écrire celui permettant de manipuler deux types de valeurs « empaquetées » dans des entiers Java — les intervalles d'entiers, et les critères d'optimisation des voyages.
+</p>
+<p>
+Avant de la commencer, lisez le guide <a href="../g/backups.html"><i>Sauvegarder son travail</i></a>, qui vous donnera des conseils importants concernant la sauvegarde de votre projet au cours du semestre.
+</p>
+</div>
+            </div>
+        
+                <div class="concepts-section">
+                    <h3>Concepts clés</h3>
+                    <div class="concept-grid">
+            
+        <div class="concept-card">
+            <h3 class="card-title">Format iCalendar</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-1">
+<p>
+Comme nous l'avons vu dans <a href="00.html">l'introduction au projet</a>, une des fonctionnalités offertes par ReCHor est l'exportation d'un voyage sous la forme d'un <b>événement</b> (<i>event</i>) destiné à être importé dans un calendrier électronique.
+</p>
+<p>
+Cette fonctionnalité repose sur la norme <a href="https://icalendar.org/">iCalendar</a> qui décrit la représentation, sous forme textuelle, d'événements dans un calendrier. Cette norme — adoptée par la plupart des calendriers électroniques — est très complète et complexe, mais dans le cadre de ce projet, nous n'en utiliserons qu'un petit sous-ensemble, décrit ci-après.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Valeurs empaquetées</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-2">
+<p>
+Comme expliqué dans le cours sur les types entiers, l'empaquetage consiste à stocker plusieurs valeurs dans les bits d'un « entier » Java, généralement pour économiser de la mémoire et améliorer les performances du programme.
+</p>
+<p>
+Dans ce projet, nous représenterons plusieurs types de valeurs de manière empaquetée, dont les intervalles et les critères d'optimisations, décrits dans les sections qui suivent.
+</p>
+</div></div>
+        </div>
+    
+                    </div>
+                </div>
+            
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+        
+        <div class="class-card">
+            <a href="classes/IcalBuilder.html">
+                <h3 class="card-title">IcalBuilder</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Classe IcalBuilder</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/JourneyIcalConverter.html">
+                <h3 class="card-title">JourneyIcalConverter</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Classe JourneyIcalConverter</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Bits32_24_8.html">
+                <h3 class="card-title">Bits32_24_8</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe Bits32_24_8</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/PackedRange.html">
+                <h3 class="card-title">PackedRange</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Classe PackedRange</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/PackedCriteria.html">
+                <h3 class="card-title">PackedCriteria</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.5. Classe PackedCriteria</p>
+        </div>
+    
+                </div>
+            </div>
+        
+            </div>
+        </body>
+        </html>
+        

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 3 - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .class-card .card-title {
+            margin: 0;
+        }
+
+        .class-card, .concept-card {
+            min-height: 100px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .concept-card {
+            margin-bottom: 1rem;
+        }
+
+        .concept-card:hover, .class-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .concept-content {
+            font-size: 0.95em;
+            color: var(--text-color);
+            overflow: auto;
+            max-height: 300px;
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 0.5rem 0;
+        }
+
+        .concept-content ol, .concept-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+            list-style: none;
+            padding: 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+
+        .concepts-section {
+            margin: 2rem 0;
+        }
+
+        .concepts-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .class-card a {
+            text-decoration: none;
+        }
+
+        .introduction {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin: 1rem 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h2>Étape 3 - Horaire et frontière de Pareto</h2>
+<p class="subtitle">ReCHor – étape 3</p>
+            <div class="introduction">
+                <div class="outline-text-2" id="text-1">
+<p>
+Le but de cette troisième étape est double : d'une part définir des interfaces représentant l'horaire de transport public et ses composants ; d'autre part, écrire une classe permettant de représenter ce que l'on nomme la frontière de Pareto, et qui joue un rôle crucial dans l'algorithme de recherche de voyages optimaux.
+</p>
+</div>
+            </div>
+        
+                <div class="concepts-section">
+                    <h3>Concepts clés</h3>
+                    <div class="concept-grid">
+            
+        <div class="concept-card">
+            <h3 class="card-title">Horaire</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-1">
+<p>
+Les données horaires que nous utiliserons dans ce projet pour rechercher les voyages optimaux sont une version légèrement simplifiée de celles de l'horaire suisse officiel. Elles sont constituées de :
+</p>
+<ul class="org-ul">
+<li>l'ensemble des liaisons (concept décrit plus bas) effectuées un jour donné,</li>
+<li>l'ensemble des courses effectuées un jour donné,</li>
+<li>l'ensemble des lignes existantes,</li>
+<li>l'ensemble des arrêts existants, constitué de deux sous-ensembles disjoints, celui des gares et celui des voies/quais,</li>
+<li>l'ensemble des noms alternatifs des gares, c.-à-d. des noms qui permettent d'identifier une gare mais qui ne sont pas son nom officiel (p. ex. <i>Losanna</i>, le nom italien de <i>Lausanne</i>, est un nom alternatif de la gare de Lausanne dans les données que nous utiliserons),</li>
+<li>l'ensemble des changements qu'il est possible d'effectuer, à pied, soit au sein d'une même gare, soit entre deux gares distinctes mais voisines.</li>
+</ul>
+<p>
+Ces différents concepts ont déjà été introduits dans les étapes précédentes, sauf celui de <b>liaison</b> (<i>connection</i>), qui est un trajet effectué par un véhicule de transport en commun entre deux arrêts successifs, c.-à-d. sans arrêt intermédiaire. Une course n'est donc rien d'autre qu'une succession de liaisons.
+</p>
+<p>
+Par exemple, nous avons vu que <a href="https://network.sbb.ch/fr/ligne/IR15">la ligne IR 15 des CFF</a> relie Genève-Aéroport à Lucerne. De nombreux trains parcourent cette ligne chaque jour, chacun effectuant une course dans l'un des deux sens possible. Par exemple, le lundi 24 février 2025, un train effectuera une course partant de Genève-Aéroport à 9h45 et arrivant à Lucerne à 13h01. Lors de cette course, il s'arrêtera à 10 arrêts intermédiaires, les 5 premiers étant Genève, Nyon, Morges, Lausanne et Palézieux. Dès lors, cette course est constituée de 11 liaisons, les cinq premières étant :
+</p>
+<ol class="org-ol">
+<li>celle partant de Genève-Aéroport à 9h45 et arrivant à Genève à 9h52,</li>
+<li>celle partant de Genève à 9h54 et arrivant à Nyon à 10h07,</li>
+<li>celle partant de Nyon à 10h09 et arrivant à Morges à 10h24,</li>
+<li>celle partant de Morges à 10h26 et arrivant à Lausanne à 10h37,</li>
+<li>celle partant de Lausanne à 10h40 et arrivant à Palézieux à 10h56.</li>
+</ol>
+<p>
+Comme cet exemple l'illustre, une course comportant un total de <i>n</i> arrêts — en comptant les deux aux extrémités — est constituée de <i>n</i> – 1 liaisons.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Frontière de Pareto</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-2">
+<p>
+Nous avons vu à l'étape précédente que la recherche de voyages optimaux se fait en considérant trois critères : l'heure de départ, l'heure d'arrivée et le nombre de changements. Dans certains cas, qui seront décrits ultérieurement, seuls l'heure d'arrivée et le nombre de changements sont pris en compte.
+</p>
+<p>
+Pour simplifier la discussion qui suit, nous ferons l'hypothèse que nous sommes justement dans une situation dans laquelle l'heure de départ n'est pas prise en compte. Notre but est donc uniquement d'optimiser l'heure d'arrivée \(a\) et le nombre de changements \(c\), que l'on désire tous deux minimiser afin d'arriver à destination aussi tôt, et en effectuant aussi peu de changements, que possible. Admettons maintenant que l'on ait les six possibilités suivantes pour se rendre à notre destination :
+</p>
+<ol class="org-ol">
+<li>arriver à 8h00 en faisant 3 changements,</li>
+<li>arriver à 8h00 en faisant 4 changements,</li>
+<li>arriver à 8h01 en faisant 2 changements,</li>
+<li>arriver à 8h02 en faisant 1 changement,</li>
+<li>arriver à 8h03 en ne faisant aucun changement,</li>
+<li>arriver à 8h04 en faisant 1 changement.</li>
+</ol>
+<p>
+Ces possibilités correspondent à l'ensemble de 6 paires \((a, c)\) suivant :
+</p>
+<p>
+\[\{(\textrm{8h00}, 3), (\textrm{8h00}, 4), (\textrm{8h01}, 2), (\textrm{8h02}, 1), (\textrm{8h03}, 0), (\textrm{8h04}, 1) \} \]
+</p>
+<p>
+En examinant cet ensemble, on constate que certaines paires sont dominées par d'autres. Par exemple, la paire \((\textrm{8h00}, 4)\) est dominée par la paire \((\textrm{8h00}, 3)\). De même, la paire \((\textrm{8h04}, 1)\) est dominée par les paires \((\textrm{8h03}, 0)\) et \((\textrm{8h02}, 1)\). Ces paires  dominées correspondent à des possibilités sans aucun intérêt pour le voyageur. Par exemple, la possibilité \((\textrm{8h00}, 4)\) n'a aucun intérêt car la possibilité \((\textrm{8h00}, 3)\), qui la domine, permet d'arriver à la même heure avec un changement de moins.
+</p>
+<p>
+Sachant que les paires dominées ne sont pas intéressantes pour le voyageur, il semble raisonnable de ne conserver que celles qui ne le sont pas, et qui forment ce que l'on nomme la <b>frontière de Pareto</b> (<i>Pareto front</i> ou <i>Pareto frontier</i>).
+</p>
+<p>
+La frontière de Pareto peut être visualisée sur un graphe dont l'axe horizontal représente l'heure d'arrivée et le vertical le nombre de changements, et sur lequel les différentes possibilités apparaissent comme des points. C'est ce qui a été fait à la figure <a href="#org0abd4d8">3</a> ci-dessous, sur laquelle la zone dominée par chacun des points — un rectangle infini<sup><a class="footref" href="#fn.2" id="fnr.2" role="doc-backlink">2</a></sup> dont le point constitue le coin bas-gauche — a été coloriée en rouge partiellement transparent. On constate ainsi aisément que le point 2 se trouve dans la zone dominée par le point 1, et que le point 6 se trouve dans les zones dominées par les points 4 et 5. Il est dès lors facile de déterminer que la frontière de Pareto est constituée des points 1, 3, 4 et 5.
+</p>
+<figure id="org0abd4d8">
+<img alt="pareto-front;16.png" src="../i/pareto-front;16.png"/>
+<figcaption><span class="figure-number">Figure 3 : </span>Frontière de Pareto</figcaption>
+</figure>
+<p>
+Bien entendu, un graphique similaire pourrait être fait pour le cas où les critères d'optimisation incluent l'heure de départ. Il faudrait pour cela utiliser une troisième dimension, et les zones dominées seraient des cubes infinis.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Représentation des frontières immuables</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-3">
+<p>
+L'algorithme de recherche de voyages optimaux que nous utiliserons calcule, étant donné un arrêt d'arrivée et une date de voyage, la frontière de Pareto de <i>tous</i> les voyages permettant d'atteindre cet arrêt ce jour-là, et ce pour chaque « gare » (au sens large) du réseau, ainsi que pour chaque course.
+</p>
+<p>
+Sachant que les données que nous utiliserons comportent plus de 30 000 « gares » et 200 000 courses par jour, il importe de représenter les frontières de Pareto de manière efficace. Nous utiliserons donc une représentation optimisée, basée bien entendu sur les critères empaquetés de l'étape précédente.
+</p>
+<p>
+Comme un tuple (paire ou triplet) de critères (augmenté) est représenté par une valeur de type <code>long</code>, et qu'une frontière de Pareto est un ensemble de critères, il semble logique d'utiliser un tableau de type <code>long[]</code> pour représenter une telle frontière. Une fois cette décision prise, la question qui se pose est de savoir si l'ordre dans lequel les critères apparaissent dans le tableau est important ou non.
+</p>
+<p>
+A priori, étant donné que les éléments d'un ensemble ne sont pas ordonnés en mathématiques, on pourrait penser que l'ordre dans lequel les tuples sont stockés dans le tableau importe peu. Et cela est effectivement le cas lorsque les frontières de Pareto que l'on désire représenter sont immuables. Toutefois, pour représenter des frontières de Pareto non immuables — des bâtisseurs de frontières, en réalité — il peut être intéressant d'ordonner les tuples de manière à obtenir des performances aussi bonnes que possible.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Représentation des frontières non immuables</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-4">
+<p>
+L'algorithme de recherche utilisé par ReCHor construit petit à petit les frontières de Pareto correspondant aux voyages optimaux, et ce pour chaque gare et chaque course.
+</p>
+<p>
+En d'autres termes, il commence avec des frontières de Pareto vides associées à chaque gare et course, puis leur ajoute progressivement des tuples correspondant à des voyages nouvellement découverts. Chaque fois qu'un nouveau tuple est ajouté à une frontière, deux cas peuvent se présenter :
+</p>
+<ol class="org-ol">
+<li>le nouveau tuple est dominé par au moins un tuple de la frontière, auquel cas le nouveau tuple n'appartient pas à la frontière, qui ne change donc pas,</li>
+<li>le nouveau tuple n'est dominé par aucun tuple de la frontière, auquel cas il lui est ajouté, tandis que les éventuels tuples dominés par le nouveau en sont retirés.</li>
+</ol>
+<p>
+Pour illustrer ce processus, voyons comment une frontière de Pareto initialement vide évolue si on lui ajoute les tuples plus haut, dans l'ordre 1, 2, 6, 3, 4, 5 :
+</p>
+<ol class="org-ol">
+<li>initialement, la frontière est vide : \(\{\}\),</li>
+<li>on lui ajoute le tuple 1, \((\textrm{8h00}, 3)\), qui n'est dominé par aucun de la frontière (vide), et qui n'en domine aucun autre, donc la frontière ne contient maintenant que lui : \(\{(\textrm{8h00}, 3)\}\),</li>
+<li>on lui ajoute le tuple 2, \((\textrm{8h00}, 4)\), qui est dominé par le seul tuple de la frontière, donc elle ne change pas : \(\{(\textrm{8h00}, 3)\}\),</li>
+<li>on lui ajoute le tuple 6, \((\textrm{8h04}, 1)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h04}, 1)\}\),</li>
+<li>on lui ajoute le tuple 3, \((\textrm{8h01}, 2)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h04}, 1)\}\),</li>
+<li>on lui ajoute le tuple 4, \((\textrm{8h02}, 1)\), qui n'est dominé par aucun de la frontière, mais qui domine le tuple \((\textrm{8h04}, 1)\), qui doit donc être supprimé de la frontière, qui devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h02}, 1)\}\),</li>
+<li>on lui ajoute le tuple 5, \((\textrm{8h03}, 0)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h02}, 1), (\textrm{8h03}, 0)\}\).</li>
+</ol>
+<p>
+Dans cet exemple, les éléments de la frontière ont toujours été placés dans l'<b>ordre lexicographique</b> (<i>lexical order</i>), c.-à-d. triés d'abord par heure d'arrivée (croissante) puis par nombre de changements (croissant). Le fait de toujours ordonner les tuples de la frontière ainsi est intéressant car cela permet d'ajouter un nouvel élément de manière relativement efficace.
+</p>
+<p>
+En effet, lorsqu'on désire ajouter un nouveau tuple à une frontière dont les tuples sont ordonnés en ordre lexicographique, on sait que tous les tuples qui pourraient dominer le nouveau se trouvent forcément <i>avant</i> la position à laquelle le nouveau devrait être inséré.
+</p>
+<p>
+On peut s'en convaincre en regardant la figure <a href="#org3de609a">4</a> ci-dessous, qui montre la totalité des points entre \((\textrm{8h00}, 0)\) et \((\textrm{8h05}, 4)\). L'ordre de parcours lexicographique est indiqué par les flèches traitillées. De plus, le point correspondant à \((\textrm{8h02}, 2)\) est colorié en noir, tous ceux qui le précèdent dans l'ordre lexicographique en rouge, et tous ceux qui le suivent en bleu.
+</p>
+<figure id="org3de609a">
+<img alt="pareto-front-lexical;32.png" src="../i/pareto-front-lexical;32.png"/>
+<figcaption><span class="figure-number">Figure 4 : </span>Parcours des points dans l'ordre lexicographique</figcaption>
+</figure>
+<p>
+En regardant cette figure, il devrait être clair que les seuls points qui peuvent dominer le noir sont les rouges, c.-à-d. ceux qui le précèdent dans l'ordre lexicographique. A l'inverse, les seuls points que le noir peut dominer sont les bleus, c.-à-d. ceux qui le suivent dans l'ordre lexicographique.
+</p>
+<p>
+Pour résumer, en stockant les tuples composant une frontière de Pareto dans l'ordre lexicographique, on peut ajouter un nouveau tuple de manière assez efficace en procédant ainsi :
+</p>
+<ol class="org-ol">
+<li>on parcourt tous les tuples de la frontière se trouvant avant celui à insérer dans l'ordre lexicographique,</li>
+<li>si, lors de ce parcours, un tuple dominant ou égal au nouveau est trouvé, on termine immédiatement l'ajout, car le nouveau tuple n'appartient pas à la frontière,</li>
+<li>une fois tous les tuples précédents parcourus, on parcourt tous ceux qui suivent le nouveau, et on élimine de la frontière tous ceux qui sont dominés par lui.</li>
+</ol>
+<p>
+Dès lors, dans ce projet, nous ordonnerons toujours les tuples des (bâtisseurs de) frontières de Pareto en ordre lexicographique. Il faut noter que le format d'empaquetage que nous avons choisi rend cela extrêmement simple, car un tuple \(t_1\) se trouve avant un autre tuple \(t_2\) dans l'ordre lexicographique si et seulement si la version empaquetée de \(t_1\), interprétée comme un entier, est plus petite que la version empaquetée de \(t_2\).
+</p>
+</div></div>
+        </div>
+    
+                    </div>
+                </div>
+            
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+        
+        <div class="class-card">
+            <a href="classes/Indexed.html">
+                <h3 class="card-title">Indexed</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Interface Indexed</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Stations.html">
+                <h3 class="card-title">Stations</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Interface Stations</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/StationAliases.html">
+                <h3 class="card-title">StationAliases</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Interface StationAliases</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Platforms.html">
+                <h3 class="card-title">Platforms</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Interface Platforms</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Routes.html">
+                <h3 class="card-title">Routes</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.5. Interface Routes</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Transfers.html">
+                <h3 class="card-title">Transfers</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.6. Interface Transfers</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Trips.html">
+                <h3 class="card-title">Trips</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.7. Interface Trips</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Connections.html">
+                <h3 class="card-title">Connections</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.8. Interface Connections</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/TimeTable.html">
+                <h3 class="card-title">TimeTable</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.9. Interface TimeTable</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/ParetoFront.html">
+                <h3 class="card-title">ParetoFront</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.10. Classe ParetoFront</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/ParetoFront.Builder.html">
+                <h3 class="card-title">ParetoFront.Builder</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.11. Classe ParetoFront.Builder</p>
+        </div>
+    
+                </div>
+            </div>
+        
+            </div>
+        </body>
+        </html>
+        

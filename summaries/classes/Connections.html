@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connections - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 3 - Horaire et frontière de Pareto</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>Connections</h1>
+                <p>3.8. Interface Connections</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-8">
+<p>
+L'interface <code>Connections</code> du sous-paquetage <code>timetable</code>, publique et étendant <code>Indexed</code>, représente des liaisons indexées. Pour les besoins de l'algorithme de recherche de voyages, les liaisons doivent être ordonnées par heure de départ décroissante.
+</p>
+<p>
+<code>Connections</code> possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int depStopId(int id)</code></dt><dd>qui retourne l'index de l'arrêt de départ de la liaison d'index donné,</dd>
+<dt><code>int depMins(int id)</code></dt><dd>qui retourne l'heure de départ de la liaison d'index donné, exprimée en minutes après minuit,</dd>
+<dt><code>int arrStopId(int id)</code></dt><dd>qui retourne l'index de l'arrêt d'arrivée de la liaison d'index donné,</dd>
+<dt><code>int arrMins(int id)</code></dt><dd>qui retourne l'heure d'arrivée de la liaison d'index donné, exprimée en minutes après minuit,</dd>
+<dt><code>int tripId(int id)</code></dt><dd>qui retourne l'index de la course à laquelle appartient la liaison d'index donné,</dd>
+<dt><code>int tripPos(int id)</code></dt><dd>qui retourne la position de la liaison d'index donné dans la course à laquelle elle appartient, la première liaison d'une course ayant l'index 0,</dd>
+<dt><code>int nextConnectionId(int id)</code></dt><dd>qui retourne l'index de la liaison suivant celle d'index donné dans la course à laquelle elle appartient, ou l'index de la première liaison de la course si la liaison d'index donné est la dernière de la course.</dd>
+</dl>
+<p>
+Toutes ces méthodes lèvent une <code>IndexOutOfBoundsException</code> si l'index qu'on leur passe (nommé <code>id</code> ci-dessous) est invalide, c.-à-d. inférieur à 0 ou supérieur ou égal à la taille retournée par <code>size()</code>.
+</p>
+<p>
+Les index des arrêts de départ et d'arrivée retournés par <code>depStopId</code> et <code>arrStopId</code> peuvent soit désigner des gares, soit des voies ou quais. Si un tel index est inférieur au nombre de gares existant dans l'horaire, alors il représente un index de gare. Sinon, il représente un index de voie ou de quai, qui peut être calculé en soustrayant de l'index d'arrêt le nombre de gares existant dans l'horaire.
+</p>
+<p>
+Par exemple, s'il y a 1000 gares et 2000 voies ou quais, l'index d'arrêt 500 représente la gare d'index 500, tandis que l'index d'arrêt 1700 représente l'index de la voie/quai 700.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

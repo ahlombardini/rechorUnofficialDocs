@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StructuredBuffer - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 4 - Horaire aplati</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>StructuredBuffer</h1>
+                <p>3.2. Classe StructuredBuffer</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-2">
+<p>
+La classe <code>StructuredBuffer</code> du sous-paquetage <code>timetable.mapped</code>, représente un « tableau d'octets structuré ». Son but est d'offrir un accès agréable à des données aplaties stockées dans un tableau d'octets, et dont la structure est décrite par une instance de <code>Structure</code>.
+</p>
+<p>
+Une fois cette classe terminée, il sera possible de l'utiliser par exemple ainsi pour obtenir l'index de chaîne du nom alternatif d'index 1 :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">StructuredBuffer buffer = …;
+int stationNameStringIndex = buffer.getU16(STATION_NAME_ID, 1);
+</pre>
+</div>
+<p>
+Dans l'exemple de la §<a href="#sec/example">2.6</a>, <code>stationNameStringIndex</code> vaudrait 3, car c'est l'index de chaîne <i>Ins</i>.
+</p>
+<p>
+<code>StructuredBuffer</code> possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>StructuredBuffer(Structure structure, ByteBuffer buffer)</code></dt><dd>qui construit un tableau structuré dont les éléments ont la structure donnée, et dont les octets sont stockés dans le « tableau » <code>buffer</code>, ou lève une <code>IllegalArgumentException</code> si le nombre d'octets de ce tableau n'est pas un multiple de la taille totale de la structure.</dd>
+</dl>
+<p>
+La classe <code>ByteBuffer</code>, qui appartient à la bibliothèque Java, est décrite dans les conseils de programmation ci-dessous.
+</p>
+<p>
+En plus de son constructeur, <code>StructuredBuffer</code> offre les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int size()</code></dt><dd>qui retourne le nombre d'éléments que contient le tableau, p. ex. 3 pour les voies/quais de la §<a href="#sec/example">2.6</a>,</dd>
+<dt><code>int getU8(int fieldIndex, int elementIndex)</code></dt><dd>qui retourne l'entier <code>U8</code> correspondant au champ d'index <code>fieldIndex</code> de l'élément d'index <code>elementIndex</code> du tableau, ou lève <code>IndexOutOfBoundsException</code> si l'un des deux index est invalide,</dd>
+<dt><code>int getU16(int fieldIndex, int elementIndex)</code></dt><dd>qui fait la même chose que <code>getU8</code> mais pour un champ de type <code>U16</code>,</dd>
+<dt><code>int getS32(int fieldIndex, int elementIndex)</code></dt><dd>qui fait la même chose que <code>getU8</code> mais pour un champ de type <code>S32</code>.</dd>
+</dl>
+<p>
+N'oubliez pas que les valeurs retournées par <code>getU8</code> et <code>getU16</code> doivent être positives, car les champs de ces deux types sont interprétés de manière non signée. C'est la raison pour laquelle ces méthodes retournent une valeur de type <code>int</code> et pas <code>byte</code> ou <code>short</code>.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

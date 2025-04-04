@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey.Leg.Transport - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 1 - Mise en place</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>Journey.Leg.Transport</h1>
+                <p>3.10. Enregistrement Journey.Leg.Transport</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-sec/java/transport">
+<p>
+L'enregistrement <code>Transport</code>, public et imbriqué dans l'interface <code>Leg</code>, représente une étape effectuée en transport public. Il implémente donc <code>Leg</code> et possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>Stop depStop</code></dt><dd>l'arrêt de départ de l'étape,</dd>
+<dt><code>LocalDateTime depTime</code></dt><dd>la date/heure de départ de l'étape,</dd>
+<dt><code>Stop arrStop</code></dt><dd>l'arrêt d'arrivée de l'étape,</dd>
+<dt><code>LocalDateTime arrTime</code></dt><dd>la date/heure d'arrivée de l'étape,</dd>
+<dt><code>List&lt;IntermediateStop&gt; intermediateStops</code></dt><dd>les éventuels arrêts intermédiaires de l'étape,</dd>
+<dt><code>Vehicle vehicle</code></dt><dd>le type de véhicule utilisé pour cette étape,</dd>
+<dt><code>String route</code></dt><dd>le nom de la ligne sur laquelle circule le véhicule utilisé pour cette étape,</dd>
+<dt><code>String destination</code></dt><dd>le nom de la destination finale du véhicule utilisé pour cette étape.</dd>
+</dl>
+<p>
+Le constructeur compact de <code>Transport</code> valide les arguments en vérifiant que :
+</p>
+<ul class="org-ul">
+<li>aucun d'entre eux n'est <code>null</code>,</li>
+<li>la date/heure d'arrivée n'est pas antérieure à celle de départ.</li>
+</ul>
+<p>
+De plus, il copie la liste des arrêts intermédiaires afin de garantir l'immuabilité de la classe.
+</p>
+<p>
+<code>Transport</code> ne possède aucune autre méthode que celles ajoutées automatiquement aux enregistrements par Java. Notez que ces méthodes ajoutées par Java sont celles qui implémentent les méthodes abstraites de l'interface <code>Leg</code>. Par exemple, la méthode d'accès pour l'attribut <code>depStop</code>, ajoutée automatiquement, implémente la méthode <code>depStop()</code> de <code>Leg</code>.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>s Java - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 1 - Mise en place</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>s Java</h1>
+                <p>3.5. Enregistrements Java</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-5">
+<p>
+Avant de décrire <code>Stop</code>, la prochaine classe à mettre en œuvre pour cette étape, il convient de décrire le concept de <b>classe enregistrement</b> (<i>record class</i>), ou simplement <b>enregistrement</b> (<i>record</i>), introduit dans la version 17 de Java.
+</p>
+<p>
+Un enregistrement est un type particulier de classe qui peut se définir au moyen d'une syntaxe plus concise qu'une classe normale. Dans cette syntaxe, le mot-clef <code>class</code> est remplacé par <code>record</code> et les attributs de la classe sont donnés entre parenthèses, après son nom.
+</p>
+<p>
+Par exemple, un enregistrement nommé <code>Complex</code> représentant un nombre complexe dont les attributs sont sa partie réelle <code>re</code> et sa partie imaginaire <code>im</code> — tous deux de type <code>double</code> — peut se définir ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public record Complex(double re, double im) { }
+</pre>
+</div>
+<p>
+Cette définition est équivalente à celle d'une classe finale (!) dotée de :
+</p>
+<ul class="org-ul">
+<li>deux attributs privés et finaux nommés <code>re</code> et <code>im</code> de type <code>double</code>,</li>
+<li>un constructeur prenant en argument la valeur de ces attributs et les initialisant,</li>
+<li>des méthodes d'accès (<i>getters</i>) publics nommés <code>re()</code> et <code>im()</code> pour ces attributs,</li>
+<li>une méthode <code>equals</code> retournant vrai si et seulement si l'objet qu'on lui passe est aussi une instance de <code>Complex</code> et que ses attributs sont égaux à ceux de <code>this</code>,</li>
+<li>une méthode <code>hashCode</code> compatible avec la méthode <code>equals</code> — le but de cette méthode et la signification de sa compatibilité avec <code>equals</code> seront examinés ultérieurement dans le cours,</li>
+<li>une méthode <code>toString</code> retournant une chaîne composée du nom de la classe et du nom et de la valeur des attributs de l'instance, p. ex. <code>Complex[re=1.0, im=2.0]</code>.</li>
+</ul>
+<p>
+En d'autres termes, la définition plus haut, qui tient sur une ligne, est équivalente à la définition suivante, qui n'utilise que des concepts que vous connaissez déjà :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public final class Complex {
+  private final double re;
+  private final double im;
+
+  public Complex(double re, double im) {
+    this.re = re;
+    this.im = im;
+  }
+
+  public double re() { return re; }
+  public double im() { return im; }
+
+  @Override
+  public boolean equals(Object that) {
+    // … vrai ssi that :
+    // 1. est aussi une instance de Complex, et
+    // 2. ses attributs re et im sont identiques.
+  }
+
+  @Override
+  public int hashCode() {
+    // … code omis car peu important
+  }
+
+  @Override
+  public String toString() {
+    return "Complex[re=" + re + ", im=" + im + "]";
+  }
+}
+</pre>
+</div>
+<p>
+Comme cet exemple l'illustre, les enregistrements permettent d'éviter d'écrire beaucoup de code répétitif, ce que les anglophones appellent du <a href="https://en.wikipedia.org/wiki/Boilerplate_code"><i>boilerplate code</i></a>. Il faut toutefois bien comprendre qu'en dehors d'une syntaxe très concise, les enregistrements n'apportent — pour l'instant en tout cas — rien de nouveau à Java, dans le sens où il est toujours possible de récrire un enregistrement en une classe Java équivalente, comme ci-dessus. En cela, les enregistrements sont similaires aux types énumérés.
+</p>
+<p>
+Il est bien entendu possible de définir des méthodes dans un enregistrement, qui viennent s'ajouter à celles définies automatiquement. Par exemple, pour doter l'enregistrement <code>Complex</code> d'une méthode <code>modulus</code> retournant son module, il suffit de l'ajouter entre les accolades, ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public record Complex(double re, double im) {
+  public double modulus() { return Math.hypot(re, im); }
+}
+</pre>
+</div>
+<p>
+(La méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Math.html#hypot(double,double)"><code>Math.hypot(x,y)</code></a> retourne \(\sqrt{x^2 + y^2}\)).
+</p>
+<p>
+Finalement, il est aussi possible de définir ce que l'on nomme un <b>constructeur compact</b> (<i>compact constructor</i>), qui augmente le constructeur que Java ajoute par défaut aux enregistrements. Un constructeur compact doit son nom au fait qu'il semble ne prendre aucun argument, et n'initialise pas explicitement les attributs. En réalité, il prend des arguments qui sont les mêmes que ceux de l'enregistrement (<code>re</code> et <code>im</code> dans notre exemple), et Java lui ajoute automatiquement des affectations de ces arguments aux attributs correspondants.
+</p>
+<p>
+Par exemple, on pourrait vouloir ajouter un constructeur compact à la classe <code>Complex</code> pour lever une exception si l'un des arguments passés au constructeur était une valeur <code>NaN</code> (<i>not a number</i>, une valeur invalide). On pourrait le faire ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public record Complex(double re, double im) {
+  public Complex {  // constructeur compact
+    if (Double.isNaN(re) || Double.isNaN(im))
+      throw new IllegalArgumentException();
+  }
+  // … méthode modulus
+}
+</pre>
+</div>
+<p>
+Ce constructeur compact serait automatiquement traduit en :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public final class Complex {
+  // … attributs re et im
+
+  public Complex(double re, double im) {
+    if (Double.isNaN(re) || Double.isNaN(im))
+      throw new IllegalArgumentException();
+    this.re = re;  // ajouté automatiquement
+    this.im = im;  // ajouté automatiquement
+  }
+
+  // … méthodes modulus, re, im, hashCode, etc.
+}
+</pre>
+</div>
+<p>
+Les enregistrements ne seront pas décrits en détail dans le cours, mais seront introduits au moyen d'exemples similaires à ceux ci-dessus dans la suite du projet. Les personnes intéressées par les détails de leur fonctionnement pourront se rapporter à la <a href="https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.10">§8.10 (<i>Record Classes</i>) de la spécification du langage</a>.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structure - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 4 - Horaire aplati</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>Structure</h1>
+                <p>3.1. Classe Structure</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-1">
+<p>
+La classe <code>Structure</code> du sous-paquetage <code>timetable.mapped</code> a pour but de faciliter la description de la structure des données aplaties. Ainsi, une fois terminée, cette classe permet d'écrire le code suivant pour décrire les noms alternatifs des gares :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int ALIAS_ID = 0;
+int STATION_NAME_ID = 1;
+
+Structure STRUCTURE = new Structure(
+    field(ALIAS_ID, U16),
+    field(STATION_NAME_ID, U16));
+</pre>
+</div>
+<p>
+qui est très proche de la table donnée à la §<a href="#sec/aliases">2.4</a>, les constantes <code>ALIAS_ID</code> et <code>STATION_NAME_ID</code> contenant les index (colonne <code>I</code>) des différents champs.
+</p>
+<p>
+Une fois cette définition écrite, il est par exemple possible de calculer l'index, dans le tableau d'octets contenant les données aplaties, du premier octet de l'index de chaîne du nom de gare du second nom alternatif d'une table (celui d'index 1), ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int offset = STRUCTURE.offset(STATION_NAME_ID, 1);
+</pre>
+</div>
+<p>
+qui vaut 6.
+</p>
+<p>
+<code>Structure</code> possède un type énuméré imbriqué public nommé <code>FieldType</code> représentant les trois types de champs possibles, à savoir <code>U8</code>, <code>U16</code> et <code>S32</code>.
+</p>
+<p>
+De plus, elle possède un enregistrement imbriqué public nommé <code>Field</code>, qui représente un champ et possède les deux attributs suivants, dans l'ordre :
+</p>
+<dl class="org-dl">
+<dt><code>int index</code></dt><dd>l'index du champ dans la structure (colonne <code>I</code> dans les tables plus haut),</dd>
+<dt><code>FieldType type</code></dt><dd>le type du champ.</dd>
+</dl>
+<p>
+<code>Field</code> possède un constructeur compact qui lève une <code>NullPointerException</code> ssi <code>type</code> est <code>null</code>.
+</p>
+<p>
+<code>Structure</code> possède de plus une méthode publique et statique dont le but est d'alléger un peu la création d'instances de <code>Field</code>, en omettant le <code>new</code>, comme dans l'exemple plus haut :
+</p>
+<dl class="org-dl">
+<dt><code>Field field(int index, FieldType type)</code></dt><dd>qui retourne une instance de <code>Field</code> avec les attributs donnés.</dd>
+</dl>
+<p>
+<code>Structure</code> possède un unique constructeur, qui prend en arguments la description des différents champs de la structure :
+</p>
+<dl class="org-dl">
+<dt><code>Structure(Field... fields)</code></dt><dd>qui retourne une structure dont les champs sont ceux donnés, ou lève une <code>IllegalArgumentException</code> si ces champs ne sont pas donnés dans l'ordre — c.-à-d. si le premier d'entre eux n'est pas celui d'index 0, le second celui d'index 1, etc.</dd>
+<dt><code>int totalSize()</code></dt><dd>qui retourne la taille totale, en octets, de la structure — p. ex. 10 pour celle correspondant aux gares,</dd>
+<dt><code>int offset(int fieldIndex, int elementIndex)</code></dt><dd>qui retourne l'index, dans le tableau d'octets contenant les données aplaties, du premier octet du champ d'index <code>fieldIndex</code> de l'élément d'index <code>elementIndex</code> ; lève <code>IndexOutOfBoundsException</code> si l'index du champ est invalide.</dd>
+</dl>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

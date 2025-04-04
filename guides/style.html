@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- 2025-02-17 Lun 14:14 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Programmer avec style</title>
+<meta name="author" content="Michel Schinz" />
+<meta name="generator" content="Org Mode" />
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="../a/cs108.css" type="text/css"><link rel="stylesheet" href="../a/highlight/styles/github.min.css" type="text/css">
+<script src="../a/highlight/highlight.min.js"></script>
+<script>
+function orgHighlight() {
+  document
+    .querySelectorAll('pre.src, .implementation dt>code')
+    .forEach((el) => { hljs.highlightElement(el); });
+}
+addEventListener('DOMContentLoaded', orgHighlight, false);
+addEventListener('load', orgHighlight, false);
+</script>
+<script type="text/javascript" src="../a/mathjax/tex-chtml.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<header>
+<h1 class="title">Programmer avec style</h1>
+<p class="subtitle" role="doc-subtitle">CS-108</p>
+</header>
+<div id="outline-container-org3f084b1" class="outline-2">
+<h2 id="org3f084b1">Introduction</h2>
+<div class="outline-text-2" id="text-org3f084b1">
+<p>
+Lorsqu'on débute en programmation, on a tendance à penser qu'un programme est terminé une fois qu'il fonctionne &#x2014; ou, plus souvent, qu'il <i>semble</i> fonctionner. Or il n'en est rien ! En plus d'être correct, il est capital qu'un programme soit aussi :
+</p>
+
+<ol class="org-ol">
+<li>lisible,</li>
+<li>concis, et</li>
+<li>efficace.</li>
+</ol>
+
+<p>
+La lisibilité est importante, car lorsqu'un programme est facile à comprendre, ses lecteurs &#x2014; dont son auteur &#x2014; pourront aisément se convaincre qu'il est correct. D'autre part, un programme lisible est aussi plus simple à modifier ultérieurement, p.ex. en vue de lui ajouter de nouvelles fonctionnalités ou de corriger un problème.
+</p>
+
+<p>
+La concision est importante car un programme concis est, généralement, plus simple à comprendre qu'un programme verbeux. Une fois encore, les lecteurs d'un code concis auront plus de facilité à se convaincre qu'il est correct, ou à le modifier.
+</p>
+
+<p>
+Finalement, l'efficacité est généralement importante, car les utilisateurs d'un programme préféreront un programme rapide à un programme lent, toutes choses égales par ailleurs.
+</p>
+
+<p>
+Bien entendu, ces trois critères sont souvent en conflit. Par exemple, la version la plus efficace d'un programme est aussi souvent la moins lisible. Il faut donc savoir quel critère favoriser. De manière générale, il est conseillé de les appliquer dans l'ordre donné ci-dessus, c-à-d favoriser en premier lieu la lisibilité, puis la concision, et finalement l'efficacité.
+</p>
+
+<p>
+Cela dit, cette règle n'est pas absolue, et admet des exceptions. Par exemple, lorsqu'une partie d'un programme doit absolument être aussi efficace que possible, on peut choisir de sacrifier en partie sa lisibilité. Néanmoins, cela ne doit être fait qu'après avoir effectivement déterminé, au moyen de mesures, que la perte en lisibilité semble bien compensée par un gain en efficacité.
+</p>
+
+<p>
+Les conseils ci-dessous ont pour but de vous aider à améliorer vos programmes selon les trois critères mentionnés plus haut. Ils ne sont pas exhaustifs et ne constituent pas des règles absolues. Ne les appliquez donc pas aveuglément, mais uniquement lorsqu'ils permettent effectivement d'améliorer votre programme. Faites preuve de bon sens et de bon goût !
+</p>
+</div>
+</div>
+
+<div id="outline-container-org65272a1" class="outline-2">
+<h2 id="org65272a1">Lisibilité</h2>
+<div class="outline-text-2" id="text-org65272a1">
+</div>
+<div id="outline-container-org70affb9" class="outline-3">
+<h3 id="org70affb9">Mettez correctement votre code en page</h3>
+<div class="outline-text-3" id="text-org70affb9">
+<p>
+La mise en page d'un programme influence grandement sa lisibilité, de la même manière qu'elle influence celle d'un texte écrit dans une langue naturelle.
+</p>
+
+<p>
+Les principales décisions à prendre lors de la mise en page de programmes sont :
+</p>
+
+<ol class="org-ol">
+<li>comment indenter les lignes du programme,</li>
+<li>où insérer des retours à la ligne,</li>
+<li>où insérer des espaces et des lignes vides.</li>
+</ol>
+
+<p>
+De nos jours, l'indentation est gérée automatiquement par l'environnement de programmation. Par exemple, IntelliJ offre la commande <i>Auto-Indent Lines</i> dans le menu <i>Code</i> pour corriger l'indentation de la partie du programme actuellement sélectionnée.
+</p>
+
+<p>
+Les retours à la ligne sont souvent insérés par le programmeur, même si là aussi les environnements de programmation moderne peuvent fournir de l'aide.
+IntelliJ offre ainsi la commande <i>Reformat Code</i> dans le menu <i>Code</i>, qui met automatiquement en page la partie du programme actuellement sélectionnée. Cela dit, le découpage des lignes est plus difficile à automatiser que l'indentation, et il est donc conseillé de le faire soi-même.
+</p>
+
+<p>
+L'exemple ci-dessous illustre comment des retours à la ligne judicieusement placés rendent un programme plus lisible. Cet extrait de programme :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">String s = new StringBuilder()
+  .append(t, 1, t.length())
+  .append(t, 0, 1)
+  .toString();
+</pre>
+</div>
+<p>
+est ainsi beaucoup plus facile à comprendre que celui-ci :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">String s = new StringBuilder().append(t, 1, t.length()).
+  append(t, 0, 1).toString();
+</pre>
+</div>
+<p>
+alors que les deux sont identiques, à l'exception des retours à la ligne. La première version est plus simple à comprendre car chaque ligne contient exactement un appel de méthode, et leur effet est donc clair.
+</p>
+
+<p>
+Finalement, les espaces et lignes vides permettent d'aérer le code et de mettre en évidence sa structure, et facilitent donc également sa lisibilité. Par exemple, pour évaluer un polynôme de degré trois, il est préférable d'utiliser des espaces pour aérer la formule :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">double v = a * pow(x, 3) + b * pow(x, 2) + c * x + d;
+</pre>
+</div>
+<p>
+plutôt que de tout écrire de manière compacte :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">double v = a*pow(x,3)+b*pow(x,2)+c*x+d;
+</pre>
+</div>
+<p>
+Notez que dans ce cas, on pourrait préférer encore une troisième solution intermédiaire, dans laquelle certains espaces sont supprimés afin d'exprimer la priorité des opérateurs :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">double v = a*pow(x,3) + b*pow(x,2) + c*x + d;
+</pre>
+</div>
+<p>
+voire utiliser la forme de Horner, qui a aussi l'avantage d'être plus efficace :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">double v = ((a * x + b) * x + c) * x + d;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1e94e56" class="outline-3">
+<h3 id="org1e94e56">Nommez les constantes que vous utilisez</h3>
+<div class="outline-text-3" id="text-org1e94e56">
+<p>
+Les constantes numériques utilisées telles quelles dans un programme rendent souvent sa lecture difficile. Dès lors, s'il est possible de donner un nom à une constante et que son utilisation clarifie le code, faites-le.
+</p>
+
+<p>
+Par exemple, supposons qu'on doive extraire d'une chaîne de caractères stockée dans une variable <code>line</code> un numéro d'identification d'une personne, et que ce numéro commence toujours au caractère 5 et ait une longueur de 6 caractères. Il est beaucoup plus clair de définir et d'utiliser des constantes nommées pour effectuer cette extraction :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">private static final int PERSON_ID_START = 5;
+private static final int PERSON_ID_LENGTH = 6;
+private static final int PERSON_ID_END =
+  PERSON_ID_START + PERSON_ID_LENGTH;
+// … plus loin:
+String personId = line.substring(PERSON_ID_START,
+                                 PERSON_ID_END);
+</pre>
+</div>
+<p>
+que d'utiliser directement les valeurs en question :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">String personId = line.substring(5, 11);
+</pre>
+</div>
+
+<p>
+Attention toutefois à ne pas tomber dans l'excès en nommant des constantes qui n'ont aucune raison de l'être. Par exemple, pour calculer la circonférence d'un cercle en fonction de son rayon <code>radius</code>, il n'y a rien de choquant à écrire :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">double perimeter = 2d * PI * radius;
+</pre>
+</div>
+<p>
+plutôt que de nommer la constante 2 :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">// A ne pas faire !!!
+private static final double TWO = 2d;
+// … plus loin
+double perimeter = TWO * PI * radius;
+</pre>
+</div>
+<p>
+(Cela dit, <a href="https://www.scientificamerican.com/article/let-s-use-tau-it-s-easier-than-pi/">il y aurait de bonnes raisons</a> pour remplacer la constante mathématique \(\pi\) par une nouvelle valant \(2\pi\), mais c'est une autre histoire.)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb3a3957" class="outline-3">
+<h3 id="orgb3a3957">Nommez les sous-expressions d'expressions complexes</h3>
+<div class="outline-text-3" id="text-orgb3a3957">
+<p>
+Les noms attribués aux différentes entités d'un programme servent de commentaires, et en les choisissant judicieusement il est possible de beaucoup améliorer la lisibilité.
+</p>
+
+<p>
+Entre autres, il ne faut pas hésiter à introduire parfois des variables « inutiles » dans le seul but de nommer, et donc de décrire, des parties d'expressions complexes.
+</p>
+
+<p>
+Par exemple, si on désire calculer la première racine d'une équation du second degré, il peut être préférable de nommer le déterminant en introduisant une variable « inutile », d'autant que la notion de déterminant est connue de tous :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">double det = b * b - 4 * a * c;
+double r1 = (-b + sqrt(det)) / (2 * a);
+</pre>
+</div>
+<p>
+plutôt que d'écrire la formule sur une seule ligne :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">double r1 = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd6d8d0e" class="outline-3">
+<h3 id="orgd6d8d0e">Contraignez autant que possible vos définitions</h3>
+<div class="outline-text-3" id="text-orgd6d8d0e">
+<p>
+En Java, il est possible d'utiliser des modificateurs pour contraindre de différentes manières les entités définies. Par exemple :
+</p>
+
+<ul class="org-ul">
+<li>les modificateurs <code>private</code> et <code>protected</code> restreignent la visibilité des entités,</li>
+<li>le modificateur <code>final</code> appliqué à une classe rend l'héritage impossible,</li>
+<li>le modificateur <code>final</code> appliqué à un attribut le rend immuable,</li>
+<li>etc.</li>
+</ul>
+
+<p>
+De manière générale, il est bon de contraindre autant que possible les différentes entités que l'on définit. Cela réduit les opérations qu'il est possible d'effectuer sur cette entité, ce qui facilite le raisonnement à son sujet.
+</p>
+
+<p>
+Par exemple, une personne lisant le code d'une méthode privée d'une classe sait que cette méthode ne peut être utilisée que dans la classe elle-même. Dès lors, il lui est facile de trouver toutes ces utilisations, ce qui peut p.ex. être utile pour déterminer comment la méthode est utilisée en pratique.
+</p>
+
+<p>
+De même, un attribut final ne peut être initialisé que dans le constructeur de la classe, et sa valeur ne peut changer par la suite. Dès lors, lorsqu'on lit le code d'une classe contenant un tel attribut, on peut immédiatement savoir quelle valeur il a, et être certain que cette valeur ne peut jamais changer. Il n'est pas nécessaire pour cela de rechercher les éventuelles affectations à cet attribut. D'autre part, si on oublie d'initialiser un tel attribut, une erreur est signalée, ce qui n'est pas le cas si l'attribut n'est pas final.
+</p>
+
+<p>
+Il en va de même des classes finales, dont il est impossible d'hériter et qui sont dès lors beaucoup plus faciles à écrire correctement et à vérifier que les classes non finales.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org76fa26c" class="outline-3">
+<h3 id="org76fa26c">Respectez les conventions de nommage</h3>
+<div class="outline-text-3" id="text-org76fa26c">
+<p>
+La plupart des langages de programmation utilisent des conventions de nommage pour faciliter la lecture des programmes. Ainsi, en Java :
+</p>
+
+<ul class="org-ul">
+<li>les classes, interfaces et énumérations ont un nom commençant par une majuscule,</li>
+
+<li>les attributs statiques sont nommés en majuscule, avec des caractères soulignés pour séparer les différentes parties (p.ex. <code>MIN_VALUE</code>),</li>
+
+<li>etc.</li>
+</ul>
+
+<p>
+Il est important de respecter ces conventions, car elles fournissent beaucoup d'informations utiles à une personne lisant le code.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5a596f5" class="outline-3">
+<h3 id="org5a596f5">Organisez votre code de manière cohérente</h3>
+<div class="outline-text-3" id="text-org5a596f5">
+<p>
+L'ordre dans lequel les différentes entités définies dans un fichier y apparaissent peuvent grandement influencer la lisibilité.
+</p>
+
+<p>
+En Java, il est par exemple bon d'essayer de systématiquement ordonner les membres en fonction de :
+</p>
+
+<ul class="org-ul">
+<li>s'il s'agit d'attributs ou de méthodes,</li>
+<li>s'ils sont statiques ou non,</li>
+<li>s'ils sont publics ou non,</li>
+<li>leur fonctionnalité.</li>
+</ul>
+
+<p>
+Par exemple, une classe <code>Complex</code> représentant un nombre complexe est plus facile à lire si ses membres sont organisés ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public final class Complex {
+  public static final Complex ZERO = new Complex(0, 0);
+
+  public static Complex cartesian(double re, double im) { … }
+  public static Complex polar(double theta, double r) { … }
+
+  private final double re, im;
+
+  private Complex(double re, double im) { … }
+
+  public double re() { … }
+  public double im() { … }
+
+  public Complex add(Complex that) { … }
+  public Complex sub(Complex that) { … }
+  public Complex mul(Complex that) { … }
+  public Complex div(Complex that) { … }
+
+  @Override
+  public int hashCode() {…}
+  @Override
+  public boolean equals(Object that) {…}
+
+  @Override
+  public String toString() {…}
+}
+</pre>
+</div>
+<p>
+que s'ils sont ordonnés de manière incohérente (p.ex. <code>hashCode</code> au début de la classe, suivie de <code>add</code>, suivie du constructeur, etc.).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org142e0d8" class="outline-3">
+<h3 id="org142e0d8">Documentez votre code</h3>
+<div class="outline-text-3" id="text-org142e0d8">
+<p>
+Les entités publiques (classes, interfaces, types énumérés, méthodes et attributs) devraient être commentés avec des commentaires Javadoc. Les méthodes privées peuvent aussi être accompagnées d'un court commentaire décrivant leur but.
+</p>
+
+<p>
+Finalement, les parties du code qui sont difficiles à comprendre peuvent mériter d'être commentées.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0c61ccd" class="outline-2">
+<h2 id="org0c61ccd">Concision</h2>
+<div class="outline-text-2" id="text-org0c61ccd">
+</div>
+<div id="outline-container-org6ef231b" class="outline-3">
+<h3 id="org6ef231b">Utilisez judicieusement le langage</h3>
+<div class="outline-text-3" id="text-org6ef231b">
+<p>
+Utilisez judicieusement les constructions du langage, et évitez d'écrire du code inutilement complexe.
+</p>
+
+<p>
+Par exemple, pour retourner vrai d'une fonction si une condition donnée est fausse, et faux si elle est vraie, il suffit d'écrire :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">return ! condition;
+</pre>
+</div>
+<p>
+plutôt que :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">if (condition)
+  return false;
+else
+  return true;
+</pre>
+</div>
+
+<p>
+De même, l'opérateur <code>?:</code> (souvent appelé « opérateur ternaire ») permet souvent d'écrire du code plus concis qu'un <code>if</code>. Par exemple, cet extrait de programme :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int i = /* … */;
+String sign = (i &lt; 0) ? "négatif" : "positif ou nul";
+</pre>
+</div>
+<p>
+est plus concis et compréhensible que celui-ci :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int i = /* … */;
+String sign;
+if (i &lt; 0)
+  sign = "négatif";
+else
+  sign = "positif ou nul";
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge70b831" class="outline-3">
+<h3 id="orge70b831">Réutilisez le code si possible</h3>
+<div class="outline-text-3" id="text-orge70b831">
+<p>
+S'il existe déjà des méthodes &#x2014; soit dans la bibliothèque Java, soit ailleurs dans le programme &#x2014; qui résolvent un problème, utilisez-les plutôt que de les programmer à nouveau.
+</p>
+
+<p>
+Par exemple, pour stocker dans <code>m</code> le maximum de deux valeurs entières <code>x</code> et <code>y</code>, il vaut mieux utiliser la méthode <code>max</code> de la classe <code>Math</code> :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">import static java.lang.Math.max;
+
+int m = max(x, y);
+</pre>
+</div>
+<p>
+plutôt que d'écrire du code équivalent, même si celui-ci est aussi concis que :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int m = x &gt; y ? x : y;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdda8b8b" class="outline-2">
+<h2 id="orgdda8b8b">Efficacité</h2>
+<div class="outline-text-2" id="text-orgdda8b8b">
+</div>
+<div id="outline-container-org13099d1" class="outline-3">
+<h3 id="org13099d1">Utilisez correctement les bibliothèques</h3>
+<div class="outline-text-3" id="text-org13099d1">
+<p>
+Il est souvent possible d'utiliser du code provenant de la bibliothèque standard pour résoudre des problèmes. Encore faut-il l'utiliser correctement ! Par exemple, en Java, il faut penser à :
+</p>
+
+<ul class="org-ul">
+<li>construire des chaînes de caractères au moyen de bâtisseurs (c-à-d de la classe <code>StringBuilder</code>) plutôt que de l'opérateur de concaténation (<code>+</code>),</li>
+
+<li>choisir le bon type de collection en fonction de l'usage que l'on veut en faire, p.ex. utiliser un ensemble (de type <code>Set&lt;…&gt;</code>) pour représenter un ensemble, et pas une liste (de type <code>List&lt;…&gt;</code>),</li>
+
+<li>choisir la bonne mise en œuvre de la collection choisie en fonction de l'usage qu'on en fait, p.ex. utiliser une « deque » de type <code>ArrayDeque&lt;…&gt;</code> plutôt qu'une liste de type <code>ArrayList&lt;…&gt;</code> lorsque les éléments y sont systématiquement ajoutés en tête,</li>
+
+<li>parcourir les collections au moyen d'itérateurs ou de boucle <i>for-each</i>, pas au moyen de la méthode <code>get</code>,</li>
+
+<li>etc.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

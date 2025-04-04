@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<!-- 2025-03-31 Lun 10:17 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Recherche de voyages optimaux</title>
+<meta content="Michel Schinz" name="author"/>
+<meta content="Org Mode" name="generator"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="../a/cs108.css" rel="stylesheet" type="text/css"/><link href="../a/highlight/styles/github.min.css" rel="stylesheet" type="text/css"/>
+<script src="../a/highlight/highlight.min.js"></script>
+
+<style>
+                body { font-family: Arial, sans-serif; margin: 2em; line-height: 1.6; }
+                .class-section {
+                    margin: 2em 0;
+                    padding: 1.5em;
+                    background: #f5f5f5;
+                    border-left: 4px solid #4CAF50;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .class-section:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .method-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .tip-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #fffaf0;
+                    border-left: 4px solid #FFA500;
+                    border-radius: 3px;
+                }
+                .code-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #f8f8f8;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                    font-family: monospace;
+                }
+                .section-dropdown {
+                    margin: 2em 0;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .section-header {
+                    padding: 1em;
+                    background: #f8f9fa;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .section-header:hover {
+                    background: #e9ecef;
+                }
+                .section-header::after {
+                    content: '▼';
+                    font-size: 0.8em;
+                    transition: transform 0.3s ease;
+                }
+                .section-header.collapsed::after {
+                    transform: rotate(-90deg);
+                }
+                .section-content {
+                    padding: 1em;
+                    display: none;
+                }
+                .section-content.expanded {
+                    display: block;
+                }
+                pre { white-space: pre-wrap; margin: 0; }
+                h1 { color: #1976D2; }
+                h2 { color: #2196F3; margin: 0; }
+                h3 { color: #4CAF50; }
+                h4 { color: #FF9800; }
+                .class-link {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                }
+                .class-link:hover {
+                    color: inherit;
+                }
+            </style></head>
+<body>
+<div class="content" id="content">
+<header>
+<h1 class="title">Recherche de voyages optimaux</h1>
+<p class="subtitle" role="doc-subtitle">ReCHor – étape 7</p>
+</header>
+<div class="outline-2" id="outline-container-orge444a61">
+<div class="outline-text-2" id="text-1">
+<p>
+Le but principal de cette étape est d'écrire l'algorithme central du projet, qui recherche les voyages optimaux permettant de se rendre à un arrêt d'arrivée donné, un jour donné. Son but secondaire est d'écrire une classe permettant de stocker les données horaires dans ce que l'on nomme un <i>cache</i>, afin d'éviter de les recharger trop fréquemment.
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgce5b9ef">
+<div class="outline-text-2" id="text-2">
+</div>
+<div class="outline-3" id="outline-container-sec/csa">
+<h3 id="sec/csa"><span class="section-number-3">2.1.</span> Algorithme CSA</h3>
+<div class="outline-text-3" id="text-sec/csa">
+<p>
+Afin de calculer les voyages optimaux, nous utiliserons l'algorithme CSA<sup><a class="footref" href="#fn.1" id="fnr.1" role="doc-backlink">1</a></sup> (<i>connection scan algorithm</i>). Comme son nom le suggère, il effectue la recherche de voyages en parcourant la totalité des liaisons à l'horaire.
+</p>
+<p>
+Cet algorithme se base sur l'observation que, si une liaison est ajoutée à un horaire mais qu'elle part <i>avant</i> toutes les liaisons existantes, alors les seuls voyages optimaux que son ajout peut affecter sont ceux partant de la gare de départ de cette liaison, ou d'une gare dont on peut y parvenir à pied.
+</p>
+<p>
+Par exemple, admettons qu'aucune liaison ne parte avant 8h du matin, et que nous ayons établi le profil de tous les voyages optimaux permettant de se rendre de n'importe quelle gare de Suisse à Gruyères. Imaginons maintenant qu'une nouvelle liaison soit ajoutée à l'horaire, et parte de Renens à 7h59 pour arriver à Lausanne à 8h04. Il devrait être clair que cet ajout ne peut, au mieux, qu'améliorer les voyages optimaux partant de Renens ou d'une gare depuis laquelle il est possible de marcher jusqu'à celle de Renens. Aucun autre voyage optimal ne peut être affecté, car la nouvelle liaison part avant toutes les autres et n'est donc pas atteignable depuis une ancienne liaison.
+</p>
+<p>
+Dès lors, on peut déterminer la totalité des voyages optimaux permettant de se rendre à une destination donnée en partant d'un horaire vide auquel on ajoute petit à petit toutes les liaisons, par heure de départ décroissante. Ce faisant, on garde à jour l'ensemble des voyages optimaux actuels.
+</p>
+<p>
+Comme nous l'avons vu, l'information concernant les voyages optimaux est stockée dans les frontières de Pareto des critères d'optimisation attachées aux gares. Lors de l'exécution de l'algorithme, ce sont donc ces frontières de Pareto qui sont mises à jour au fur et à mesure de l'ajout des liaisons. De plus, des frontières de Pareto associées aux différentes <i>courses</i> sont tenues à jour de manière identique, pour des raisons expliquées plus bas.
+</p>
+<p>
+Pour chaque liaison ajoutée à l'horaire, l'algorithme CSA commence par déterminer la frontière de Pareto des voyages optimaux de la liaison elle-même, en utilisant le fait qu'une personne l'empruntant n'a que trois manière de continuer son voyage :
+</p>
+<ol class="org-ol">
+<li>elle peut descendre à la fin de la liaison et marcher jusqu'à la destination finale, pour peu que celle-ci soit atteignable à pied depuis là,</li>
+<li>elle peut rester dans le véhicule afin de continuer avec la prochaine liaison de la même course (s'il y en a une),</li>
+<li>elle peut changer de véhicule à la fin de la liaison.</li>
+</ol>
+<p>
+Une fois que la frontière de Pareto des voyages optimaux de la liaison a été  déterminée, elle peut être utilisée pour mettre à jour les frontières de Pareto de :
+</p>
+<ul class="org-ul">
+<li>la course à laquelle appartient la liaison, et</li>
+<li>toutes les gares depuis lesquelles il est possible de marcher pour atteindre la gare de départ de la liaison — y compris la gare de départ elle-même.</li>
+</ul>
+<p>
+Lorsque toutes les liaisons ont été ajoutées, l'algorithme se termine, son résultat étant les frontières de Pareto des voyages optimaux des gares.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org2540038">
+<h4 id="org2540038"><span class="section-number-4">2.1.1.</span> Version de base</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+La version de base de l'algorithme CSA ne contient aucune optimisation et se contente de calculer les frontières de Pareto des voyages optimaux permettant de rejoindre la destination depuis n'importe quelle gare, sans calculer l'information auxiliaire nécessaire à l'extraction des voyages. Elle est présentée ci-dessous sous forme de pseudo-code dans lequel :
+</p>
+<ul class="org-ul">
+<li><code>dst</code> est l'arrêt de destination,</li>
+<li><code>dep(x)</code> / <code>arr(x)</code> est l'arrêt de départ/arrivée de la liaison ou du changement <code>x</code>,</li>
+<li><code>h_dep(x)</code> / <code>h_arr(x)</code> est l'heure de départ/arrivée de la liaison ou du tuple <code>x</code>,</li>
+<li><code>chg(t)</code> est le nombre de changements du tuple <code>t</code>,</li>
+<li><code>trp(l)</code> est la course de la liaison <code>l</code>,</li>
+<li><code>dur(c)</code> est la durée du changement <code>c</code>.</li>
+</ul>
+<p>
+Bien entendu, les liaisons parcourues par l'algorithme sont celles du jour de voyage choisi.
+</p>
+<pre class="example" id="org621d85f">
+<span class="linenr"> 1: </span>p = profil vide
+<span class="linenr"> 2: </span>
+<span class="linenr"> 3: </span>pour chaque liaison l par heure de départ décroissante:
+<span class="linenr"> 4: </span>  f = frontière de Pareto vide
+<span class="linenr"> 5: </span>
+<span class="linenr"> 6: </span>  // Option 1: marcher de l'arrivée de l à la destination
+<span class="linenr"> 7: </span>  s'il existe un changement c de arr(l) à dst:
+<span class="coderef-off" id="coderef-t1"><span class="linenr"> 8: </span>    ajouter à f le tuple (h_arr(l) + dur(c), 0)</span>
+<span class="linenr"> 9: </span>
+<span class="linenr">10: </span>  // Option 2: continuer avec la liaison suivante
+<span class="linenr">11: </span>  ajouter à f tous les tuples de p[trp(l)]
+<span class="linenr">12: </span>
+<span class="linenr">13: </span>  // Option 3: changer de véhicule à la fin de l
+<span class="linenr">14: </span>  pour tous les tuples t de p[arr(l)]:
+<span class="linenr">15: </span>    si h_dep(t) &gt;= h_arr(l):
+<span class="coderef-off" id="coderef-t2"><span class="linenr">16: </span>      ajouter à f le tuple (h_arr(t), chg(t) + 1)</span>
+<span class="linenr">17: </span>
+<span class="linenr">18: </span>  // Mise à jour de la frontière de la liaison
+<span class="linenr">19: </span>  ajouter à p[trp(l)] tous les tuples de f
+<span class="linenr">20: </span>
+<span class="linenr">21: </span>  // Mise à jour des frontières des gares
+<span class="linenr">22: </span>  pour tous les changements c arrivant à dep(l):
+<span class="linenr">23: </span>    d = h_dep(l) - dur(c)
+<span class="linenr">24: </span>    pour tous les tuples t de f:
+<span class="coderef-off" id="coderef-t3"><span class="linenr">25: </span>      ajouter à p[dep(c)] le tuple (d, h_arr(t), chg(t))</span>
+</pre>
+<p>
+Le résultat de l'algorithme est le profil <code>p</code>, qui contient les frontières de Pareto des voyages optimaux pour toutes les gares et toutes les courses. Comme nous l'avons vu, seules celles associées aux gares sont nécessaires pour reconstruire ensuite les voyages optimaux, mais des informations additionnelles doivent être associées à leurs tuples.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-orgc976bf6">
+<h4 id="orgc976bf6"><span class="section-number-4">2.1.2.</span> Informations associées</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+Pour pouvoir extraire les voyages à partir d'un profil, il faut qu'à chaque tuple d'une frontière de Pareto de gare soient associés :
+</p>
+<ul class="org-ul">
+<li>l'identité de la première liaison de la première étape du voyage,</li>
+<li>le nombre d'arrêts intermédiaires de la première étape du voyage.</li>
+</ul>
+<p>
+Pour mémoire, dans notre mise en œuvre, ces informations sont empaquetées dans la charge utile du tuple auquel elles sont associées.
+</p>
+<p>
+Afin de pouvoir déterminer ces informations pour les tuples des frontières des <i>gares</i>, il est nécessaire d'associer aux tuples des frontières des <i>courses</i> l'identité de la liaison de la course en question à laquelle il faut en descendre. Cette liaison est facile à déterminer : lorsqu'on termine à pied après la liaison <code>l</code> (ligne <a class="coderef" href="#coderef-t1" onmouseout="CodeHighlightOff(this, 'coderef-t1');" onmouseover="CodeHighlightOn(this, 'coderef-t1');">8</a>), ou lorsqu'on change de véhicule à la fin de <code>l</code> (ligne <a class="coderef" href="#coderef-t2" onmouseout="CodeHighlightOff(this, 'coderef-t2');" onmouseover="CodeHighlightOn(this, 'coderef-t2');">16</a>), cette liaison est simplement <code>l</code>.
+</p>
+<p>
+Grâce à cette information associée aux frontières des courses, on peut calculer l'information à associer aux tuples lors de la mise à jour des frontières des gares (ligne <a class="coderef" href="#coderef-t3" onmouseout="CodeHighlightOff(this, 'coderef-t3');" onmouseover="CodeHighlightOn(this, 'coderef-t3');">25</a>), puisque :
+</p>
+<ul class="org-ul">
+<li>la première liaison de la première étape du voyage est simplement la liaison <code>l</code>,</li>
+<li>le nombre d'arrêts intermédiaires est la différence entre la position, dans la course, de la liaison à laquelle il faut descendre de la course, et la liaison <code>l</code>.</li>
+</ul>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org1019eac">
+<h4 id="org1019eac"><span class="section-number-4">2.1.3.</span> Optimisations</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<p>
+L'algorithme de base peut être optimisé de deux manières.
+</p>
+<p>
+Premièrement, avant d'effectuer les mises à jour des frontières de Pareto de la course et des gares, si la frontière <code>f</code> est vide, on peut passer directement à la liaison suivante.
+</p>
+<p>
+Deuxièmement, la mise à jour des frontières des gares n'a pas besoin d'être faite si tous les tuples de la frontière <code>f</code>, augmentés de l'heure de départ de la liaison <code>l</code>, sont dominés par au moins un tuple de la frontière de la gare de départ de <code>l</code>. En effet, on sait dans ce cas que la frontière <code>f</code> n'aurait aucun impact sur celles des gares depuis lesquelles il est possible de marcher jusqu'à la gare de départ de <code>l</code>, même si le temps de marche était nul.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org5d61a46">
+<h3 id="org5d61a46"><span class="section-number-3">2.2.</span> Mémoire cache</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+En informatique, on nomme <b>mémoire cache</b> (<i>cache memory</i>), ou simplement <b>cache</b>, une mémoire dans laquelle on stocke une (copie d'une) donnée fréquemment utilisée, pour éviter de devoir la recalculer à chaque utilisation.
+</p>
+<p>
+Dans ce projet, nous utiliserons un cache pour accélérer l'accès aux données horaires qui dépendent du jour, c.-à-d. les courses et les liaisons. Comme nous l'avons vu à l'étape précédente, ces données sont chargées — ou, plus exactement, « mappées » en mémoire — à chaque utilisation. Or il est très probable que les données horaires du même jour soient nécessaires plusieurs fois de suite, et en les plaçant dans un cache on évite leur rechargement — ou « re-mappage » en mémoire — ce qui peut améliorer considérablement les performances du programme.
+</p>
+<p>
+Le cache que nous utiliserons est particulièrement simple, puisqu'il ne mémorise que les données horaires d'un seul jour. On aurait pu imaginer un cache plus sophistiqué, mémorisant les données des <i>n</i> derniers jours, mais étant donné la manière dont le programme est généralement utilisé, cela ne s'avère pas utile.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2 implementation" id="outline-container-org12cedfb">
+<div class="outline-text-2" id="text-3">
+<div class="cs108warning" id="org97c03ce">
+<p>
+Cette étape est la première de la seconde partie du projet, durant laquelle vous serez plus libres et moins guidés que durant la première.
+</p>
+<p>
+En particulier, vous avez maintenant le droit de modifier ou augmenter l'interface publique des classes et interfaces proposées, pour peu bien entendu que vous ayez une bonne raison de le faire. Pour faciliter la correction, nous vous demandons néanmoins de respecter les noms de paquetages et de classes, interfaces, enregistrements et types énumérés donnés.
+</p>
+<p>
+D'autre part, nous nous attendons à ce que vous lisiez et compreniez la documentation des parties de la bibliothèque Java que vous devez utiliser.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org7ea3ff5">
+<a class="class-link" href="classes/class_handout_07.html_router.html"><div class="class-section"><h3 id="org7ea3ff5"><span class="section-number-3">3.1.</span> Enregistrement <code>Router</code></h3></div></a>
+<div class="outline-text-3" id="text-3-1">
+<p>
+L'enregistrement <code>Router</code> du sous-paquetage <code>journey</code>, public et immuable, représente un « routeur », c.-à-d. un objet capable de calculer le profil de tous les voyages optimaux permettant de se rendre de n'importe quelle gare du réseau à un gare d'arrivée donnée, un jour donné. Il possède un seul attribut, de type <code>TimeTable</code>, qui contient les données horaires à utiliser.
+</p>
+<p>
+En dehors des méthodes ajoutées automatiquement par Java aux enregistrements, <code>Router</code> possède une seule méthode publique, nommée p. ex. <code>profile</code>, qui prend en arguments :
+</p>
+<ul class="org-ul">
+<li>la date pour laquelle les voyages optimaux doivent être calculés,</li>
+<li>l'identité de la gare de destination,</li>
+</ul>
+<p>
+et retourne le profil de tous les voyages optimaux permettant de se rendre de n'importe quelle gare du réseau à celle de destination, le jour donné. Cette méthode utilise bien entendu l'algorithme CSA décrit plus haut.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orgd10c2f9">
+<h4 id="orgd10c2f9"><span class="section-number-4">3.1.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-1-1">
+</div>
+<ol class="org-ol">
+<li><a id="orgd7a0687"></a>Organisation<br/>
+<div class="outline-text-5" id="text-3-1-1-1">
+<p>
+L'algorithme CSA n'est pas trivial à mettre en œuvre, et pour cette raison il est fortement conseillé de procéder par étapes, ainsi :
+</p>
+<ol class="org-ol">
+<li>commencer par la version de base, sans gestion de la charge utile permettant d'extraire les voyages, ni optimisations,</li>
+<li>tester cette version en vérifiant, par exemple, que dans le profil pour se rendre à <i>Gruyères</i> un mardi, la frontière associée à l'arrêt <i>Ecublens VD, EPFL</i> comporte bien les tuples correspondants aux voyages visibles sur la figure 1 de <a href="https://cs108.epfl.ch/p/00.html">l'introduction au projet</a>,</li>
+<li>augmenter cette mise en œuvre pour qu'elle gère la charge utile,</li>
+<li>tester cette nouvelle mise en œuvre en extrayant des voyages du profil obtenu et en les comparant aux résultats attendus,</li>
+<li>augmenter encore la mise en œuvre pour lui ajouter les optimisations, et vérifier que cela n'a pas d'impact sur le profil généré.</li>
+</ol>
+<p>
+En procédant ainsi, vous augmentez vos chances d'obtenir assez un code correct en un temps raisonnable.
+</p>
+</div>
+</li>
+<li><a id="org3a7f749"></a>Arrêts « marchables »<br/>
+<div class="outline-text-5" id="text-3-1-1-2">
+<p>
+Pour chaque liaison qu'il examine, l'algorithme CSA doit tout d'abord déterminer s'il existe un changement allant de l'arrivée de la liaison à la destination finale.
+</p>
+<p>
+Ce test pourrait bien entendu se faire en appelant <code>minutesBetween</code>, mais sachant qu'il doit être fait pour chacune des ~3 millions de liaisons, une technique plus rapide doit être utilisée.
+</p>
+<p>
+Nous vous proposons donc d'utiliser un tableau indexé par les gares et contenant, à un index donné, le temps de marche entre la gare correspondante et la destination, ou -1 si le trajet n'est pas faisable à pied. Ce tableau peut être créé avant de commencer à parcourir les liaisons, et grâce à lui, le test susmentionné est très rapide.
+</p>
+</div>
+</li>
+<li><a id="orgc1757af"></a>Parcours des liaisons<br/>
+<div class="outline-text-5" id="text-3-1-1-3">
+<p>
+L'algorithme CSA parcourt les liaisons par ordre décroissant d'heure de départ. Dans les données que nous utilisons, les liaisons sont déjà triées de la sorte, donc il suffit de les parcourir par ordre <i>croissant</i> d'index.
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org6ca765e">
+<div class="class-section"><a class="class-link" href="classes/class_handout_07.html_3.2._classe_cachedtimetable.html"><div class="class-section"><a class="class-link" href="classes/class_handout_07.html_cachedtimetable.html"><div class="class-section"><h3 id="org6ca765e"><span class="section-number-3">3.2.</span> Classe <code>CachedTimeTable</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-2">
+<p>
+La classe <code>CachedTimeTable</code> du sous-paquetage <code>timetable</code>, publique et immuable, implémente <code>TimeTable</code> et représente un horaire dont les données qui dépendent de la date — les courses et les liaisons — sont stockées dans un cache. De la sorte, si ces données sont demandées plusieurs fois de suite pour une seule et même date, elles ne sont pas rechargées à chaque fois.
+</p>
+<p>
+<code>CachedTimeTable</code> offre un constructeur prenant en argument l'horaire, de type <code>TimeTable</code>, dont les courses et liaisons doivent être stockées dans un cache. Nous appellerons cet horaire <b>l'horaire sous-jacent</b> (<i>underlying timetable</i>).
+</p>
+<p>
+En dehors de ce constructeur, <code>CachedTimeTable</code> n'offre que les méthodes publiques de l'interface <code>TimeTable</code>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org2d1c117">
+<h4 id="org2d1c117"><span class="section-number-4">3.2.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-2-1">
+</div>
+<ol class="org-ol">
+<li><a id="org4a62a3a"></a>Représentation du cache<br/>
+<div class="outline-text-5" id="text-3-2-1-1">
+<p>
+<code>CachedTimeTable</code> garde en cache au plus une valeur de type <code>Connections</code> et une de type <code>Trips</code>, stockées dans des attributs qui peuvent être vides (<code>null</code>).
+</p>
+<p>
+Initialement, ces attributs sont <code>null</code>, mais au premier appel à la méthode <code>tripsFor</code> ou <code>connectionsFor</code>, les données sont tout d'abord obtenues de l'horaire sous-jacent, puis stockées dans l'attribut correspondant — le cache. Bien entendu, la date à laquelle ces données correspondent doit également être mémorisée dans un attribut.
+</p>
+<p>
+Lors des appels suivants aux méthode <code>tripsFor</code> ou <code>connectionsFor</code>, si les données horaires demandées sont celles qui sont déjà dans le cache — c.-à-d. stockées dans les attributs —, alors elles sont simplement retournées, sans aucun appel à une méthode de l'horaire sous-jacent. Par contre, si la date passée en argument à <code>tripsFor</code> ou <code>connectionsFor</code> n'est pas la même que celle passée à l'appel précédent, alors les données sont obtenues de l'horaire sous-jacent et stockées dans les attributs à la place des anciennes.
+</p>
+<p>
+De la sorte, toute séquence d'appels aux méthodes <code>tripsFor</code> ou <code>connectionsFor</code> avec la même date en argument ne nécessite qu'un seul chargement — ou « mappage » en mémoire — des données.
+</p>
+</div>
+</li>
+<li><a id="org0531fbe"></a>Délégation<br/>
+<div class="outline-text-5" id="text-3-2-1-2">
+<p>
+Toutes les méthodes de <code>CachedTimeTable</code>, à l'exception de <code>connectionsFor</code> et <code>tripsFor</code>, ne font rien d'autre qu'appeler la même méthode sur l'horaire sous-jacent, en retournant son éventuelle valeur de retour.
+</p>
+<p>
+En programmation orientée-objets, cette technique consistant à demander à un objet d'effectuer une tâche à la place d'un autre se nomme souvent <b>délégation</b> (<i>delegation</i>). Étant donné que la délégation est fréquemment utilisée, IntelliJ  permet de générer le code des méthodes qui délèguent leur tâche à un autre objet. Pour utiliser cette possibilité, il vous suffit de :
+</p>
+<ul class="org-ul">
+<li>déclarer l'attribut contenant l'horaire sous-jacent auquel les différentes tâches (méthodes) vont être déléguées,</li>
+<li>placer votre curseur dans la classe, à l'endroit où les méthodes de délégation devraient apparaître,</li>
+<li>ouvrir le menu <i>Code</i>, choisir <i>Generate…</i> puis <i>Delegate Methods…</i>, sélectionner l'objet auquel déléguer les méthodes (l'horaire sous-jacent), puis les méthodes qu'IntelliJ doit générer.</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org413626a">
+<h3 id="org413626a"><span class="section-number-3">3.3.</span> Tests</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+Pour tester votre calcul de voyages optimaux, vous pouvez écrire un programme similaire à celui ci-dessous pour afficher l'événement iCalendar correspondant à un voyage optimal. Avec les données horaires de la semaine 14, ce programme  devrait afficher un événement très similaire à celui de <a href="02.html#sec/ical/example">la §2.1.8 de l'étape 2</a>.
+</p>
+<div class="org-src-container">
+<pre class="src src-java">static int stationId(Stations stations, String stationName) {
+  // … laissé en exercice
+}
+
+public static void main(String[] args) throws IOException {
+  long tStart = System.nanoTime();
+
+  TimeTable timeTable =
+    new CachedTimeTable(FileTimeTable.in(Path.of("timetable")));
+  Stations stations = timeTable.stations();
+  LocalDate date = LocalDate.of(2025, Month.APRIL, 1);
+  int depStationId = stationId(stations, "Ecublens VD, EPFL");
+  int arrStationId = stationId(stations, "Gruyères");
+  Router router = new Router(timeTable);
+  Profile profile = router.profile(date, arrStationId);
+  Journey journey = JourneyExtractor
+    .journeys(profile, depStationId)
+    .get(32);
+  System.out.println(JourneyIcalConverter.toIcalendar(journey));
+
+  double elapsed = (System.nanoTime() - tStart) * 1e-9;
+  System.out.printf("Temps écoulé : %.3f s%n", elapsed);
+}
+
+</pre>
+</div>
+<p>
+En plus de l'évènement iCalendar, ce programme affiche le temps nécessaire à son exécution. Sur un MacBook Pro de 2020, ce temps se situe généralement autour des 2½ secondes, et si vous obtenez un résultat du même ordre de grandeur sur votre ordinateur, vous pouvez raisonnablement en conclure que votre programme n'a pas de gros problème de performance.
+</p>
+<p>
+Bien entendu, vous pouvez également calculer les voyages optimaux entre des gares différentes, et comparer vos résultats avec ceux d'un site comme <a href="https://www.cff.ch/">celui des CFF</a>.
+</p>
+<p>
+Finalement, vous pouvez aussi essayer de calculer le même profil que celui fourni à <a href="06.html">l'étape 6</a>, le stocker dans un fichier textuel de format identique, et ensuite comparer le contenu des deux fichiers. IntelliJ permet de faire facilement de telles comparaison : il suffit de sélectionner les deux fichiers à comparer, puis à sélectionner <i>Compare files…</i> dans le menu contextuel.
+</p>
+<p>
+Faites toutefois attention au fait qu'il pourrait y avoir des différences non significatives dues à la manière dont la méthode <code>add</code> de votre classe <code>ParetoFront.Builder</code> gère le cas où on ajoute un tuple déjà présent dans la frontière en cours de construction. Le corrigé du projet, utilisé pour générer le profil de référence, conserve l'ancien tuple et sa charge utile, en ignorant le nouveau. Si votre mise en œuvre <i>remplace</i> le tuple existant par le nouveau — ce qui est aussi valide, bien que moins efficace — alors vous pourriez obtenir un profil différent mais néanmoins correct.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org3b53724">
+<div class="outline-text-2" id="text-4">
+<p>
+Pour cette étape, vous devez :
+</p>
+<ul class="org-ul">
+<li>écrire les classes <code>Router</code> et <code>CachedTimeTable</code> selon les indications donnés plus haut,</li>
+<li>tester votre code,</li>
+<li>documenter la totalité des entités publiques que vous avez définies.</li>
+</ul>
+<p>
+Vous n'avez pas l'obligation de rendre cette étape avant le rendu final, mais nous vous conseillons néanmoins de le faire afin de sauvegarder votre travail.
+</p>
+</div>
+</div>
+<div id="footnotes">
+<div id="text-footnotes">
+<div class="footdef"><sup><a class="footnum" href="#fnr.1" id="fn.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+Cet algorithme est décrit dans un article du même nom disponible en ligne. Il n'est absolument pas nécessaire de lire cet article, mais les personnes décidant de le faire devront prêter attention au fait qu'il comporte malheureusement de nombreuses erreurs.
+</p></div></div>
+</div>
+</div></div>
+<script>
+                window.addEventListener('load', function() {
+                    document.querySelectorAll('.section-header').forEach(header => {
+                        header.addEventListener('click', function() {
+                            this.classList.toggle('collapsed');
+                            const content = this.nextElementSibling;
+                            content.classList.toggle('expanded');
+                        });
+                    });
+                });
+            </script></body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 5 - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .class-card .card-title {
+            margin: 0;
+        }
+
+        .class-card, .concept-card {
+            min-height: 100px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .concept-card {
+            margin-bottom: 1rem;
+        }
+
+        .concept-card:hover, .class-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .concept-content {
+            font-size: 0.95em;
+            color: var(--text-color);
+            overflow: auto;
+            max-height: 300px;
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 0.5rem 0;
+        }
+
+        .concept-content ol, .concept-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+            list-style: none;
+            padding: 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+
+        .concepts-section {
+            margin: 2rem 0;
+        }
+
+        .concepts-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .class-card a {
+            text-decoration: none;
+        }
+
+        .introduction {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin: 1rem 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h2>Étape 5 - Horaire aplati (II)</h2>
+<p class="subtitle">ReCHor – étape 5</p>
+            <div class="introduction">
+                <div class="outline-text-2" id="text-1">
+<p>
+Le but de cette étape est de continuer la rédaction les classes permettant de manipuler l'horaire aplati, en écrivant celles gérant les lignes, les courses, les liaisons et les changements.
+</p>
+</div>
+            </div>
+        
+                <div class="concepts-section">
+                    <h3>Concepts clés</h3>
+                    <div class="concept-grid">
+            
+        <div class="concept-card">
+            <h3 class="card-title">Lignes</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-sec/routes">
+<p>
+Pour mémoire, une ligne est un itinéraire le long duquel des véhicules de transport public se déplacent régulièrement. Un exemple est la ligne de métro m1 reliant la gare de Renens à celle du Flon.
+</p>
+<p>
+Les deux seules caractéristiques des lignes qui nous intéressent pour ce projet sont leur nom et le type de véhicule qui les dessert. La structure des lignes aplaties est donc particulièrement simple :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>NAME_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne du nom de la ligne</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>KIND</code></td>
+<td class="org-left"><code>U8</code></td>
+<td class="org-left">Type de véhicule desservant la ligne</td>
+</tr>
+</tbody>
+</table>
+<p>
+Le type du véhicule est représenté comme un entier compris entre 0 (inclus) et 6 (inclus) qui correspond directement au type énuméré <code>Vehicle</code> défini à <a href="01.html">l'étape 1</a> — 0 correspond à <code>TRAM</code>, 1 à <code>METRO</code>, etc.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Courses</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-sec/trips">
+<p>
+Pour mémoire, une course est un trajet effectué par un véhicule de transport public entre les deux extrémités d'une ligne, dans l'un des deux sens possibles.
+</p>
+<p>
+Les deux seules caractéristiques des courses qui nous intéressent pour ce projet sont leur ligne et le nom de leur destination finale. La structure des courses aplaties est donc également simple :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>ROUTE_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de la ligne de la course</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>DESTINATION_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne de la destination finale</td>
+</tr>
+</tbody>
+</table>
+<p>
+<code>ROUTE_ID</code> est un index de ligne, donc il fait référence à un élément de la table des lignes dont la structure a été décrite à la section précédente. Sachant que dans les données horaires que nous utiliserons il y a un peu moins de 8 000 lignes, le type <code>U16</code> convient bien pour représenter un tel index.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Liaisons</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-sec/connections">
+<p>
+Pour mémoire, une liaison est un trajet effectué par un véhicule de transport public, dans le cadre d'une course, entre deux arrêts successifs — donc sans arrêt intermédiaire. Dans les données aplaties, les liaisons ont la structure suivante :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>DEP_STOP_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de l'arrêt de départ</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>DEP_MINUTES</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Heure de départ, en minutes après minuit</td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left"><code>ARR_STOP_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de l'arrêt d'arrivée</td>
+</tr>
+<tr>
+<td class="org-right">3</td>
+<td class="org-left"><code>ARR_MINUTES</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Heure d'arrivée, en minutes après minuit</td>
+</tr>
+<tr>
+<td class="org-right">4</td>
+<td class="org-left"><code>TRIP_POS_ID</code></td>
+<td class="org-left"><code>S32</code></td>
+<td class="org-left">Index de la course et position en son sein</td>
+</tr>
+</tbody>
+</table>
+<p>
+Les champs <code>DEP_STOP_ID</code> et <code>ARR_STOP_ID</code> sont des index d'arrêts, qui pour mémoire peuvent soit référencer une gare, soit une voie/quai. Les données horaires que nous utiliserons comportant un peu plus de 54 000 arrêts au total — environ 33 000 gares et 21 000 voies/quai — le type <code>U16</code> convient bien pour les indexer.
+</p>
+<p>
+Les champs <code>DEP_MINUTES</code> et <code>ARR_MINUTES</code> contiennent les heures de départ et d'arrivée de la liaison, exprimées en minutes après minuit. Ces minutes sont <i>forcément</i> positives ou nulles dans les données horaires, donc le type <code>U16</code> convient bien pour les représenter. Comme nous le verrons plus tard, le fait que des heures négatives puissent apparaître, et doivent donc être stockées dans les critères d'optimisation, est dû aux trajets à pied (changements).
+</p>
+<p>
+Le champ <code>TRIP_POS_ID</code> contient une valeur empaquetée dont les 24 bits de poids fort sont l'index dans la table des courses de celle à laquelle la liaison appartient, et les 8 bits de poids faible sont la position de la liaison dans la course en question, à partir de 0. Sachant qu'il y a un peu moins de 3 millions de courses par jour, et que la plus longue course de Suisse comporte 78 liaisons, l'empaquetage utilisé convient tout à fait.
+</p>
+<p>
+La table des liaisons aplaties est ordonnée, dans le sens où les liaisons y apparaissent ordonnées par heure de départ décroissante. Donc la première liaison, d'index 0, est celle partant le plus tard de toutes. Cet ordre est utilisé par l'algorithme de calcul de voyages optimaux, comme nous le verrons.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Liaison suivante</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-sec/connections-succ">
+<p>
+En examinant la structure des liaisons aplaties présentée à la section précédente, on constate qu'une information qu'il n'est pas évident d'en extraire est la liaison qui suit une liaison donnée dans une course. Or l'interface <code>Connections</code> possède justement une méthode permettant d'obtenir la liaison suivant une liaison donnée.
+</p>
+<p>
+En théorie, cette information pourrait être déterminée à partir des liaisons aplaties, puisque chacune d'entre elles contient l'index de la course à laquelle elle appartient, ainsi que sa propre position dans cette course. Dès lors, pour déterminer la liaison suivant une liaison donnée, on pourrait chercher, parmi toutes les liaisons, celle ayant le même index de course mais la position suivante — qui existe pour toutes les liaisons sauf la dernière d'une course.
+</p>
+<p>
+Bien que cela soit possible, procéder à une telle recherche serait coûteux sachant qu'il y a, pour un jour donné, entre 2 et 3 millions de liaisons. Il semble dès lors plus judicieux de pré-calculer, pour chaque liaison, l'index de celle qui la suit dans la course, et de stocker cette information dans les données aplaties.
+</p>
+<p>
+C'est donc ce que nous ferons dans ce projet, mais plutôt que de stocker cette information directement dans la table des liaisons, nous utiliserons une table auxiliaire, ne contenant rien d'autre que cette information. Ce choix a été fait afin que la table des liaisons — décrite à la section précédente — ne contienne <i>que</i> les informations nécessaires à l'algorithme de calcul des voyages optimaux, et la liaison suivant une autre n'en fait pas partie. Cette séparation en deux tables permet à celle des liaisons d'être aussi petite que possible, ce qui accélère la recherche de voyages optimaux.
+</p>
+<p>
+La structure de la table auxiliaire contenant, pour chaque liaison, l'index de la suivante dans la course est donc extrêmement simple :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>NEXT_CONNECTION_ID</code></td>
+<td class="org-left"><code>S32</code></td>
+<td class="org-left">Index de la liaison suivante / première</td>
+</tr>
+</tbody>
+</table>
+<p>
+Il faut noter que, comme la dernière liaison d'une course n'a pas de liaison suivante, cette table associe la <i>première</i> liaison d'une course à la dernière. En d'autres termes, les liaisons sont liées entre elles de manière circulaire.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Changements</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-sec/transfers">
+<p>
+Pour mémoire, un changement est un trajet à pied qui peut être effectué soit entre deux gares voisines, soit au sein d'une même gare. Dans les données aplaties, les changements ont la structure suivante :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>DEP_STATION_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de la gare de départ</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>ARR_STATION_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de la gare d'arrivée</td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left"><code>TRANSFER_MINUTES</code></td>
+<td class="org-left"><code>U8</code></td>
+<td class="org-left">Durée du changement, en minutes</td>
+</tr>
+</tbody>
+</table>
+<p>
+Les champs <code>DEP_STATION_ID</code> et <code>ARR_STATION_ID</code> sont des index de <i>gares</i> (et jamais de voie/quai), car dans les données horaires à notre disposition, seuls les changements entre gares — ou au sein d'une seule gare — existent.
+</p>
+<p>
+Le plus long changement dans les données horaires à notre disposition fait 99 minutes — une valeur au demeurant suspecte, qui indique probablement un problème — donc le type <code>U8</code> convient bien à la représentation de la durée du changement.
+</p>
+<p>
+La table des changements aplatis est ordonnée de manière à ce que tous les changements arrivant à la même gare y soient consécutifs. Cette propriété permet de représenter l'ensemble des changements arrivant à une gare donnée au moyen de l'intervalle des index des changements qui y arrivent.
+</p>
+</div></div>
+        </div>
+    
+                    </div>
+                </div>
+            
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+        
+        <div class="class-card">
+            <a href="classes/BufferedRoutes.html">
+                <h3 class="card-title">BufferedRoutes</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Classe BufferedRoutes</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/BufferedTrips.html">
+                <h3 class="card-title">BufferedTrips</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Classe BufferedTrips</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/BufferedConnections.html">
+                <h3 class="card-title">BufferedConnections</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe BufferedConnections</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/BufferedTransfers.html">
+                <h3 class="card-title">BufferedTransfers</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Classe BufferedTransfers</p>
+        </div>
+    
+                </div>
+            </div>
+        
+            </div>
+        </body>
+        </html>
+        

@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<!-- 2025-03-07 Ven 12:40 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Horaire et frontière de Pareto</title>
+<meta content="Michel Schinz" name="author"/>
+<meta content="Org Mode" name="generator"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="../a/cs108.css" rel="stylesheet" type="text/css"/><link href="../a/highlight/styles/github.min.css" rel="stylesheet" type="text/css"/>
+<script src="../a/highlight/highlight.min.js"></script>
+
+<script src="../a/mathjax/tex-chtml.js" type="text/javascript"></script>
+<style>
+                body { font-family: Arial, sans-serif; margin: 2em; line-height: 1.6; }
+                .class-section {
+                    margin: 2em 0;
+                    padding: 1.5em;
+                    background: #f5f5f5;
+                    border-left: 4px solid #4CAF50;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .class-section:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .method-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .tip-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #fffaf0;
+                    border-left: 4px solid #FFA500;
+                    border-radius: 3px;
+                }
+                .code-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #f8f8f8;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                    font-family: monospace;
+                }
+                .section-dropdown {
+                    margin: 2em 0;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .section-header {
+                    padding: 1em;
+                    background: #f8f9fa;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .section-header:hover {
+                    background: #e9ecef;
+                }
+                .section-header::after {
+                    content: '▼';
+                    font-size: 0.8em;
+                    transition: transform 0.3s ease;
+                }
+                .section-header.collapsed::after {
+                    transform: rotate(-90deg);
+                }
+                .section-content {
+                    padding: 1em;
+                    display: none;
+                }
+                .section-content.expanded {
+                    display: block;
+                }
+                pre { white-space: pre-wrap; margin: 0; }
+                h1 { color: #1976D2; }
+                h2 { color: #2196F3; margin: 0; }
+                h3 { color: #4CAF50; }
+                h4 { color: #FF9800; }
+                .class-link {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                }
+                .class-link:hover {
+                    color: inherit;
+                }
+            </style></head>
+<body>
+<div class="content" id="content">
+<header>
+<h1 class="title">Horaire et frontière de Pareto</h1>
+<p class="subtitle" role="doc-subtitle">ReCHor – étape 3</p>
+</header>
+<div class="outline-2" id="outline-container-orgdbd644d">
+<div class="outline-text-2" id="text-1">
+<p>
+Le but de cette troisième étape est double : d'une part définir des interfaces représentant l'horaire de transport public et ses composants ; d'autre part, écrire une classe permettant de représenter ce que l'on nomme la frontière de Pareto, et qui joue un rôle crucial dans l'algorithme de recherche de voyages optimaux.
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org8654b2b">
+<div class="outline-text-2" id="text-2">
+</div>
+<div class="outline-3" id="outline-container-orgac0cf35">
+<h3 id="orgac0cf35"><span class="section-number-3">2.1.</span> Horaire</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Les données horaires que nous utiliserons dans ce projet pour rechercher les voyages optimaux sont une version légèrement simplifiée de celles de l'horaire suisse officiel. Elles sont constituées de :
+</p>
+<ul class="org-ul">
+<li>l'ensemble des liaisons (concept décrit plus bas) effectuées un jour donné,</li>
+<li>l'ensemble des courses effectuées un jour donné,</li>
+<li>l'ensemble des lignes existantes,</li>
+<li>l'ensemble des arrêts existants, constitué de deux sous-ensembles disjoints, celui des gares et celui des voies/quais,</li>
+<li>l'ensemble des noms alternatifs des gares, c.-à-d. des noms qui permettent d'identifier une gare mais qui ne sont pas son nom officiel (p. ex. <i>Losanna</i>, le nom italien de <i>Lausanne</i>, est un nom alternatif de la gare de Lausanne dans les données que nous utiliserons),</li>
+<li>l'ensemble des changements qu'il est possible d'effectuer, à pied, soit au sein d'une même gare, soit entre deux gares distinctes mais voisines.</li>
+</ul>
+<p>
+Ces différents concepts ont déjà été introduits dans les étapes précédentes, sauf celui de <b>liaison</b> (<i>connection</i>), qui est un trajet effectué par un véhicule de transport en commun entre deux arrêts successifs, c.-à-d. sans arrêt intermédiaire. Une course n'est donc rien d'autre qu'une succession de liaisons.
+</p>
+<p>
+Par exemple, nous avons vu que <a href="https://network.sbb.ch/fr/ligne/IR15">la ligne IR 15 des CFF</a> relie Genève-Aéroport à Lucerne. De nombreux trains parcourent cette ligne chaque jour, chacun effectuant une course dans l'un des deux sens possible. Par exemple, le lundi 24 février 2025, un train effectuera une course partant de Genève-Aéroport à 9h45 et arrivant à Lucerne à 13h01. Lors de cette course, il s'arrêtera à 10 arrêts intermédiaires, les 5 premiers étant Genève, Nyon, Morges, Lausanne et Palézieux. Dès lors, cette course est constituée de 11 liaisons, les cinq premières étant :
+</p>
+<ol class="org-ol">
+<li>celle partant de Genève-Aéroport à 9h45 et arrivant à Genève à 9h52,</li>
+<li>celle partant de Genève à 9h54 et arrivant à Nyon à 10h07,</li>
+<li>celle partant de Nyon à 10h09 et arrivant à Morges à 10h24,</li>
+<li>celle partant de Morges à 10h26 et arrivant à Lausanne à 10h37,</li>
+<li>celle partant de Lausanne à 10h40 et arrivant à Palézieux à 10h56.</li>
+</ol>
+<p>
+Comme cet exemple l'illustre, une course comportant un total de <i>n</i> arrêts — en comptant les deux aux extrémités — est constituée de <i>n</i> – 1 liaisons.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org4c5c3e3">
+<h4 id="org4c5c3e3"><span class="section-number-4">2.1.1.</span> Représentation des données</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+Pour avoir une idée de la taille des données, la table ci-dessous donne le nombre des entités des différents types pour le lundi 24 février 2025 — la date importe car le nombre de liaisons et de courses varie de jour en jour :
+</p>
+<table>
+<colgroup>
+<col class="org-left"/>
+<col class="org-right"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-left" scope="col">Données</th>
+<th class="org-right" scope="col">Nombre</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Liaisons</td>
+<td class="org-right">2 751 634</td>
+</tr>
+<tr>
+<td class="org-left">Courses</td>
+<td class="org-right">198 788</td>
+</tr>
+<tr>
+<td class="org-left">Lignes</td>
+<td class="org-right">7 723</td>
+</tr>
+<tr>
+<td class="org-left">Gares</td>
+<td class="org-right">33 275</td>
+</tr>
+<tr>
+<td class="org-left">Voies/quais</td>
+<td class="org-right">20 753</td>
+</tr>
+<tr>
+<td class="org-left">Changements</td>
+<td class="org-right">40 232</td>
+</tr>
+</tbody>
+</table>
+<p>
+On le voit, la quantité de données est assez conséquente, et il est donc important de réfléchir à leur représentation. Cela est d'autant plus vrai que l'algorithme de recherche de voyage que nous utiliserons parcourt la <i>totalité</i> des liaisons, et comme il y en a près de 3 millions, cela doit pouvoir se faire rapidement.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org20998a0">
+<h4 id="org20998a0"><span class="section-number-4">2.1.2.</span> Représentation standard</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+La manière naturelle de représenter les données d'un horaire en Java serait d'utiliser des enregistrements pour chacun des concepts mentionnés plus haut.
+</p>
+<p>
+Par exemple, une liaison pourrait être représentée par l'enregistrement <code>Connection</code> ci-dessous, qui n'est pas sans rappeler l'enregistrement <code>Leg.Transport</code> de l'étape 1 (certains attributs ont été omis pour simplifier la discussion) :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">record Connection(Stop depStop,
+                  LocalTime depTime,
+                  Stop arrStop,
+                  LocalTime arrTime) { /* … */ }
+</pre>
+</div>
+<p>
+Une fois cet enregistrement défini, l'ensemble de toutes les liaisons d'un horaire pourrait être représenté au moyen d'un tableau de type <code>Connection[]</code> ou d'un tableau dynamique de type <code>ArrayList&lt;Connection&gt;</code>. En mémoire, ce tableau et ses composants seraient organisés de la manière présentée à la figure <a href="#org811aef0">1</a> ci-dessous.
+</p>
+<figure id="org811aef0">
+<img alt="connections-as-records;8.png" src="i/connections-as-records;8.png"/>
+<figcaption><span class="figure-number">Figure 1 : </span>Liaisons représentées au moyen d'enregistrements</figcaption>
+</figure>
+<p>
+Même si cette représentation des liaisons au moyen d'enregistrements est naturelle en Java, et donc agréable à utiliser, elle n'est pas très efficace, pour deux raisons.
+</p>
+<p>
+La première est qu'un objet distinct doit être créé pour chaque liaison, donc un total de près de 3 millions d'objets devraient être créés pour l'horaire suisse, ce qui est conséquent.
+</p>
+<p>
+La seconde est que l'accès aux attributs de ces objets est relativement lent. Par exemple, pour obtenir l'heure de départ de la première liaison, il faut extraire le premier élément du tableau les contenant, qui est une référence vers un objet <code>Connection</code>, puis accéder à l'attribut <code>depTime</code> de cet objet. Cela ne pose pas de problème si de tels accès sont peu fréquents, mais quand il faut en faire plusieurs millions par requête, cela peut avoir un impact important sur les performances.
+</p>
+<p>
+Pour cette raison, nous utiliserons une représentation dite « aplatie » (<i>flat</i>) des données, décrites ci-dessous.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org53ce15a">
+<h4 id="org53ce15a"><span class="section-number-4">2.1.3.</span> Représentation aplatie</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<p>
+L'idée de la représentation aplatie est de ne <i>pas</i> représenter les liaisons individuelles au moyen d'un enregistrement comme <code>Connection</code>, mais de représenter uniquement la <i>totalité</i> des liaisons, en stockant leurs attributs consécutivement dans un unique tableau.
+</p>
+<p>
+Les détails de cette représentation seront décrits dans une étape ultérieure, car ils n'importent pas pour celle-ci, mais pour donner une idée, on pourrait imaginer représenter la totalité des liaisons au moyen d'un tableau d'entiers de type <code>short[]</code>. Les données de la première liaison pourraient y être stockés dans les quatre premiers éléments du tableau, ainsi :
+</p>
+<ul class="org-ul">
+<li>dans l'élément d'index 0, l'arrêt de départ (<code>depStop</code>), représenté par son index dans la représentation aplatie des arrêts,</li>
+<li>dans l'élément d'index 1, l'heure de départ (<code>depTime</code>), représentée en nombre de minutes écoulées depuis minuit,</li>
+<li>dans l'élément d'index 2, l'arrêt d'arrivée (<code>arrStop</code>), représenté par son index dans la représentation aplatie des arrêts,</li>
+<li>dans l'élément d'index 3, l'heure d'arrivée (<code>arrTime</code>), représentée en nombre de minutes écoulées depuis minuit.</li>
+</ul>
+<p>
+L'index de l'arrêt de départ de la seconde liaison serait ensuite placé dans l'élément d'index 4, et ainsi de suite. En d'autres termes, chaque liaison occuperait 4 entiers consécutifs de type <code>short</code> dans le tableau les contenant toutes, et qui contiendrait donc quelque chose comme 12 millions d'éléments. Le début de ce tableau est illustré dans la figure <a href="#org811aef0">1</a> ci-dessous — où 481 est la représentation de 8h01, 552 celle de 9h12, 7782 est supposé être l'index de l'arrêt de départ, 10172 celui de l'arrêt d'arrivée.
+</p>
+<figure id="org2e1100d">
+<img alt="connections-in-array;8.png" src="i/connections-in-array;8.png"/>
+<figcaption><span class="figure-number">Figure 2 : </span>Liaisons représentées de manière aplatie</figcaption>
+</figure>
+<p>
+L'avantage de cette représentation par rapport à la représentation naturelle est que la totalité des liaisons est représentée par un unique objet — le tableau de type <code>short[]</code> — et que l'accès à un attribut d'une liaison ne requiert qu'un seul accès à un élément de ce tableau.
+</p>
+<p>
+Une simple comparaison visuelle des figures <a href="#org811aef0">1</a> et <a href="#org2e1100d">2</a> devrait permettre de se rendre compte que la représentation aplatie est beaucoup plus compacte que la naturelle, et il semble donc raisonnable d'en conclure que l'accès à ses éléments sera passablement plus rapide.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-orga1f3510">
+<h4 id="orga1f3510"><span class="section-number-4">2.1.4.</span> Impact du choix de la représentation</h4>
+<div class="outline-text-4" id="text-2-1-4">
+<p>
+L'utilisation d'une représentation aplatie pour les données horaires a un impact important sur le code du projet. En effet, une telle représentation implique qu'il n'existe pas de représentation des éléments individuels — liaisons, arrêts, etc. — sous forme d'objets Java. Au lieu de cela, il existe une représentation de la totalité des éléments, et il est possible d'obtenir les différents attributs d'un élément dont on connaît l'index<sup><a class="footref" href="#fn.1" id="fnr.1" role="doc-backlink">1</a></sup>.
+</p>
+<p>
+Ainsi, dans le cas des liaisons, l'utilisation d'une représentation aplatie implique l'existence d'une interface (ou d'une classe) représentant la totalité des liaisons. Cette interface pourrait ressembler à ceci :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">interface Connections {
+  int depStopId(int id);
+  int depMins(int id);
+  int arrStopId(int id);
+  int arrMins(int id);
+}
+</pre>
+</div>
+<p>
+où la méthode <code>depMins</code>, par exemple, prend en argument l'index d'une liaison et retourne son heure de départ, en minutes après minuit. Dès lors, si l'on désire par exemple calculer la durée de la première liaison, on peut le faire en écrivant quelque chose comme :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">Connections connections = …;
+int firstConnectionDuration =
+  connections.arrMins(0) - connections.depMins(0);
+</pre>
+</div>
+<p>
+En comparaison, si on avait opté pour une représentation par enregistrements, on pourrait faire ce calcul ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">ArrayList&lt;Connection&gt; connections = …;
+Connection c0 = connections.get(0);
+Duration firstConnectionDuration =
+  Duration.between(c0.arrTime(), c0.depTime());
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org3b8f140">
+<h3 id="org3b8f140"><span class="section-number-3">2.2.</span> Frontière de Pareto</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Nous avons vu à l'étape précédente que la recherche de voyages optimaux se fait en considérant trois critères : l'heure de départ, l'heure d'arrivée et le nombre de changements. Dans certains cas, qui seront décrits ultérieurement, seuls l'heure d'arrivée et le nombre de changements sont pris en compte.
+</p>
+<p>
+Pour simplifier la discussion qui suit, nous ferons l'hypothèse que nous sommes justement dans une situation dans laquelle l'heure de départ n'est pas prise en compte. Notre but est donc uniquement d'optimiser l'heure d'arrivée \(a\) et le nombre de changements \(c\), que l'on désire tous deux minimiser afin d'arriver à destination aussi tôt, et en effectuant aussi peu de changements, que possible. Admettons maintenant que l'on ait les six possibilités suivantes pour se rendre à notre destination :
+</p>
+<ol class="org-ol">
+<li>arriver à 8h00 en faisant 3 changements,</li>
+<li>arriver à 8h00 en faisant 4 changements,</li>
+<li>arriver à 8h01 en faisant 2 changements,</li>
+<li>arriver à 8h02 en faisant 1 changement,</li>
+<li>arriver à 8h03 en ne faisant aucun changement,</li>
+<li>arriver à 8h04 en faisant 1 changement.</li>
+</ol>
+<p>
+Ces possibilités correspondent à l'ensemble de 6 paires \((a, c)\) suivant :
+</p>
+<p>
+\[\{(\textrm{8h00}, 3), (\textrm{8h00}, 4), (\textrm{8h01}, 2), (\textrm{8h02}, 1), (\textrm{8h03}, 0), (\textrm{8h04}, 1) \} \]
+</p>
+<p>
+En examinant cet ensemble, on constate que certaines paires sont dominées par d'autres. Par exemple, la paire \((\textrm{8h00}, 4)\) est dominée par la paire \((\textrm{8h00}, 3)\). De même, la paire \((\textrm{8h04}, 1)\) est dominée par les paires \((\textrm{8h03}, 0)\) et \((\textrm{8h02}, 1)\). Ces paires  dominées correspondent à des possibilités sans aucun intérêt pour le voyageur. Par exemple, la possibilité \((\textrm{8h00}, 4)\) n'a aucun intérêt car la possibilité \((\textrm{8h00}, 3)\), qui la domine, permet d'arriver à la même heure avec un changement de moins.
+</p>
+<p>
+Sachant que les paires dominées ne sont pas intéressantes pour le voyageur, il semble raisonnable de ne conserver que celles qui ne le sont pas, et qui forment ce que l'on nomme la <b>frontière de Pareto</b> (<i>Pareto front</i> ou <i>Pareto frontier</i>).
+</p>
+<p>
+La frontière de Pareto peut être visualisée sur un graphe dont l'axe horizontal représente l'heure d'arrivée et le vertical le nombre de changements, et sur lequel les différentes possibilités apparaissent comme des points. C'est ce qui a été fait à la figure <a href="#org0abd4d8">3</a> ci-dessous, sur laquelle la zone dominée par chacun des points — un rectangle infini<sup><a class="footref" href="#fn.2" id="fnr.2" role="doc-backlink">2</a></sup> dont le point constitue le coin bas-gauche — a été coloriée en rouge partiellement transparent. On constate ainsi aisément que le point 2 se trouve dans la zone dominée par le point 1, et que le point 6 se trouve dans les zones dominées par les points 4 et 5. Il est dès lors facile de déterminer que la frontière de Pareto est constituée des points 1, 3, 4 et 5.
+</p>
+<figure id="org0abd4d8">
+<img alt="pareto-front;16.png" src="i/pareto-front;16.png"/>
+<figcaption><span class="figure-number">Figure 3 : </span>Frontière de Pareto</figcaption>
+</figure>
+<p>
+Bien entendu, un graphique similaire pourrait être fait pour le cas où les critères d'optimisation incluent l'heure de départ. Il faudrait pour cela utiliser une troisième dimension, et les zones dominées seraient des cubes infinis.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org76ba8bc">
+<h3 id="org76ba8bc"><span class="section-number-3">2.3.</span> Représentation des frontières immuables</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+L'algorithme de recherche de voyages optimaux que nous utiliserons calcule, étant donné un arrêt d'arrivée et une date de voyage, la frontière de Pareto de <i>tous</i> les voyages permettant d'atteindre cet arrêt ce jour-là, et ce pour chaque « gare » (au sens large) du réseau, ainsi que pour chaque course.
+</p>
+<p>
+Sachant que les données que nous utiliserons comportent plus de 30 000 « gares » et 200 000 courses par jour, il importe de représenter les frontières de Pareto de manière efficace. Nous utiliserons donc une représentation optimisée, basée bien entendu sur les critères empaquetés de l'étape précédente.
+</p>
+<p>
+Comme un tuple (paire ou triplet) de critères (augmenté) est représenté par une valeur de type <code>long</code>, et qu'une frontière de Pareto est un ensemble de critères, il semble logique d'utiliser un tableau de type <code>long[]</code> pour représenter une telle frontière. Une fois cette décision prise, la question qui se pose est de savoir si l'ordre dans lequel les critères apparaissent dans le tableau est important ou non.
+</p>
+<p>
+A priori, étant donné que les éléments d'un ensemble ne sont pas ordonnés en mathématiques, on pourrait penser que l'ordre dans lequel les tuples sont stockés dans le tableau importe peu. Et cela est effectivement le cas lorsque les frontières de Pareto que l'on désire représenter sont immuables. Toutefois, pour représenter des frontières de Pareto non immuables — des bâtisseurs de frontières, en réalité — il peut être intéressant d'ordonner les tuples de manière à obtenir des performances aussi bonnes que possible.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org4f70b93">
+<h3 id="org4f70b93"><span class="section-number-3">2.4.</span> Représentation des frontières non immuables</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+L'algorithme de recherche utilisé par ReCHor construit petit à petit les frontières de Pareto correspondant aux voyages optimaux, et ce pour chaque gare et chaque course.
+</p>
+<p>
+En d'autres termes, il commence avec des frontières de Pareto vides associées à chaque gare et course, puis leur ajoute progressivement des tuples correspondant à des voyages nouvellement découverts. Chaque fois qu'un nouveau tuple est ajouté à une frontière, deux cas peuvent se présenter :
+</p>
+<ol class="org-ol">
+<li>le nouveau tuple est dominé par au moins un tuple de la frontière, auquel cas le nouveau tuple n'appartient pas à la frontière, qui ne change donc pas,</li>
+<li>le nouveau tuple n'est dominé par aucun tuple de la frontière, auquel cas il lui est ajouté, tandis que les éventuels tuples dominés par le nouveau en sont retirés.</li>
+</ol>
+<p>
+Pour illustrer ce processus, voyons comment une frontière de Pareto initialement vide évolue si on lui ajoute les tuples plus haut, dans l'ordre 1, 2, 6, 3, 4, 5 :
+</p>
+<ol class="org-ol">
+<li>initialement, la frontière est vide : \(\{\}\),</li>
+<li>on lui ajoute le tuple 1, \((\textrm{8h00}, 3)\), qui n'est dominé par aucun de la frontière (vide), et qui n'en domine aucun autre, donc la frontière ne contient maintenant que lui : \(\{(\textrm{8h00}, 3)\}\),</li>
+<li>on lui ajoute le tuple 2, \((\textrm{8h00}, 4)\), qui est dominé par le seul tuple de la frontière, donc elle ne change pas : \(\{(\textrm{8h00}, 3)\}\),</li>
+<li>on lui ajoute le tuple 6, \((\textrm{8h04}, 1)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h04}, 1)\}\),</li>
+<li>on lui ajoute le tuple 3, \((\textrm{8h01}, 2)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h04}, 1)\}\),</li>
+<li>on lui ajoute le tuple 4, \((\textrm{8h02}, 1)\), qui n'est dominé par aucun de la frontière, mais qui domine le tuple \((\textrm{8h04}, 1)\), qui doit donc être supprimé de la frontière, qui devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h02}, 1)\}\),</li>
+<li>on lui ajoute le tuple 5, \((\textrm{8h03}, 0)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h02}, 1), (\textrm{8h03}, 0)\}\).</li>
+</ol>
+<p>
+Dans cet exemple, les éléments de la frontière ont toujours été placés dans l'<b>ordre lexicographique</b> (<i>lexical order</i>), c.-à-d. triés d'abord par heure d'arrivée (croissante) puis par nombre de changements (croissant). Le fait de toujours ordonner les tuples de la frontière ainsi est intéressant car cela permet d'ajouter un nouvel élément de manière relativement efficace.
+</p>
+<p>
+En effet, lorsqu'on désire ajouter un nouveau tuple à une frontière dont les tuples sont ordonnés en ordre lexicographique, on sait que tous les tuples qui pourraient dominer le nouveau se trouvent forcément <i>avant</i> la position à laquelle le nouveau devrait être inséré.
+</p>
+<p>
+On peut s'en convaincre en regardant la figure <a href="#org3de609a">4</a> ci-dessous, qui montre la totalité des points entre \((\textrm{8h00}, 0)\) et \((\textrm{8h05}, 4)\). L'ordre de parcours lexicographique est indiqué par les flèches traitillées. De plus, le point correspondant à \((\textrm{8h02}, 2)\) est colorié en noir, tous ceux qui le précèdent dans l'ordre lexicographique en rouge, et tous ceux qui le suivent en bleu.
+</p>
+<figure id="org3de609a">
+<img alt="pareto-front-lexical;32.png" src="i/pareto-front-lexical;32.png"/>
+<figcaption><span class="figure-number">Figure 4 : </span>Parcours des points dans l'ordre lexicographique</figcaption>
+</figure>
+<p>
+En regardant cette figure, il devrait être clair que les seuls points qui peuvent dominer le noir sont les rouges, c.-à-d. ceux qui le précèdent dans l'ordre lexicographique. A l'inverse, les seuls points que le noir peut dominer sont les bleus, c.-à-d. ceux qui le suivent dans l'ordre lexicographique.
+</p>
+<p>
+Pour résumer, en stockant les tuples composant une frontière de Pareto dans l'ordre lexicographique, on peut ajouter un nouveau tuple de manière assez efficace en procédant ainsi :
+</p>
+<ol class="org-ol">
+<li>on parcourt tous les tuples de la frontière se trouvant avant celui à insérer dans l'ordre lexicographique,</li>
+<li>si, lors de ce parcours, un tuple dominant ou égal au nouveau est trouvé, on termine immédiatement l'ajout, car le nouveau tuple n'appartient pas à la frontière,</li>
+<li>une fois tous les tuples précédents parcourus, on parcourt tous ceux qui suivent le nouveau, et on élimine de la frontière tous ceux qui sont dominés par lui.</li>
+</ol>
+<p>
+Dès lors, dans ce projet, nous ordonnerons toujours les tuples des (bâtisseurs de) frontières de Pareto en ordre lexicographique. Il faut noter que le format d'empaquetage que nous avons choisi rend cela extrêmement simple, car un tuple \(t_1\) se trouve avant un autre tuple \(t_2\) dans l'ordre lexicographique si et seulement si la version empaquetée de \(t_1\), interprétée comme un entier, est plus petite que la version empaquetée de \(t_2\).
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2 implementation" id="outline-container-orgd1fded0">
+<div class="outline-text-2" id="text-3">
+<p>
+La mise en œuvre de cette étape est composée de deux parties : l'écriture d'interfaces représentant les différentes composantes d'un horaire ainsi que l'horaire lui-même ; et l'écriture d'une classe immuable représentant un front de Pareto et d'un bâtisseur pour cette classe.
+</p>
+<p>
+L'écriture des interfaces est triviale, puisqu'elles ne contiennent presque aucun code. Il est toutefois important de bien comprendre la signification et l'utilité des différentes méthodes qu'elles offrent, car cela sera important pour la suite.
+</p>
+<p>
+L'écriture de la classe représentant le front de Pareto, et surtout de son bâtisseur, sont considérablement plus complexes et demandent beaucoup d'attention.
+</p>
+</div>
+<div class="outline-3" id="outline-container-org04e31ca">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_indexed.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_indexed.html"><div class="class-section"><h3 id="org04e31ca"><span class="section-number-3">3.1.</span> Interface <code>Indexed</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-1">
+<p>
+L'interface <code>Indexed</code>, du sous-paquetage <code>timetable</code>, est destinée à être étendue par toutes les interfaces représentant des données indexées. Par « données indexées » on entend toutes les données de l'horaire qui, conceptuellement en tout cas, sont stockées dans un tableau et identifiées par un index allant de 0 (inclus) à la taille du tableau (exclue).
+</p>
+<p>
+<code>Indexed</code> ne possède qu'une seule méthode (publique et abstraite) :
+</p>
+<dl class="org-dl">
+<dt><code>int size()</code></dt><dd>qui retourne la taille — c.-à-d. le nombre d'éléments — des données.</dd>
+</dl>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgbbe4f2d">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_stations.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_stations.html"><div class="class-section"><h3 id="orgbbe4f2d"><span class="section-number-3">3.2.</span> Interface <code>Stations</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-2">
+<p>
+L'interface <code>Stations</code> du sous-paquetage <code>timetable</code>, publique et étendant <code>Indexed</code>, représente des gares indexées. Elle possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>String name(int id)</code></dt><dd>qui retourne le nom de la gare d'index donné,</dd>
+<dt><code>double longitude(int id)</code></dt><dd>qui retourne la longitude, en degrés, de la gare d'index donné,</dd>
+<dt><code>double latitude(int id)</code></dt><dd>qui retourne la latitude, en degrés, de la gare d'index donné.</dd>
+</dl>
+<p>
+Toutes ces méthodes lèvent une <code>IndexOutOfBoundsException</code> si l'index qu'on leur passe (nommé <code>id</code> ci-dessous) est invalide, c.-à-d. inférieur à 0 ou supérieur ou égal à la taille retournée par <code>size()</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orga220848">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_stationaliases.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_stationaliases.html"><div class="class-section"><h3 id="orga220848"><span class="section-number-3">3.3.</span> Interface <code>StationAliases</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-3">
+<p>
+L'interface <code>StationAliases</code> du sous-paquetage <code>timetable</code>, publique et étendant <code>Indexed</code>, représente les noms alternatifs des gares. Elle possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>String alias(int id)</code></dt><dd>qui retourne le nom alternatif d'index donné (p. ex. <code>Losanna</code>),</dd>
+<dt><code>String stationName(int id)</code></dt><dd>qui retourne le nom de la gare à laquelle correspond le nom alternatif d'index donné (p. ex. <code>Lausanne</code>).</dd>
+</dl>
+<p>
+Toutes ces méthodes lèvent une <code>IndexOutOfBoundsException</code> si l'index qu'on leur passe (nommé <code>id</code> ci-dessous) est invalide, c.-à-d. inférieur à 0 ou supérieur ou égal à la taille retournée par <code>size()</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org9096fde">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_platforms.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_platforms.html"><div class="class-section"><h3 id="org9096fde"><span class="section-number-3">3.4.</span> Interface <code>Platforms</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-4">
+<p>
+L'interface <code>Platforms</code> du sous-paquetage <code>timetable</code>, publique et étendant <code>Indexed</code>, représente des voies/quais indexés. Elle possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>String name(int id)</code></dt><dd>qui retourne le nom de la voie (p. ex. <code>70</code>) ou du quai (p. ex. <code>A</code>), qui peut être vide,</dd>
+<dt><code>int stationId(int id)</code></dt><dd>qui retourne l'index de la gare à laquelle cette voie ou ce quai appartient.</dd>
+</dl>
+<p>
+Toutes ces méthodes lèvent une <code>IndexOutOfBoundsException</code> si l'index qu'on leur passe (nommé <code>id</code> ci-dessous) est invalide, c.-à-d. inférieur à 0 ou supérieur ou égal à la taille retournée par <code>size()</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgcbd3a11">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_routes.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_routes.html"><div class="class-section"><h3 id="orgcbd3a11"><span class="section-number-3">3.5.</span> Interface <code>Routes</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-5">
+<p>
+L'interface <code>Routes</code> du sous-paquetage <code>timetable</code>, publique et étendant <code>Indexed</code>, représente des lignes de transport public indexées. Elle possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>Vehicle vehicle(int id)</code></dt><dd>qui retourne le type de véhicule desservant la ligne d'index donné,</dd>
+<dt><code>String name(int id)</code></dt><dd>qui retourne le nom de la ligne d'index donné (p. ex. IR 15).</dd>
+</dl>
+<p>
+Toutes ces méthodes lèvent une <code>IndexOutOfBoundsException</code> si l'index qu'on leur passe (nommé <code>id</code> ci-dessous) est invalide, c.-à-d. inférieur à 0 ou supérieur ou égal à la taille retournée par <code>size()</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org9c12fbf">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_transfers.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_transfers.html"><div class="class-section"><h3 id="org9c12fbf"><span class="section-number-3">3.6.</span> Interface <code>Transfers</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-6">
+<p>
+L'interface <code>Transfers</code> du sous-paquetage <code>timetable</code>, publique et étendant <code>Indexed</code>, représente des changements indexés. Il faut noter que, dans les données que nous utiliserons, des changements ne sont possibles qu'entre (ou au sein de) gares, et pas entre des voies ou quais.
+</p>
+<p>
+<code>Transfers</code> possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int depStationId(int id)</code></dt><dd>qui retourne l'index de la gare de départ du changement d'index donné,</dd>
+<dt><code>int minutes(int id)</code></dt><dd>qui retourne la durée, en minutes, du changement d'index donné,</dd>
+<dt><code>int arrivingAt(int stationId)</code></dt><dd>qui retourne l'intervalle empaqueté — selon la convention utilisée par <code>PackedRange</code> — des index des changements dont la gare d'arrivée est celle d'index donné,</dd>
+<dt><code>int minutesBetween(int depStationId, int arrStationId)</code></dt><dd>qui retourne la durée, en minutes, du changement entre les deux gares d'index donnés, ou lève <code>NoSuchElementException</code> si aucun changement n'est possible entre ces deux gares.</dd>
+</dl>
+<p>
+Toutes ces méthodes lèvent une <code>IndexOutOfBoundsException</code> si l'un des index qu'on leur passe est invalide.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org09a214b">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_trips.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_trips.html"><div class="class-section"><h3 id="org09a214b"><span class="section-number-3">3.7.</span> Interface <code>Trips</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-7">
+<p>
+L'interface <code>Trips</code> du sous-paquetage <code>timetable</code>, publique et étendant <code>Indexed</code>, représente des courses de transport public indexées. Elle possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int routeId(int id)</code></dt><dd>qui retourne l'index de la ligne à laquelle la course d'index donné appartient,</dd>
+<dt><code>String destination(int id)</code></dt><dd>qui retourne le nom de la destination finale de la course.</dd>
+</dl>
+<p>
+Toutes ces méthodes lèvent une <code>IndexOutOfBoundsException</code> si l'index qu'on leur passe (nommé <code>id</code> ci-dessous) est invalide, c.-à-d. inférieur à 0 ou supérieur ou égal à la taille retournée par <code>size()</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgda31227">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_connections.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_connections.html"><div class="class-section"><h3 id="orgda31227"><span class="section-number-3">3.8.</span> Interface <code>Connections</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-8">
+<p>
+L'interface <code>Connections</code> du sous-paquetage <code>timetable</code>, publique et étendant <code>Indexed</code>, représente des liaisons indexées. Pour les besoins de l'algorithme de recherche de voyages, les liaisons doivent être ordonnées par heure de départ décroissante.
+</p>
+<p>
+<code>Connections</code> possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int depStopId(int id)</code></dt><dd>qui retourne l'index de l'arrêt de départ de la liaison d'index donné,</dd>
+<dt><code>int depMins(int id)</code></dt><dd>qui retourne l'heure de départ de la liaison d'index donné, exprimée en minutes après minuit,</dd>
+<dt><code>int arrStopId(int id)</code></dt><dd>qui retourne l'index de l'arrêt d'arrivée de la liaison d'index donné,</dd>
+<dt><code>int arrMins(int id)</code></dt><dd>qui retourne l'heure d'arrivée de la liaison d'index donné, exprimée en minutes après minuit,</dd>
+<dt><code>int tripId(int id)</code></dt><dd>qui retourne l'index de la course à laquelle appartient la liaison d'index donné,</dd>
+<dt><code>int tripPos(int id)</code></dt><dd>qui retourne la position de la liaison d'index donné dans la course à laquelle elle appartient, la première liaison d'une course ayant l'index 0,</dd>
+<dt><code>int nextConnectionId(int id)</code></dt><dd>qui retourne l'index de la liaison suivant celle d'index donné dans la course à laquelle elle appartient, ou l'index de la première liaison de la course si la liaison d'index donné est la dernière de la course.</dd>
+</dl>
+<p>
+Toutes ces méthodes lèvent une <code>IndexOutOfBoundsException</code> si l'index qu'on leur passe (nommé <code>id</code> ci-dessous) est invalide, c.-à-d. inférieur à 0 ou supérieur ou égal à la taille retournée par <code>size()</code>.
+</p>
+<p>
+Les index des arrêts de départ et d'arrivée retournés par <code>depStopId</code> et <code>arrStopId</code> peuvent soit désigner des gares, soit des voies ou quais. Si un tel index est inférieur au nombre de gares existant dans l'horaire, alors il représente un index de gare. Sinon, il représente un index de voie ou de quai, qui peut être calculé en soustrayant de l'index d'arrêt le nombre de gares existant dans l'horaire.
+</p>
+<p>
+Par exemple, s'il y a 1000 gares et 2000 voies ou quais, l'index d'arrêt 500 représente la gare d'index 500, tandis que l'index d'arrêt 1700 représente l'index de la voie/quai 700.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org6220b43">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_timetable.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_timetable.html"><div class="class-section"><h3 id="org6220b43"><span class="section-number-3">3.9.</span> Interface <code>TimeTable</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-9">
+<p>
+L'interface <code>TimeTable</code> du sous-paquetage <code>timetable</code>, publique, représente un horaire de transport public. Elle possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>Stations stations()</code></dt><dd>qui retourne les gares indexées de l'horaire,</dd>
+<dt><code>StationAliases stationAliases()</code></dt><dd>qui retourne les noms alternatifs indexés des gares de l'horaire,</dd>
+<dt><code>Platforms platforms()</code></dt><dd>qui retourne les voies/quais indexées de l'horaire,</dd>
+<dt><code>Routes routes()</code></dt><dd>qui retourne les lignes indexées de l'horaire,</dd>
+<dt><code>Transfers transfers()</code></dt><dd>qui retourne les changements indexés de l'horaire,</dd>
+<dt><code>Trips tripsFor(LocalDate date)</code></dt><dd>qui retourne les courses indexées de l'horaire actives le jour donné,</dd>
+<dt><code>Connections connectionsFor(LocalDate date)</code></dt><dd>qui retourne les liaisons indexées de l'horaire actives le jour donné.</dd>
+</dl>
+<p>
+En plus de ces méthodes abstraites, <code>TimeTable</code> possède également les méthodes par défaut suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>default boolean isStationId(int stopId)</code></dt><dd>qui retourne vrai si et seulement si l'index d'arrêt donné est un index de gare (et pas un index de voie ou de quai),</dd>
+<dt><code>default boolean isPlatformId(int stopId)</code></dt><dd>qui retourne vrai si et seulement si l'index d'arrêt donné est un index de voie ou de quai (et pas un index de gare),</dd>
+<dt><code>default int stationId(int stopId)</code></dt><dd>qui retourne l'index de la gare de l'arrêt d'index donné (qui peut être identique si l'arrêt en question est une gare),</dd>
+<dt><code>default String platformName(int stopId)</code></dt><dd>qui retourne le nom de voie ou de quai de l'arrêt d'index donné, ou <code>null</code> si cet arrêt est une gare.</dd>
+</dl>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org34c1169">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_3.10._classe_paretofront.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_paretofront.html"><div class="class-section"><h3 id="org34c1169"><span class="section-number-3">3.10.</span> Classe <code>ParetoFront</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-10">
+<p>
+La classe <code>ParetoFront</code> du sous-paquetage <code>journey</code>, publique et immuable, représente une frontière de Pareto de critères d'optimisation. Les tuples de la frontière sont stockés sous forme empaquetée, dans un tableau de type <code>long[]</code> privé.
+</p>
+<p>
+<code>ParetoFront</code> possède l'attribut public, statique et final suivant :
+</p>
+<dl class="org-dl">
+<dt><code>ParetoFront EMPTY</code></dt><dd>qui contient une frontière de Pareto vide.</dd>
+</dl>
+<p>
+<code>ParetoFront</code> ne possède pas de constructeur public, car ses instances ne sont destinées à être construites que par le bâtisseur décrit à la section suivante. Elle possède toutefois un constructeur privé qui prend en argument un tableau de type <code>long[]</code> contenant les critères empaquetés, qu'elle stocke <i>sans</i> le copier. Pour garantir l'immuabilité de la classe, il est donc fondamental que ce tableau ne change pas après l'appel du constructeur. En particulier, la méthode <code>build</code> du bâtisseur décrit plus bas doit garantir cela, en passant au constructeur une copie de son tableau interne.
+</p>
+<p>
+En plus de ce constructeur privé, <code>ParetoFront</code> offre les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int size()</code></dt><dd>qui retourne la taille de la frontière de Pareto, c.-à-d. le nombre de tuples (paires ou triplets de critères d'optimisation) qu'elle contient,</dd>
+<dt><code>long get(int arrMins, int changes)</code></dt><dd>qui retourne les critères d'optimisation empaquetés dont l'heure d'arrivée et le nombre de changements sont ceux donnés, ou lève une <code>NoSuchElementException</code> si ces critères ne font pas partie de la frontière,</dd>
+<dt><code>void forEach(LongConsumer action)</code></dt><dd>qui appelle la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/LongConsumer.html#accept(long)"><code>accept</code></a> de l'action de type <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/LongConsumer.html"><code>LongConsumer</code></a> donnée avec chacun des critères de la frontière, dans l'ordre.</dd>
+</dl>
+<p>
+En plus de ces méthodes, il est <i>très fortement</i> conseillé d'ajouter à <code>ParetoFront</code> une redéfinition de la méthode <code>toString</code> qui produit une représentation textuelle de la frontière de Pareto, afin de faciliter le débogage. Le format de cette représentation textuelle n'est pas spécifié, mais il est conseillé de présenter les critères de la frontière de manière aussi lisible que possible, en montrant pour chacun d'eux l'heure de départ (si elle est présente), l'heure d'arrivée et le nombre de changements.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org2b0dc17">
+<h4 id="org2b0dc17"><span class="section-number-4">3.10.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-10-1">
+<p>
+La méthode <code>forEach</code> permet de parcourir les éléments de la frontière et d'effectuer une action pour chacun d'eux. Par exemple, si on désirait afficher les critères à l'écran, un par ligne, on pourrait procéder ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">class MyPrinter implements LongConsumer {
+  @Override
+  void accept(long value) {
+    System.out.println(value);
+  }
+}
+
+ParetoFront paretoFront = …;
+paretoFront.forEach(new MyPrinter());
+</pre>
+</div>
+<p>
+Toutefois, cette manière de faire est très lourde, et en réalité la méthode <code>forEach</code> est destinée à être utilisée avec une lambda. Ce concept n'a malheureusement pas encore été vu au cours, mais il faut savoir qu'en l'utilisant, le code ci-dessus peut s'écrire simplement ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">ParetoFront paretoFront = …;
+paretoFront.forEach(value -&gt; { System.out.println(value); });
+</pre>
+</div>
+<p>
+Dès lors, si vous voulez utiliser la méthode <code>forEach</code> dans votre code, vous pouvez vous inspirer de cet exemple pour écrire le code de manière plus concise, en attendant que les lambdas soient décrites en détail au cours.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org835e53d">
+<div class="class-section"><a class="class-link" href="classes/class_handout_03.html_3.11._classe_paretofront.builder.html"><div class="class-section"><a class="class-link" href="classes/class_handout_03.html_paretofront.html"><div class="class-section"><h3 id="org835e53d"><span class="section-number-3">3.11.</span> Classe <code>ParetoFront.Builder</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-11">
+<p>
+La classe <code>Builder</code> imbriquée statiquement dans <code>ParetoFront</code>, publique, représente un bâtisseur de frontière de Pareto. La frontière en cours de construction est stockée dans un tableau de type <code>long[]</code> qui contient les tuples et est « redimensionné » au besoin selon la technique décrite dans les conseils de programmation plus bas.
+</p>
+<p>
+<code>Builder</code> offre deux constructeurs publics :
+</p>
+<dl class="org-dl">
+<dt><code>Builder()</code></dt><dd>qui retourne un bâtisseur dont la frontière en cours de construction est vide,</dd>
+<dt><code>Builder(Builder that)</code></dt><dd>qui retourne un nouveau bâtisseur avec les mêmes attributs que celui reçu en argument (constructeur de copie).</dd>
+</dl>
+<p>
+En plus de ces constructeurs, <code>Builder</code> offre les méthodes publiques ci-dessous, toutes celles modifiant la frontière retournent le bâtisseur lui-même afin de permettre le chaînage des appels :
+</p>
+<dl class="org-dl">
+<dt><code>boolean isEmpty()</code></dt><dd>qui retourne vrai si et seulement si la frontière en cours de construction est vide,</dd>
+<dt><code>Builder clear()</code></dt><dd>qui vide la frontière en cours de construction en supprimant tous ses éléments,</dd>
+<dt><code>Builder add(long packedTuple)</code></dt><dd>qui ajoute à la frontière le tuple de critères empaquetés donné ; cet ajout n'est fait que si le nouveau tuple n'est pas dominé ou égal à un de la frontière, et tous les éventuels tuples existants et dominés par le nouveau en sont supprimés,</dd>
+<dt><code>Builder add(int arrMins, int changes, int payload)</code></dt><dd>qui ajoute à la frontière un tuple de critères augmentés ayant l'heure d'arrivée, le nombre de changements et la charge utile donnés, mais pas d'heure de départ ; l'ajout est fait de la même manière que dans la méthode précédente,</dd>
+<dt><code>Builder addAll(Builder that)</code></dt><dd>qui ajoute à la frontière tous les tuples présents dans la frontière en cours de construction par le bâtisseur donné,</dd>
+<dt><code>boolean fullyDominates(Builder that, int depMins)</code></dt><dd>qui retourne vrai si et seulement si chacun des tuples de la frontière donnée, une fois son heure de départ fixée sur celle donnée, est dominé par, ou égal à, au moins un tuple du récepteur (le récepteur étant l'objet auquel on applique la méthode),</dd>
+<dt><code>void forEach(LongConsumer action)</code></dt><dd>qui fait la même chose que la méthode <code>forEach</code> de <code>ParetoFront</code>,</dd>
+<dt><code>ParetoFront build()</code></dt><dd>qui retourne la frontière de Pareto en cours de construction par ce bâtisseur.</dd>
+</dl>
+<p>
+Tout comme pour <code>ParetoFront</code>, il est très fortement conseillé d'ajouter à <code>Builder</code> une redéfinition de la méthode <code>toString</code> afin de faciliter le débogage. La plupart du code peut être partagée entre les deux méthodes <code>toString</code>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orgf118a66">
+<h4 id="orgf118a66"><span class="section-number-4">3.11.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-11-1">
+<p>
+Pour que cette classe soit efficace, elle doit impérativement stocker les critères (tuples) sous forme empaquetée, dans un tableau de type <code>long[]</code>, triés par ordre lexicographique. Toutefois, cela n'est pas très simple à mettre en œuvre, pour les raisons décrites ci-après, et vous pouvez donc, si vous le désirez, utiliser temporairement une autre solution de stockage, comme un tableau dynamique de type <code>ArrayList&lt;Long&gt;</code>. Sachez néanmoins que pour obtenir la totalité des points au rendu intermédiaire (semaine 7), vous devrez impérativement utiliser un tableau de type <code>long[]</code> géré comme décrit ci-après.
+</p>
+<p>
+Il y a deux raisons principales pour lesquelles l'utilisation d'un tableau de type <code>long[]</code> pour stocker les critères est difficile : premièrement, un tel tableau ne peut pas être redimensionné ; et deuxièmement, il n'est pas facile d'insérer ou de supprimer des éléments au milieu d'un tel tableau. Or ces deux opérations — redimensionnement et insertion ou suppression au milieu — sont nécessaires à la mise en œuvre de la méthode <code>add</code>.
+</p>
+<p>
+Pour stocker les critères dans un tableau de type <code>long[]</code>, l'idée est d'en utiliser un ayant une taille — nommée sa <b>capacité</b> (<i>capacity</i>) — supérieure ou égale au nombre de tuples qu'il contient effectivement. Par exemple, sa capacité initiale, lorsque la frontière en cours de construction est vide, pourrait être fixée à 2. Un second attribut, de type <code>int</code>, doit donc être ajouté au bâtisseur pour connaître la taille effective de la frontière. Les tuples sont toujours stockés dans les premiers éléments du tableau, en ordre lexicographique.
+</p>
+<p>
+Lors de l'ajout d'un tuple, le tableau est parcouru à partir du début, à la recherche du premier élément supérieur (dans l'ordre lexicographique) à celui à insérer. Comme nous l'avons vu, l'ordre lexicographique sur les tuples est équivalent à l'ordre mathématique standard sur les entiers contenant les tuples empaquetés. Autrement dit, utiliser par exemple l'opérateur <code>&lt;</code> pour comparer deux entiers <code>long</code> représentant des tuples empaquetés permet de déterminer si le premier tuple se trouve avant le second dans l'ordre lexicographique.
+</p>
+<p>
+Cela fonctionne car nous avons pris soin d'empaqueter les critères de manière à ce qu'ils soient toujours positifs, et de stocker le complément de l'heure de départ plutôt que l'heure de départ elle-même. Il faut toutefois prendre garde au fait que la charge utile, présente dans les 32 bits de poids faible des tuples empaquetés, détermine le résultat de la comparaison lorsque deux tuples ont exactement les mêmes critères. Une manière simple de tenir compte de cela est de remplacer temporairement la charge utile du tuple à insérer, soit par la plus petite valeur possible (0), soit par la plus grande, en fonction de l'effet désiré.
+</p>
+<p>
+Durant le parcours des tuples de la frontière à la recherche de la position d'insertion du nouveau, si un tuple dominant ou égal à celui à insérer est trouvé, l'ajout se termine sans modifier la frontière en cours de construction. Sinon, une fois que la position d'insertion du nouvel élément a été trouvée, les éléments qui se trouvent après cette position et qui sont dominés par le nouveau doivent être éliminés avant que le nouveau puisse être inséré.
+</p>
+<p>
+L'élimination des éléments dominés par le nouveau peut se faire en parcourant ceux qui suivent la position d'insertion et en les « compactant », c.-à-d. en copiant ceux qui ne sont pas dominés vers le bas, afin qu'ils se trouvent juste après la position d'insertion.
+</p>
+<p>
+Le code pour faire cela n'étant pas totalement trivial à écrire, vous pouvez vous inspirer de la méthode suivante, qui « compacte » un tableau d'entiers qu'on lui passe en ne gardant que les éléments supérieurs ou égaux à 10, qui sont placés dans les premiers éléments du tableau. Le nombre d'éléments conservés est retourné en résultat de la méthode.
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int compact(int[] array) {
+  int dst = 0;
+  for (int src = 0; src &lt; array.length; src += 1) {
+    if (array[src] &lt; 10) continue;
+    if (dst != src) array[dst] = array[src];
+    dst += 1;
+  }
+  return dst;
+}
+</pre>
+</div>
+<p>
+Par exemple, si on applique cette méthode au tableau suivant :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int[] array = {1, 5, 10, 11, 3, 1, 20, 30, 2};
+</pre>
+</div>
+<p>
+elle retourne le nombre d'éléments du tableau supérieurs ou égaux à 10 — donc 4 — et déplace ces éléments, dans le même ordre, dans les 4 premiers éléments du tableau.
+</p>
+<p>
+Une fois le tableau des tuples ainsi « compacté », deux cas peuvent se présenter : soit sa capacité est suffisante pour insérer le nouveau tuple, soit elle ne l'est pas.
+</p>
+<p>
+Si la capacité est suffisante, les éléments d'index supérieur ou égal à la position d'insertion doivent être décalés d'une position vers le haut, afin de laisser une place pour le nouvel élément. Ce décalage peut se faire au moyen de la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/System.html#arraycopy(java.lang.Object,int,java.lang.Object,int,int)"><code>arraycopy</code></a>.
+</p>
+<p>
+Si la capacité est insuffisante, alors un nouveau tableau de taille supérieure — p. ex. 1.5 fois plus grand — à l'actuel doit être créé. Tous les tuples de l'ancien tableau doivent y être copiés, ainsi que le nouveau, en préservant l'ordre lexicographique. Là aussi, la copie peut se faire au moyen de la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/System.html#arraycopy(java.lang.Object,int,java.lang.Object,int,int)"><code>arraycopy</code></a>.
+</p>
+<p>
+Avant de vous lancer dans la programmation de la méthode <code>add</code>, soyez sûrs de bien comprendre ce qui précède, et faites des dessins pour avoir une idée claire des opérations à effectuer.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgba11192">
+<h3 id="orgba11192"><span class="section-number-3">3.12.</span> Tests</h3>
+<div class="outline-text-3" id="text-3-12">
+<p>
+Comme pour l'étape précédente, nous ne vous fournissons plus de tests mais <a href="f/SignatureChecks_3.java">un fichier de vérification de signatures</a> à importer dans votre projet.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org035ad24">
+<div class="outline-text-2" id="text-4">
+<p>
+Pour cette étape, vous devez :
+</p>
+<ul class="org-ul">
+<li>écrire les interfaces <code>Indexed</code>, <code>Stations</code>, <code>StationAliases</code>, <code>Platforms</code>, <code>Routes</code>, <code>Transfers</code>, <code>Trips</code>, <code>Connections</code> et <code>TimeTable</code>, ainsi que les classes <code>ParetoFront</code> et <code>ParetoFront.Builder</code> selon les indications données plus haut,</li>
+<li>tester votre code,</li>
+<li>documenter la totalité des entités publiques que vous avez définies,</li>
+<li>rendre votre code au plus tard le <b>7 mars 2025 à 18h00</b>, au moyen du programme <code>Submit.java</code> fourni et des jetons disponibles sur votre <a href="https://cs108.epfl.ch/my/">page privée</a>.</li>
+</ul>
+<p>
+Ce rendu est un rendu testé, auquel 20 points sont attribués, au prorata des tests unitaires passés avec succès.
+</p>
+<div class="cs108warning" id="org2ff43c0">
+<p>
+N'attendez surtout pas le dernier moment pour effectuer votre rendu, car vous n'êtes pas à l'abri d'imprévus.
+</p>
+<p>
+Si vous manquez la date limite de rendu, vous avez encore la possibilité de faire un rendu tardif au moyen des jetons prévus à cet effet, et ce durant les 2 heures qui suivent, mais il vous en coûtera une pénalité <b>inconditionnelle</b> de 2 points.
+</p>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<div id="text-footnotes">
+<div class="footdef"><sup><a class="footnum" href="#fnr.1" id="fn.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+Cette affirmation peut sembler étrange au vu de l'existence de l'enregistrement <code>Stop</code> écrit à l'étape 1. Il faut toutefois comprendre que cet enregistrement n'est destiné qu'à être utilisé pour représenter les arrêts qui font partie d'un voyage, et <i>pas</i> la totalité des arrêts de l'horaire, dont il est question ici.
+</p></div></div>
+<div class="footdef"><sup><a class="footnum" href="#fnr.2" id="fn.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+En réalité, comme l'heure d'arrivée et le nombre de changements sont tous les deux bornés, les rectangles de domination ne sont pas infinis, mais c'est un détail.
+</p></div></div>
+</div>
+</div></div>
+<script>
+                window.addEventListener('load', function() {
+                    document.querySelectorAll('.section-header').forEach(header => {
+                        header.addEventListener('click', function() {
+                            this.classList.toggle('collapsed');
+                            const content = this.nextElementSibling;
+                            content.classList.toggle('expanded');
+                        });
+                    });
+                });
+            </script></body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReCHor - Documentation Non-Officielle</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --warning-color: #ff9800;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .warning-banner {
+            background-color: #fff3e0;
+            border-left: 4px solid var(--warning-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .warning-banner h3 {
+            color: var(--warning-color);
+            margin-top: 0;
+        }
+
+        .nav {
+            background: var(--background-color);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            padding: 0.5rem 1rem;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-item a:hover {
+            color: var(--secondary-color);
+        }
+
+        .project-part {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .project-part h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        .part-content {
+            margin-top: 1rem;
+        }
+
+        .class-section {
+            margin-top: 1.5rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .class-card {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .class-card h3 {
+            margin: 0;
+            color: var(--secondary-color);
+        }
+
+        .class-card a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .class-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+
+        .concepts-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--background-color);
+            border-radius: 4px;
+        }
+
+        .concepts-section h3 {
+            color: var(--secondary-color);
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>ReCHor - Documentation Non-Officielle</h1>
+        <p>Documentation extraite automatiquement des handouts du projet ReCHor</p>
+    </header>
+
+    <div class="container">
+        <div class="warning-banner">
+            <h3>⚠️ Avertissement aux étudiants</h3>
+            <p>Cette documentation est générée automatiquement à partir des handouts et n'est pas officielle. Il n'y a aucune garantie quant à l'exactitude ou l'exhaustivité des informations présentées. Pour toute référence officielle, veuillez vous référer aux handouts originaux disponibles sur cs108.epfl.ch.</p>
+        </div>
+
+        <nav class="nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="#overview">Vue d'ensemble</a></li>
+                <li class="nav-item"><a href="#part1">Étape 1</a></li>
+                <li class="nav-item"><a href="#part2">Étape 2</a></li>
+                <li class="nav-item"><a href="#part3">Étape 3</a></li>
+                <li class="nav-item"><a href="#part4">Étape 4</a></li>
+                <li class="nav-item"><a href="#part5">Étape 5</a></li>
+                <li class="nav-item"><a href="#part6">Étape 6</a></li>
+                <li class="nav-item"><a href="#part7">Étape 7</a></li>
+            </ul>
+        </nav>
+
+        <div id="content">
+
+        <section class="project-part" id="overview">
+            <h2>Vue d'ensemble du projet</h2>
+            <div class="part-content">
+                <p>Le projet ReCHor est divisé en 14 étapes principales, chacune se concentrant sur différents aspects de l'implémentation d'un système de recherche d'itinéraires en transport public.</p>
+            </div>
+        </section>
+
+        <section class="project-part" id="part1">
+            <h2>Étape 1 - Mise en place</h2>
+            <div class="part-content">
+    <p style="font-style: italic;">ReCHor – étape 1</p>
+            <div class="concepts-section">
+                <h3>Concepts clés</h3>
+                <ul>
+        <li><strong>2.1. Arrêt</strong></li><li><strong>2.2. Ligne</strong></li><li><strong>2.3. Voyage</strong></li><li><strong>2.4. Représentation textuelle</strong></li>
+                </ul>
+            </div>
+
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+
+        <div class="class-card">
+            <a href="classes/Preconditions.html">
+                <h3>Preconditions</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe Preconditions</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/s Java.html">
+                <h3>s Java</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.5. Enregistrements Java</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Stop.html">
+                <h3>Stop</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.6. Enregistrement Stop</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Journey.html">
+                <h3>Journey</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.7. Enregistrement Journey</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Journey.Leg.html">
+                <h3>Journey.Leg</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.8. Interface Journey.Leg</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Journey.Leg.IntermediateStop.html">
+                <h3>Journey.Leg.IntermediateStop</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.9. Enregistrement Journey.Leg.IntermediateStop</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Journey.Leg.Transport.html">
+                <h3>Journey.Leg.Transport</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.10. Enregistrement Journey.Leg.Transport</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Journey.Leg.Foot.html">
+                <h3>Journey.Leg.Foot</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.11. Enregistrement Journey.Leg.Foot</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/s scellées en Java.html">
+                <h3>s scellées en Java</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.12. Interfaces scellées en Java</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/FormatterFr.html">
+                <h3>FormatterFr</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.13. Classe FormatterFr</p>
+        </div>
+
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <section class="project-part" id="part2">
+            <h2>Étape 2 - iCalendar et valeurs empaquetées</h2>
+            <div class="part-content">
+    <p style="font-style: italic;">ReCHor – étape 2</p>
+            <div class="concepts-section">
+                <h3>Concepts clés</h3>
+                <ul>
+        <li><strong>2.1. Format iCalendar</strong></li><li><strong>2.2. Valeurs empaquetées</strong></li>
+                </ul>
+            </div>
+
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+
+        <div class="class-card">
+            <a href="classes/IcalBuilder.html">
+                <h3>IcalBuilder</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Classe IcalBuilder</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/JourneyIcalConverter.html">
+                <h3>JourneyIcalConverter</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Classe JourneyIcalConverter</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Bits32_24_8.html">
+                <h3>Bits32_24_8</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe Bits32_24_8</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/PackedRange.html">
+                <h3>PackedRange</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Classe PackedRange</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/PackedCriteria.html">
+                <h3>PackedCriteria</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.5. Classe PackedCriteria</p>
+        </div>
+
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <section class="project-part" id="part3">
+            <h2>Étape 3 - Horaire et frontière de Pareto</h2>
+            <div class="part-content">
+    <p style="font-style: italic;">ReCHor – étape 3</p>
+            <div class="concepts-section">
+                <h3>Concepts clés</h3>
+                <ul>
+        <li><strong>2.1. Horaire</strong></li><li><strong>2.2. Frontière de Pareto</strong></li><li><strong>2.3. Représentation des frontières immuables</strong></li><li><strong>2.4. Représentation des frontières non immuables</strong></li>
+                </ul>
+            </div>
+
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+
+        <div class="class-card">
+            <a href="classes/Indexed.html">
+                <h3>Indexed</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Interface Indexed</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Stations.html">
+                <h3>Stations</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Interface Stations</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/StationAliases.html">
+                <h3>StationAliases</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Interface StationAliases</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Platforms.html">
+                <h3>Platforms</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Interface Platforms</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Routes.html">
+                <h3>Routes</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.5. Interface Routes</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Transfers.html">
+                <h3>Transfers</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.6. Interface Transfers</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Trips.html">
+                <h3>Trips</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.7. Interface Trips</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Connections.html">
+                <h3>Connections</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.8. Interface Connections</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/TimeTable.html">
+                <h3>TimeTable</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.9. Interface TimeTable</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/ParetoFront.html">
+                <h3>ParetoFront</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.10. Classe ParetoFront</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/ParetoFront.Builder.html">
+                <h3>ParetoFront.Builder</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.11. Classe ParetoFront.Builder</p>
+        </div>
+
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <section class="project-part" id="part4">
+            <h2>Étape 4 - Horaire aplati</h2>
+            <div class="part-content">
+    <p style="font-style: italic;">ReCHor – étape 4</p>
+            <div class="concepts-section">
+                <h3>Concepts clés</h3>
+                <ul>
+        <li><strong>2.1. Données aplaties</strong></li><li><strong>2.2. Table des chaînes de caractères</strong></li><li><strong>2.3. Gares</strong></li><li><strong>2.4. Noms alternatifs des gares</strong></li><li><strong>2.5. Voies ou quais</strong></li><li><strong>2.6. Exemple</strong></li>
+                </ul>
+            </div>
+
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+
+        <div class="class-card">
+            <a href="classes/Structure.html">
+                <h3>Structure</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Classe Structure</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/StructuredBuffer.html">
+                <h3>StructuredBuffer</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Classe StructuredBuffer</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/BufferedStations.html">
+                <h3>BufferedStations</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe BufferedStations</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/BufferedStationAliases.html">
+                <h3>BufferedStationAliases</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Classe BufferedStationAliases</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/BufferedPlatforms.html">
+                <h3>BufferedPlatforms</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.5. Classe BufferedPlatforms</p>
+        </div>
+
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <section class="project-part" id="part5">
+            <h2>Étape 5 - Horaire aplati (II)</h2>
+            <div class="part-content">
+    <p style="font-style: italic;">ReCHor – étape 5</p>
+            <div class="concepts-section">
+                <h3>Concepts clés</h3>
+                <ul>
+        <li><strong>2.1. Lignes</strong></li><li><strong>2.2. Courses</strong></li><li><strong>2.3. Liaisons</strong></li><li><strong>2.4. Liaison suivante</strong></li><li><strong>2.5. Changements</strong></li>
+                </ul>
+            </div>
+
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+
+        <div class="class-card">
+            <a href="classes/BufferedRoutes.html">
+                <h3>BufferedRoutes</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Classe BufferedRoutes</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/BufferedTrips.html">
+                <h3>BufferedTrips</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Classe BufferedTrips</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/BufferedConnections.html">
+                <h3>BufferedConnections</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe BufferedConnections</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/BufferedTransfers.html">
+                <h3>BufferedTransfers</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Classe BufferedTransfers</p>
+        </div>
+
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <section class="project-part" id="part6">
+            <h2>Étape 6 - Profil et extraction de voyage</h2>
+            <div class="part-content">
+    <p style="font-style: italic;">ReCHor – étape 6</p>
+            <div class="concepts-section">
+                <h3>Concepts clés</h3>
+                <ul>
+        <li><strong>2.1. « Mappage » de fichiers en mémoire</strong></li><li><strong>2.2. Profil</strong></li><li><strong>2.3. Profil augmenté</strong></li><li><strong>2.4. Extraction de voyages</strong></li><li><strong>2.5. Étapes initiales et finales</strong></li>
+                </ul>
+            </div>
+
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+
+        <div class="class-card">
+            <a href="classes/FileTimeTable.html">
+                <h3>FileTimeTable</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Enregistrement FileTimeTable</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Profile.html">
+                <h3>Profile</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Enregistrement Profile</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/Profile.Builder.html">
+                <h3>Profile.Builder</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe Profile.Builder</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/JourneyExtractor.html">
+                <h3>JourneyExtractor</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.4. Classe JourneyExtractor</p>
+        </div>
+
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <section class="project-part" id="part7">
+            <h2>Étape 7 - Recherche de voyages optimaux</h2>
+            <div class="part-content">
+    <p style="font-style: italic;">ReCHor – étape 7</p>
+            <div class="concepts-section">
+                <h3>Concepts clés</h3>
+                <ul>
+        <li><strong>2.1. Algorithme CSA</strong></li><li><strong>2.2. Mémoire cache</strong></li>
+                </ul>
+            </div>
+
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+
+        <div class="class-card">
+            <a href="classes/Router.html">
+                <h3>Router</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Enregistrement Router</p>
+        </div>
+
+        <div class="class-card">
+            <a href="classes/CachedTimeTable.html">
+                <h3>CachedTimeTable</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Classe CachedTimeTable</p>
+        </div>
+
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        </div>
+    </div>
+
+
+</body>
+</html>

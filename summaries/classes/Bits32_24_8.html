@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bits32_24_8 - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 2 - iCalendar et valeurs empaquetées</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>Bits32_24_8</h1>
+                <p>3.3. Classe Bits32_24_8</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-3">
+<p>
+La classe <code>Bits32_24_8</code> du paquetage principal, publique et non instanciable, contient des méthodes statiques permettant de manipuler une paire de valeurs — de 24 et 8 bits respectivement — empaquetées dans un entier de 32 bits de type <code>int</code>.
+</p>
+<p>
+Cette classe existe car il se trouve que plusieurs paires de valeurs utiles dans ce projet, dont les intervalles d'entiers, peuvent être empaquetées de la sorte, et il semble donc raisonnable de partager le code les manipulant.
+</p>
+<p>
+Les méthodes publiques (et statiques) offertes par <code>Bits32_24_8</code> sont :
+</p>
+<dl class="org-dl">
+<dt><code>int pack(int bits24, int bits8)</code></dt><dd>qui retourne le vecteur de 32 bits dont les 24 bits de poids fort sont <code>bits24</code> et les 8 bits de poids faible sont <code>bits8</code>, ou lève une <code>IllegalArgumentException</code> si l'une des deux valeurs nécessite plus de bits qu'elle ne devrait (24 et 8, respectivement, voir les conseils de programmation),</dd>
+<dt><code>int unpack24(int bits32)</code></dt><dd>qui retourne les 24 bits de poids fort du vecteur de 32 bits donné,</dd>
+<dt><code>int unpack8(int bits32)</code></dt><dd>qui retourne les 8 bits de poids faible du vecteur de 32 bits donné.</dd>
+</dl>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

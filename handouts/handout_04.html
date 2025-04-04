@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<!-- 2025-03-03 Lun 10:26 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Horaire aplati</title>
+<meta content="Michel Schinz" name="author"/>
+<meta content="Org Mode" name="generator"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="../a/cs108.css" rel="stylesheet" type="text/css"/><link href="../a/highlight/styles/github.min.css" rel="stylesheet" type="text/css"/>
+<script src="../a/highlight/highlight.min.js"></script>
+
+<script src="../a/mathjax/tex-chtml.js" type="text/javascript"></script>
+<style>
+                body { font-family: Arial, sans-serif; margin: 2em; line-height: 1.6; }
+                .class-section {
+                    margin: 2em 0;
+                    padding: 1.5em;
+                    background: #f5f5f5;
+                    border-left: 4px solid #4CAF50;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .class-section:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .method-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .tip-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #fffaf0;
+                    border-left: 4px solid #FFA500;
+                    border-radius: 3px;
+                }
+                .code-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #f8f8f8;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                    font-family: monospace;
+                }
+                .section-dropdown {
+                    margin: 2em 0;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .section-header {
+                    padding: 1em;
+                    background: #f8f9fa;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .section-header:hover {
+                    background: #e9ecef;
+                }
+                .section-header::after {
+                    content: '▼';
+                    font-size: 0.8em;
+                    transition: transform 0.3s ease;
+                }
+                .section-header.collapsed::after {
+                    transform: rotate(-90deg);
+                }
+                .section-content {
+                    padding: 1em;
+                    display: none;
+                }
+                .section-content.expanded {
+                    display: block;
+                }
+                pre { white-space: pre-wrap; margin: 0; }
+                h1 { color: #1976D2; }
+                h2 { color: #2196F3; margin: 0; }
+                h3 { color: #4CAF50; }
+                h4 { color: #FF9800; }
+                .class-link {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                }
+                .class-link:hover {
+                    color: inherit;
+                }
+            </style></head>
+<body>
+<div class="content" id="content">
+<header>
+<h1 class="title">Horaire aplati</h1>
+<p class="subtitle" role="doc-subtitle">ReCHor – étape 4</p>
+</header>
+<div class="outline-2" id="outline-container-org5727eeb">
+<div class="outline-text-2" id="text-1">
+<p>
+Le but de cette étape est d'écrire des classes facilitant la lecture des données horaires aplaties, et de les utiliser pour écrire celles permettant de manipuler les gares et voies représentées de cette manière.
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org2bf5835">
+<div class="outline-text-2" id="text-2">
+</div>
+<div class="outline-3" id="outline-container-orgff1f312">
+<h3 id="orgff1f312"><span class="section-number-3">2.1.</span> Données aplaties</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Comme nous l'avons vu à l'étape précédente, les données horaire utilisées dans ce projet sont représentées d'une manière un peu particulière, que nous avons appelée <b>aplatie</b>.
+</p>
+<p>
+L'idée de cette représentation est que les différents types de données de l'horaire (gares, voies/quais, liaisons, etc.) sont stockés dans des tableaux, chaque tableau contenant toutes les valeurs d'un type donné, p. ex. toutes les gares. De plus, au lieu de contenir des références vers des objets contenant les attributs des différentes instances — comme d'habitude en Java — ces tableaux contiennent directement les attributs des différentes instances.
+</p>
+<p>
+À l'étape 3, pour simplifier les choses, nous avions fait l'hypothèse que les données représentées de manière aplatie étaient homogènes, dans le sens où tous leurs attributs pouvaient être représentés au moyen d'entiers du même type. Ainsi, dans l'exemple de la §2.1.3 de cette étape, les liaisons étaient composée de 4 attributs, et chacun d'entre eux pouvait être représenté au moyen d'un entier de type <code>short</code>. La totalité des liaisons pouvait donc être stockée dans un unique tableau de type <code>short[]</code>, de taille égale à 4 fois le nombre de liaisons.
+</p>
+<p>
+En réalité, les données aplaties que nous utiliserons dans ce projet seront hétérogènes, dans le sens où elles seront constituées d'un certain nombre d'attributs ayant chacun un type potentiellement différent. Nous nommerons ces attributs des <b>champs</b> (<i>fields</i>), et ils pourront être chacun d'un des trois types entiers suivant :
+</p>
+<dl class="org-dl">
+<dt><code>U8</code></dt><dd>8 bits (1 octet) interprétés comme un entier non signé, compris donc entre 0 (inclus) et 256 (exclu),</dd>
+<dt><code>U16</code></dt><dd>16 bits (2 octets) interprétés comme un entier non signé, compris donc entre 0 (inclus) et 65 536 (exclu),</dd>
+<dt><code>S32</code></dt><dd>32 bits (4 octets) interprétés comme un entier signé, compris donc entre<br/>
+–2 147 483 648 (inclus) et 2 147 483 648 (exclu).</dd>
+</dl>
+<p>
+Ces trois types correspondent presque aux types <code>byte</code>, <code>short</code> et <code>int</code> de Java, la seule différence étant que les deux premiers sont interprétés de manière non signée.
+</p>
+<p>
+Les données hétérogènes sont stockées dans des tableaux d'octets (<i>bytes</i>), et un champ de type <code>U8</code> occupe donc un seul élément d'un tel tableau, un champ de type <code>U16</code> en occupe deux consécutifs, et un champ de type <code>S32</code> en occupe quatre consécutifs.
+</p>
+<p>
+Comme les trois types de champs sont tous des types entiers, il faut trouver une manière de représenter <i>toutes</i> les données de l'horaire au moyen d'entiers, entre autres les nombreuses chaînes de caractères qu'elles contiennent.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org9bb0a1c">
+<h3 id="org9bb0a1c"><span class="section-number-3">2.2.</span> Table des chaînes de caractères</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+De nombreuses données de l'horaire contiennent des chaînes de caractères, p. ex. les gares ont un nom qui est une chaîne, et il en va de même pour les voies ou quais, les courses, etc.
+</p>
+<p>
+Pour pouvoir représenter ces chaînes de caractères dans des données aplaties, une solution simple consiste à établir une table de toutes les chaînes présentes dans les données, puis d'identifier une chaîne par son index dans cette table.
+</p>
+<p>
+Les données horaires que nous utiliserons contiennent un peu plus de 40 000 chaînes différentes, et un index dans cette table peut donc être représenté par une valeur de type <code>U16</code>. Dans ce qui suit, nous nommerons ces index des <b>index de chaîne</b>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/stations">
+<h3 id="sec/stations"><span class="section-number-3">2.3.</span> Gares</h3>
+<div class="outline-text-3" id="text-sec/stations">
+<p>
+Les gares sont représentées de manière aplatie au moyen des trois champs donnés dans la table ci-dessous, la colonne <code>I</code> donnant l'index du champ (à partir de 0) :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>NAME_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne du nom de la gare</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>LON</code></td>
+<td class="org-left"><code>S32</code></td>
+<td class="org-left">Longitude de la gare</td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left"><code>LAT</code></td>
+<td class="org-left"><code>S32</code></td>
+<td class="org-left">Latitude de la gare</td>
+</tr>
+</tbody>
+</table>
+<p>
+La représentation aplatie d'une gare nécessite donc 10 octets (sans compter ceux nécessaires à la représentation des chaînes dans la table des chaînes), et le tableau d'octets contenant la totalité des gares a donc une taille égale à 10 fois le nombre de gares.
+</p>
+<p>
+La longitude et la latitude d'une gare aplatie ne sont <i>pas</i> exprimées en degrés, mais dans une unité anonyme, équivalente à \(360°\div 2^{32}\). En d'autres termes, une longitude ou une latitude \(l\) exprimée dans cette unité anonyme peut être convertie en sa version en degrés \(l°\) au moyen de la formule suivante :
+</p>
+<p>
+\[ l° = \frac{360}{2^{32}}\,l \]
+</p>
+<p>
+L'intérêt de cette unité est qu'elle permet de représenter les longitudes et latitudes au moyen d'entiers de 32 bits, avec une précision de l'ordre du centimètre. En effet, sachant qu'à l'équateur la Terre a une circonférence d'environ 40 000 km, la précision est d'au moins :
+</p>
+<p>
+\[ \frac{40\,000}{2^{32}}\,\textrm{km} \approx 0.93\,\textrm{cm} \]
+</p>
+<p>
+ce qui suffit très largement à nos besoins.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/aliases">
+<h3 id="sec/aliases"><span class="section-number-3">2.4.</span> Noms alternatifs des gares</h3>
+<div class="outline-text-3" id="text-sec/aliases">
+<p>
+Comme nous l'avons vu, certaines gares ont des noms alternatifs qui doivent pouvoir être utilisés dans la recherche d'arrêts, p. ex. <i>Losanna</i> pour <i>Lausanne</i>, <i>Soleure</i> pour <i>Solothurn</i>, <a href="https://fr.wikipedia.org/wiki/Anet_(Berne)"><i>Anet</i></a> pour <a href="https://de.wikipedia.org/wiki/Ins_BE"><i>Ins</i></a>, etc.
+</p>
+<p>
+Ces noms alternatifs sont représentés comme des paires composées du nom alternatif et du nom original. La structure de cette table est donc très simple :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>ALIAS_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne du nom alternatif</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>STATION_NAME_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne du nom de la gare</td>
+</tr>
+</tbody>
+</table>
+<p>
+La représentation aplatie d'un nom alternatif d'une gare nécessite donc 4 octets.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/platforms">
+<h3 id="sec/platforms"><span class="section-number-3">2.5.</span> Voies ou quais</h3>
+<div class="outline-text-3" id="text-sec/platforms">
+<p>
+Les voies ou quai ont un nom (p. ex. <code>70</code>, <code>1AB</code>, <code>A</code>) et une référence vers la gare à laquelle ils appartiennent, que nous appellerons la <b>gare parente</b> (<i>parent station</i>).
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>NAME_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne du nom de la voie ou du quai</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>STATION_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de la gare parente</td>
+</tr>
+</tbody>
+</table>
+<p>
+La représentation aplatie d'une voie ou d'un quai nécessite donc 4 octets.
+</p>
+<p>
+Il est important de comprendre que le premier champ (<code>NAME_ID</code>) contient un index dans la table des chaînes, mais le second (<code>STATION_ID</code>) contient un index dans la table des gares, et pas dans celle des chaînes !
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/example">
+<h3 id="sec/example"><span class="section-number-3">2.6.</span> Exemple</h3>
+<div class="outline-text-3" id="text-sec/example">
+<p>
+Pour illustrer la représentation aplatie des gares, de leurs noms alternatifs et des gares ou quais, admettons que la table des chaînes de caractères contienne les éléments suivants :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Chaîne</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>1</code></td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>70</code></td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left"><code>Anet</code></td>
+</tr>
+<tr>
+<td class="org-right">3</td>
+<td class="org-left"><code>Ins</code></td>
+</tr>
+<tr>
+<td class="org-right">4</td>
+<td class="org-left"><code>Lausanne</code></td>
+</tr>
+<tr>
+<td class="org-right">5</td>
+<td class="org-left"><code>Losanna</code></td>
+</tr>
+<tr>
+<td class="org-right">6</td>
+<td class="org-left"><code>Palézieux</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+et voyons ensuite comment représenter des gares, noms alternatifs et voies/quai aplatis.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org70dff89">
+<h4 id="org70dff89"><span class="section-number-4">2.6.1.</span> Gares</h4>
+<div class="outline-text-4" id="text-2-6-1">
+<p>
+Le tableau d'octets suivant, où chaque octet est donné en hexadécimal sur deux chiffres :
+</p>
+<pre class="example">
+00 04 04 b6 ca 14 21 14 1f a1 00 06 04 dc cc 12 21 18 da 03
+</pre>
+<p>
+représente la table des gares :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-right"/>
+<col class="org-right"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Nom</th>
+<th class="org-right" scope="col">Longitude</th>
+<th class="org-right" scope="col">Latitude</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left">Lausanne</td>
+<td class="org-right">6.629092</td>
+<td class="org-right">46.516792</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">Palézieux</td>
+<td class="org-right">6.837875</td>
+<td class="org-right">46.542764</td>
+</tr>
+</tbody>
+</table>
+<p>
+En effet, les deux premiers octets (<code>00 04</code>) représentent l'entier <code>U16</code> qui vaut 4, et qui est l'index de la chaîne <i>Lausanne</i> dans la table des chaînes. Les quatre octets suivants (<code>04 b6 ca 14</code>) représentent l'entier <code>S32</code> qui vaut 4b6ca14<sub>16</sub>, soit 79088148<sub>10</sub>. En convertissant cette valeur en degrés au moyen de la formule de la §<a href="#sec/stations">2.3</a>, on obtient 6.629092 (en arrondissant à 6 décimales). En faisant de même avec l'entier <code>S32</code> représenté par les 4 octets suivants (<code>21 14 1f a1</code>), on obtient 46.516792. Et ainsi de suite.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org3be20ed">
+<h4 id="org3be20ed"><span class="section-number-4">2.6.2.</span> Noms alternatifs</h4>
+<div class="outline-text-4" id="text-2-6-2">
+<p>
+Le tableau d'octets suivants :
+</p>
+<pre class="example">
+00 05 00 04 00 02 00 03
+</pre>
+<p>
+représente la table des noms alternatifs :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Nom alternatif</th>
+<th class="org-left" scope="col">Nom de la gare</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left">Losanna</td>
+<td class="org-left">Lausanne</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">Anet</td>
+<td class="org-left">Ins</td>
+</tr>
+</tbody>
+</table>
+<p>
+En effet, les deux premiers octets (<code>00 05</code>) représentent l'entier <code>U16</code> qui vaut 5, et qui est l'index de la chaîne <i>Losanna</i> dans la table des chaînes. Les deux octets suivants (<code>00 04</code>) représentent l'entier <code>U16</code> 4, qui est l'index de la chaîne <i>Lausanne</i>. Et ainsi de suite.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-orgb67e23f">
+<h4 id="orgb67e23f"><span class="section-number-4">2.6.3.</span> Voies ou quais</h4>
+<div class="outline-text-4" id="text-2-6-3">
+<p>
+Le tableau d'octets suivant :
+</p>
+<pre class="example">
+00 00 00 00 00 01 00 00 00 00 00 01
+</pre>
+<p>
+représente la table des voies ou quai :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-right"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-right" scope="col">Nom</th>
+<th class="org-left" scope="col">Gare parente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-right"><code>1</code></td>
+<td class="org-left">Lausanne</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right"><code>70</code></td>
+<td class="org-left">Lausanne</td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-right"><code>1</code></td>
+<td class="org-left">Palézieux</td>
+</tr>
+</tbody>
+</table>
+<p>
+En effet, les deux premiers octets (<code>00 00</code>) représentent l'entier <code>U16</code> qui vaut 0, qui est l'index de la chaîne <i>1</i> dans la table des chaînes. Les deux octets suivants (<code>00 00</code>) représentent l'entier <code>U16</code> qui vaut aussi 0, qui est l'index de la gare de Lausanne dans la table <i>des gares</i> (!). Et ainsi de suite.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class="outline-2 implementation" id="outline-container-org8f5c98d">
+<div class="outline-text-2" id="text-3">
+<p>
+Les classes de cette étape font toutes partie du sous-paquetage <code>timetable.mapped</code>, dédié aux données horaires « mappées en mémoire ». La signification exacte de ce terme sera expliquée dans une étape ultérieure, lorsque nous examinerons le chargement des données.
+</p>
+</div>
+<div class="outline-3" id="outline-container-orga4398e6">
+<div class="class-section"><a class="class-link" href="classes/class_handout_04.html_3.1._classe_structure.html"><div class="class-section"><a class="class-link" href="classes/class_handout_04.html_structure.html"><div class="class-section"><h3 id="orga4398e6"><span class="section-number-3">3.1.</span> Classe <code>Structure</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-1">
+<p>
+La classe <code>Structure</code> du sous-paquetage <code>timetable.mapped</code> a pour but de faciliter la description de la structure des données aplaties. Ainsi, une fois terminée, cette classe permet d'écrire le code suivant pour décrire les noms alternatifs des gares :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int ALIAS_ID = 0;
+int STATION_NAME_ID = 1;
+
+Structure STRUCTURE = new Structure(
+    field(ALIAS_ID, U16),
+    field(STATION_NAME_ID, U16));
+</pre>
+</div>
+<p>
+qui est très proche de la table donnée à la §<a href="#sec/aliases">2.4</a>, les constantes <code>ALIAS_ID</code> et <code>STATION_NAME_ID</code> contenant les index (colonne <code>I</code>) des différents champs.
+</p>
+<p>
+Une fois cette définition écrite, il est par exemple possible de calculer l'index, dans le tableau d'octets contenant les données aplaties, du premier octet de l'index de chaîne du nom de gare du second nom alternatif d'une table (celui d'index 1), ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int offset = STRUCTURE.offset(STATION_NAME_ID, 1);
+</pre>
+</div>
+<p>
+qui vaut 6.
+</p>
+<p>
+<code>Structure</code> possède un type énuméré imbriqué public nommé <code>FieldType</code> représentant les trois types de champs possibles, à savoir <code>U8</code>, <code>U16</code> et <code>S32</code>.
+</p>
+<p>
+De plus, elle possède un enregistrement imbriqué public nommé <code>Field</code>, qui représente un champ et possède les deux attributs suivants, dans l'ordre :
+</p>
+<dl class="org-dl">
+<dt><code>int index</code></dt><dd>l'index du champ dans la structure (colonne <code>I</code> dans les tables plus haut),</dd>
+<dt><code>FieldType type</code></dt><dd>le type du champ.</dd>
+</dl>
+<p>
+<code>Field</code> possède un constructeur compact qui lève une <code>NullPointerException</code> ssi <code>type</code> est <code>null</code>.
+</p>
+<p>
+<code>Structure</code> possède de plus une méthode publique et statique dont le but est d'alléger un peu la création d'instances de <code>Field</code>, en omettant le <code>new</code>, comme dans l'exemple plus haut :
+</p>
+<dl class="org-dl">
+<dt><code>Field field(int index, FieldType type)</code></dt><dd>qui retourne une instance de <code>Field</code> avec les attributs donnés.</dd>
+</dl>
+<p>
+<code>Structure</code> possède un unique constructeur, qui prend en arguments la description des différents champs de la structure :
+</p>
+<dl class="org-dl">
+<dt><code>Structure(Field... fields)</code></dt><dd>qui retourne une structure dont les champs sont ceux donnés, ou lève une <code>IllegalArgumentException</code> si ces champs ne sont pas donnés dans l'ordre — c.-à-d. si le premier d'entre eux n'est pas celui d'index 0, le second celui d'index 1, etc.</dd>
+<dt><code>int totalSize()</code></dt><dd>qui retourne la taille totale, en octets, de la structure — p. ex. 10 pour celle correspondant aux gares,</dd>
+<dt><code>int offset(int fieldIndex, int elementIndex)</code></dt><dd>qui retourne l'index, dans le tableau d'octets contenant les données aplaties, du premier octet du champ d'index <code>fieldIndex</code> de l'élément d'index <code>elementIndex</code> ; lève <code>IndexOutOfBoundsException</code> si l'index du champ est invalide.</dd>
+</dl>
+</div>
+<div class="outline-4" id="outline-container-orgefde600">
+<h4 id="orgefde600"><span class="section-number-4">3.1.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<p>
+La méthode <code>offset</code> doit être aussi efficace que possible, car elle est utilisée pour accéder à la totalité des attributs des données horaires lors de la recherche de voyages. Dès lors, il faut que les calculs qu'elle doive faire pour déterminer la position qu'elle retourne consistent en une simple multiplication suivie d'une addition.
+</p>
+<p>
+Cela implique que le constructeur de <code>Structure</code> doit calculer, et stocker dans des attributs, d'une part un tableau contenant la position, en octets, du premier octet de chacun des champs dans la structure, et d'autre part la taille totale de la structure, en octets.
+</p>
+<p>
+L'existence du tableau contenant la position du premier octet des différents champs implique que la méthode <code>offset</code> n'a pas besoin de valider explicitement l'argument <code>fieldIndex</code> qu'elle reçoit, car Java lèvera automatiquement la bonne exception si cet index est invalide.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org4119722">
+<div class="class-section"><a class="class-link" href="classes/class_handout_04.html_3.2._classe_structuredbuffer.html"><div class="class-section"><a class="class-link" href="classes/class_handout_04.html_structuredbuffer.html"><div class="class-section"><h3 id="org4119722"><span class="section-number-3">3.2.</span> Classe <code>StructuredBuffer</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-2">
+<p>
+La classe <code>StructuredBuffer</code> du sous-paquetage <code>timetable.mapped</code>, représente un « tableau d'octets structuré ». Son but est d'offrir un accès agréable à des données aplaties stockées dans un tableau d'octets, et dont la structure est décrite par une instance de <code>Structure</code>.
+</p>
+<p>
+Une fois cette classe terminée, il sera possible de l'utiliser par exemple ainsi pour obtenir l'index de chaîne du nom alternatif d'index 1 :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">StructuredBuffer buffer = …;
+int stationNameStringIndex = buffer.getU16(STATION_NAME_ID, 1);
+</pre>
+</div>
+<p>
+Dans l'exemple de la §<a href="#sec/example">2.6</a>, <code>stationNameStringIndex</code> vaudrait 3, car c'est l'index de chaîne <i>Ins</i>.
+</p>
+<p>
+<code>StructuredBuffer</code> possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>StructuredBuffer(Structure structure, ByteBuffer buffer)</code></dt><dd>qui construit un tableau structuré dont les éléments ont la structure donnée, et dont les octets sont stockés dans le « tableau » <code>buffer</code>, ou lève une <code>IllegalArgumentException</code> si le nombre d'octets de ce tableau n'est pas un multiple de la taille totale de la structure.</dd>
+</dl>
+<p>
+La classe <code>ByteBuffer</code>, qui appartient à la bibliothèque Java, est décrite dans les conseils de programmation ci-dessous.
+</p>
+<p>
+En plus de son constructeur, <code>StructuredBuffer</code> offre les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int size()</code></dt><dd>qui retourne le nombre d'éléments que contient le tableau, p. ex. 3 pour les voies/quais de la §<a href="#sec/example">2.6</a>,</dd>
+<dt><code>int getU8(int fieldIndex, int elementIndex)</code></dt><dd>qui retourne l'entier <code>U8</code> correspondant au champ d'index <code>fieldIndex</code> de l'élément d'index <code>elementIndex</code> du tableau, ou lève <code>IndexOutOfBoundsException</code> si l'un des deux index est invalide,</dd>
+<dt><code>int getU16(int fieldIndex, int elementIndex)</code></dt><dd>qui fait la même chose que <code>getU8</code> mais pour un champ de type <code>U16</code>,</dd>
+<dt><code>int getS32(int fieldIndex, int elementIndex)</code></dt><dd>qui fait la même chose que <code>getU8</code> mais pour un champ de type <code>S32</code>.</dd>
+</dl>
+<p>
+N'oubliez pas que les valeurs retournées par <code>getU8</code> et <code>getU16</code> doivent être positives, car les champs de ces deux types sont interprétés de manière non signée. C'est la raison pour laquelle ces méthodes retournent une valeur de type <code>int</code> et pas <code>byte</code> ou <code>short</code>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org34565c9">
+<h4 id="org34565c9"><span class="section-number-4">3.2.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<p>
+La classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/ByteBuffer.html"><code>ByteBuffer</code></a> de la bibliothèque Java représente ce que l'on appelle parfois une <b>mémoire tampon</b> (<i>buffer</i>) en informatique. En bref, il s'agit d'un tableau utilisé pour stocker temporairement certaines données, en général dans le but d'améliorer les performances d'un programme.
+</p>
+<p>
+Cela dit, dans ce projet, nous utiliserons cette classe comme un simple tableau d'octets, donc comme quelque chose de très similaire à une valeur de type <code>byte[]</code>. La raison principale pour laquelle nous l'utilisons à la place d'un véritable tableau de type <code>byte[]</code> est que le « mappage mémoire » n'est possible qu'avec des instances de <code>ByteBuffer</code>. Or comme nous l'avons dit plus haut, nous utiliserons le mappage mémoire pour charger les données horaires simplement et rapidement.
+</p>
+<p>
+<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/ByteBuffer.html"><code>ByteBuffer</code></a> est relativement complexe à comprendre, mais seules quatre de ses méthodes sont utiles à l'écriture de <code>StructuredBuffer</code>. La première est <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/Buffer.html#capacity()"><code>capacity</code></a>, qui donne la taille du tableau, donc le nombre d'octets qu'il contient. Les trois autres sont <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/ByteBuffer.html#get(int)"><code>get</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/ByteBuffer.html#getShort(int)"><code>getShort</code></a> et <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/ByteBuffer.html#getInt(int)"><code>getInt</code></a>, qui permettent respectivement d'obtenir un entier de type <code>byte</code>, <code>short</code> ou <code>int</code> en combinant 1, 2 ou 4 octets consécutifs du tableau. Sans surprise, ces méthodes sont très utiles pour écrire <code>getU8</code>, <code>getU16</code> et <code>getS32</code>. Toutefois, pour <code>getU8</code> et <code>getU16</code>, il ne faut pas oublier que nous désirons interpréter les entiers de manière non signée, et donc qu'un appel à <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Byte.html#toUnsignedInt(byte)"><code>Byte.toUnsignedInt</code></a> ou <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Short.html#toUnsignedInt(short)"><code>Short.toUnsignedInt</code></a> est nécessaire.
+</p>
+<p>
+Notez que les méthodes <code>get</code>, <code>getShort</code> et <code>getInt</code> lèvent toutes les trois une <code>IndexOutOfBoundsException</code> si l'index qu'on leur donne est invalide, ce qui implique qu'aucune validation explicite n'est nécessaire dans les méthodes <code>getU8</code>, <code>getU16</code> et <code>getS32</code>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgebf7e53">
+<div class="class-section"><a class="class-link" href="classes/class_handout_04.html_3.3._classe_bufferedstations.html"><div class="class-section"><a class="class-link" href="classes/class_handout_04.html_bufferedstations.html"><div class="class-section"><h3 id="orgebf7e53"><span class="section-number-3">3.3.</span> Classe <code>BufferedStations</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-3">
+<p>
+La classe <code>BufferedStations</code> du sous-paquetage <code>timetable.mapped</code>, publique et finale, implémente l'interface <code>Stations</code> et permet d'accéder à une table de gares représentée de manière aplatie comme décrit à la §<a href="#sec/stations">2.3</a>. Elle possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>BufferedStations(List&lt;String&gt; stringTable, ByteBuffer buffer)</code></dt><dd>qui construit une instance donnant accès aux données aplaties disponibles dans le tableau <code>buffer</code>, en utilisant la table de chaînes <code>stringTable</code> pour déterminer la valeur des chaînes référencées par ces données.</dd>
+</dl>
+<p>
+Les seules méthodes publiques offertes par cette classe sont les versions concrètes des méthodes abstraites de <code>Stations</code>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orge535bea">
+<h4 id="orge535bea"><span class="section-number-4">3.3.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+Dans la définition de cette classe et des suivantes, il faut absolument définir des constantes nommées pour les index des différents champs, similaires aux constantes <code>ALIAS_ID</code> et <code>STATION_NAME_ID</code> de l'exemple plus haut, afin de rendre le code plus facile à lire.
+</p>
+<p>
+Pour calculer la constante \(\tfrac{360}{2^{32}}\) nécessaire à la conversion d'unités des longitudes et latitudes, utilisez la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StrictMath.html#scalb(double,int)"><code>scalb</code></a> qui permet de multiplier une valeur quelconque par une puissance de 2 entière (et éventuellement négative), de manière à la fois efficace et précise. On peut la voir comme une version des opérateurs de décalage (<code>&lt;&lt;</code> et <code>&gt;&gt;</code>) mais qui fonctionne avec des valeurs en virgule flottante de type <code>double</code>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org51173e7">
+<div class="class-section"><a class="class-link" href="classes/class_handout_04.html_3.4._classe_bufferedstationaliases.html"><div class="class-section"><a class="class-link" href="classes/class_handout_04.html_bufferedstationaliases.html"><div class="class-section"><h3 id="org51173e7"><span class="section-number-3">3.4.</span> Classe <code>BufferedStationAliases</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-4">
+<p>
+La classe <code>BufferedStationAliasess</code> du sous-paquetage <code>timetable.mapped</code>, publique et finale, implémente l'interface <code>StationAliases</code> et permet d'accéder à une table de noms alternatifs de gares représentée de manière aplatie comme décrit à la §<a href="#sec/aliases">2.4</a>. Elle possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>BufferedStationAliases(List&lt;String&gt; stringTable, ByteBuffer buffer)</code></dt><dd>qui construit une instance donnant accès aux données aplaties disponibles dans le tableau <code>buffer</code>, en utilisant la table de chaînes <code>stringTable</code> pour déterminer la valeur des chaînes référencées par ces données.</dd>
+</dl>
+<p>
+Les seules méthodes publiques offertes par cette classe sont les versions concrètes des méthodes abstraites de <code>StationAliases</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org22be41d">
+<div class="class-section"><a class="class-link" href="classes/class_handout_04.html_3.5._classe_bufferedplatforms.html"><div class="class-section"><a class="class-link" href="classes/class_handout_04.html_bufferedplatforms.html"><div class="class-section"><h3 id="org22be41d"><span class="section-number-3">3.5.</span> Classe <code>BufferedPlatforms</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-5">
+<p>
+La classe <code>BufferedPlatforms</code> du sous-paquetage <code>timetable.mapped</code>, publique et finale, implémente l'interface <code>Platforms</code> et permet d'accéder à une table de voies ou quais représentée de manière aplatie comme décrit à la §<a href="#sec/platforms">2.5</a>. Elle possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>BufferedPlatforms(List&lt;String&gt; stringTable, ByteBuffer buffer)</code></dt><dd>qui construit une instance donnant accès aux données aplaties disponibles dans le tableau <code>buffer</code>, en utilisant la table de chaînes <code>stringTable</code> pour déterminer la valeur des chaînes référencées par ces données.</dd>
+</dl>
+<p>
+Les seules méthodes publiques offertes par cette classe sont les versions concrètes des méthodes abstraites de <code>Platforms</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org5b54c92">
+<h3 id="org5b54c92"><span class="section-number-3">3.6.</span> Tests</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+Comme d'habitude, nous ne vous fournissons plus de tests mais <a href="f/SignatureChecks_4.java">un fichier de vérification de signatures</a> à importer dans votre projet.
+</p>
+<p>
+Pour écrire vos tests, vous pouvez entre autres vous aider des valeurs d'exemple données à la §<a href="#sec/example">2.6</a>. Grâce à la classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/HexFormat.html"><code>HexFormat</code></a> de la bibliothèque Java, il est très simple d'obtenir le tableau d'octets correspondant à une chaîne ayant le même format que celui de cette section. Par exemple, pour obtenir le tableau d'octets des noms alternatifs, on peut procéder ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">HexFormat hexFormat = HexFormat.ofDelimiter(" ");
+byte[] bytes = hexFormat.parseHex("00 05 00 04 00 02 00 03");
+</pre>
+</div>
+<p>
+Une fois ce tableau obtenu, la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/ByteBuffer.html#wrap(byte%5B%5D)"><code>wrap</code></a> de <code>ByteBuffer</code> permet d'obtenir une valeur de type <code>ByteBuffer</code> qui peut directement être passée au constructeur de <code>BufferedStationAliases</code>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgade374e">
+<div class="outline-text-2" id="text-4">
+<p>
+Pour cette étape, vous devez :
+</p>
+<ul class="org-ul">
+<li>écrire les classes <code>Structure</code>, <code>StructuredBuffer</code>, <code>BufferedStations</code>, <code>BufferedStationAliases</code> et <code>BufferedPlatforms</code> selon les indications données plus haut,</li>
+<li>tester votre code,</li>
+<li>documenter la totalité des entités publiques que vous avez définies,</li>
+<li>rendre votre code au plus tard le <b>14 mars 2025 à 18h00</b>, au moyen du programme <code>Submit.java</code> fourni et des jetons disponibles sur votre <a href="https://cs108.epfl.ch/my/">page privée</a>.</li>
+</ul>
+<p>
+Ce rendu est un rendu testé, auquel 20 points sont attribués, au prorata des tests unitaires passés avec succès.
+</p>
+<div class="cs108warning" id="org654c69b">
+<p>
+N'attendez surtout pas le dernier moment pour effectuer votre rendu, car vous n'êtes pas à l'abri d'imprévus.
+</p>
+<p>
+Si vous manquez la date limite de rendu, vous avez encore la possibilité de faire un rendu tardif au moyen des jetons prévus à cet effet, et ce durant les 2 heures qui suivent, mais il vous en coûtera une pénalité <b>inconditionnelle</b> de 2 points.
+</p>
+</div>
+</div>
+</div>
+</div>
+<script>
+                window.addEventListener('load', function() {
+                    document.querySelectorAll('.section-header').forEach(header => {
+                        header.addEventListener('click', function() {
+                            this.classList.toggle('collapsed');
+                            const content = this.nextElementSibling;
+                            content.classList.toggle('expanded');
+                        });
+                    });
+                });
+            </script></body>
+</html>

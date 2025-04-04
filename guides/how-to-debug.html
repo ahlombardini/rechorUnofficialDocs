@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- 2025-03-13 Jeu 08:51 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Déboguer son projet</title>
+<meta name="author" content="Michel Schinz" />
+<meta name="generator" content="Org Mode" />
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="../a/cs108.css" type="text/css"><link rel="stylesheet" href="../a/highlight/styles/github.min.css" type="text/css">
+<script src="../a/highlight/highlight.min.js"></script>
+<script>
+function orgHighlight() {
+  document
+    .querySelectorAll('pre.src, .implementation dt>code')
+    .forEach((el) => { hljs.highlightElement(el); });
+}
+addEventListener('DOMContentLoaded', orgHighlight, false);
+addEventListener('load', orgHighlight, false);
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<header>
+<h1 class="title">Déboguer son projet</h1>
+<p class="subtitle" role="doc-subtitle">CS-108</p>
+</header>
+<div id="outline-container-org8479b96" class="outline-2">
+<h2 id="org8479b96"><span class="section-number-2">1.</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Lors du développement d'un programme, il est fréquent de constater que celui-ci contient une ou plusieurs erreurs qui provoquent un comportement incorrect et que l'on nomme <b>bogue(s)</b> en informatique (<i>bug(s)</i> en anglais). Ces bogues doivent être identifiés puis supprimés en <b>déboguant</b> (<i>debug</i>) le programme. Ce guide décrit une procédure permettant de faire cela de manière systématique et efficace.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org058ef14" class="outline-2">
+<h2 id="org058ef14"><span class="section-number-2">2.</span> Procédure</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Lorsqu'on constate un problème à l'exécution d'un programme, il peut être tentant d'essayer de le faire disparaître rapidement, par exemple en masquant ses symptômes, ou en modifiant le code de manière plus ou moins arbitraire. Une telle approche est toutefois à proscrire absolument, car elle est à la fois inefficace et dangereuse, et mène généralement à l'introduction d'autres erreurs dans le programme.
+</p>
+
+<p>
+Au lieu de cela, nous vous suggérons de suivre la procédure suivante :
+</p>
+
+<ol class="org-ol">
+<li><a href="#sec/reproduce"><b>reproduisez</b></a> systématiquement le problème,</li>
+<li><a href="#sec/simplify"><b>simplifiez</b></a>, au besoin, la reproduction du problème,</li>
+<li><a href="#sec/understand"><b>comprenez</b></a> la cause du problème,</li>
+<li><a href="#sec/fix"><b>corrigez</b></a> la cause du problème.</li>
+</ol>
+
+<p>
+Les différentes étapes de cette procédure sont décrites dans les sections suivantes.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec/reproduce" class="outline-2">
+<h2 id="sec/reproduce"><span class="section-number-2">3.</span> Reproduire</h2>
+<div class="outline-text-2" id="text-sec/reproduce">
+<p>
+Pour pouvoir corriger la cause d'un problème, la première chose à faire est de s'assurer que ce dernier peut être reproduit systématiquement.
+</p>
+
+<p>
+Si le problème a été constaté au moyen d'un test unitaire qui échoue, et que ce test échoue à chaque exécution, le test en question constitue une manière de reproduire le problème, et il n'y a rien d'autre à faire.
+</p>
+
+<p>
+Si le problème a été constaté lors d'une utilisation interactive du programme, il faut essayer de retrouver la séquence exacte d'opérations à effectuer pour le provoquer. Une fois cela fait, il peut être utile d'essayer d'écrire un test unitaire le provoquant, car un tel test est plus simple à exécuter qu'une suite d'opérations manuelles. Cela n'est toutefois pas toujours facile.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec/simplify" class="outline-2">
+<h2 id="sec/simplify"><span class="section-number-2">4.</span> Simplifier</h2>
+<div class="outline-text-2" id="text-sec/simplify">
+<p>
+Il arrive que la procédure permettant de reproduire le problème soit relativement complexe. Par exemple, le test unitaire qui échoue peut être long ou difficile à comprendre, ou le nombre d'étapes nécessaires à la reproduction du problème lors d'une utilisation interactive peut être important. Dans un tel cas, il vaut la peine d'essayer de réduire la complexité de la procédure de reproduction du problème, pour deux raisons principales :
+</p>
+
+<ol class="org-ol">
+<li>cela permet de reproduire le problème plus rapidement &#x2014; ce qui est particulièrement important lorsque la reproduction n'est pas automatique,</li>
+
+<li>cela peut diminuer la quantité de code exécutée pour reproduire le problème, et donc réduire la taille de la portion du programme à examiner pour trouver sa cause.</li>
+</ol>
+
+<p>
+De plus, le processus de simplification en lui-même peut donner des indications intéressantes quant au problème, qui peuvent aider à le comprendre. Par exemple, lors de la simplification, il arrive de constater que le problème ne se produit que dans une situation bien particulière, et cela peut donner une indication quant à sa cause.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec/understand" class="outline-2">
+<h2 id="sec/understand"><span class="section-number-2">5.</span> Comprendre</h2>
+<div class="outline-text-2" id="text-sec/understand">
+<p>
+Lorsqu'on est capable de reproduire systématiquement le problème au moyen d'une procédure aussi simple que possible, il est temps de le comprendre. Cette phase est généralement la plus complexe et nécessite l'utilisation de différentes stratégies, décrites dans les sections suivantes.
+</p>
+</div>
+
+<div id="outline-container-orgbe237c3" class="outline-3">
+<h3 id="orgbe237c3"><span class="section-number-3">5.1.</span> Lire les messages d'erreur</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+Un problème se manifeste souvent par un plantage du programme qui, en Java, est généralement dû à une exception non traitée par le programme. Le message affiché lors du plantage montre :
+</p>
+
+<ul class="org-ul">
+<li>le type de l'exception levée ainsi que l'éventuel message qui lui est attaché,</li>
+<li>la <b>pile des appels</b> de méthodes (<i>[call] stack trace</i>) qui étaient en cours lorsque l'exception a été levée.</li>
+</ul>
+
+<p>
+Ces messages constituent une source d'information cruciale. Il est donc très important de savoir comment les lire, et de passer le temps nécessaire à les comprendre avant de continuer.
+</p>
+
+<p>
+Le programme d'exemple ci-dessous permet d'illustrer le contenu d'un message d'exception.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-java"><span class="linenr"> 1: </span>package cs108;
+<span class="linenr"> 2: </span>
+<span class="linenr"> 3: </span>public final class Main {
+<span class="linenr"> 4: </span>  static double circleArea(double radius) {
+<span class="linenr"> 5: </span>    if (radius &lt; 0)
+<span class="linenr"> 6: </span>      throw new IllegalArgumentException("radius &lt; 0");
+<span class="linenr"> 7: </span>    return Math.PI * radius * radius;
+<span class="linenr"> 8: </span>  }
+<span class="linenr"> 9: </span>
+<span class="linenr">10: </span>  static void printCircleArea(double radius) {
+<span class="linenr">11: </span>    System.out.println("Rayon : " + radius);
+<span class="linenr">12: </span>    System.out.println(" Aire : " + circleArea(radius));
+<span class="linenr">13: </span>  }
+<span class="linenr">14: </span>
+<span class="linenr">15: </span>  public static void main(String[] args) {
+<span class="linenr">16: </span>    printCircleArea(-2);
+<span class="linenr">17: </span>  }
+<span class="linenr">18: </span>}
+</pre>
+</div>
+
+<p>
+Lorsqu'on l'exécute, il plante et affiche alors le message suivant :
+</p>
+
+<p>
+<textarea cols="80" rows="4">
+Exception in thread "main" java.lang.IllegalArgumentException: radius < 0
+      at cs108.Main.circleArea(Main.java:6)
+      at cs108.Main.printCircleArea(Main.java:12)
+      at cs108.Main.main(Main.java:16)</textarea>
+</p>
+
+<p>
+La première ligne de ce message, qui commence par <i>Exception in thread […]</i> indique qu'une exception a été levée mais n'a pas été traitée par le programme. Le type de l'exception (ici <code>IllegalArgumentException</code>) est donné, de même que l'éventuel message associé à l'exception (ici <i>radius &lt; 0</i>). Ce dernier comporte souvent des informations importantes, et doit donc être lu avec soin.
+</p>
+
+<p>
+La pile d'appel, qui débute à la seconde ligne, se lit de haut en bas. La première ligne qui commence par « <i>at</i> » indique le nom de la méthode qui a levé l'exception (ici <code>circleArea</code>) et la position du code l'ayant levé (ici la ligne 6 du fichier <code>Main.java</code>). Dans IntelliJ, un simple clic sur la position permet d'afficher le code correspondant dans l'éditeur.
+</p>
+
+<p>
+Les lignes suivantes de la pile d'appel &#x2014; qui commencent toutes par « <i>at</i> » &#x2014; indiquent les méthodes ayant appelé celle qui a levé l'exception. Ici on  constate que la méthode <code>circleArea</code> ayant levé l'exception a été appelée par <code>printCircleArea</code>, elle-même appelée par la méthode principale du programme (<code>main</code>). La dernière ligne d'une pile d'appel est donc généralement la méthode principale du programme.
+</p>
+
+<p>
+Il faut noter qu'en Java, les exceptions peuvent être « chaînées », c.-à-d. qu'une exception peut en référencer une autre comme étant sa cause. Ce chaînage influence le message affiché lors du plantage du programme, et il est donc important de le comprendre.
+</p>
+
+<p>
+Le programme ci-dessous est une variante du précédent dans laquelle la méthode <code>printCircleArea</code> a été modifiée afin d'attraper l'éventuelle exception de type <code>IllegalArgumentException</code> levée par <code>circleArea</code>. Lorsqu'une telle exception est levée, <code>printCircleArea</code> l'attrape puis lève une autre exception de type <code>Error</code>, à laquelle l'exception attrapée, nommée <code>e</code>, est passée comme cause.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-java"><span class="linenr"> 1: </span>package cs108;
+<span class="linenr"> 2: </span>
+<span class="linenr"> 3: </span>public final class Main2 {
+<span class="linenr"> 4: </span>  static double circleArea(double radius) {
+<span class="linenr"> 5: </span>    if (radius &lt; 0)
+<span class="linenr"> 6: </span>      throw new IllegalArgumentException("radius &lt; 0");
+<span class="linenr"> 7: </span>    return Math.PI * radius * radius;
+<span class="linenr"> 8: </span>  }
+<span class="linenr"> 9: </span>
+<span class="linenr">10: </span>  static void printCircleArea(double radius) {
+<span class="linenr">11: </span>    try {
+<span class="linenr">12: </span>      System.out.println("Rayon : " + radius);
+<span class="linenr">13: </span>      System.out.println(" Aire : " + circleArea(radius));
+<span class="linenr">14: </span>    } catch (IllegalArgumentException e) {
+<span class="linenr">15: </span>      throw new Error(e);
+<span class="linenr">16: </span>    }
+<span class="linenr">17: </span>  }
+<span class="linenr">18: </span>
+<span class="linenr">19: </span>  public static void main(String[] args) {
+<span class="linenr">20: </span>    printCircleArea(-2);
+<span class="linenr">21: </span>  }
+<span class="linenr">22: </span>}
+</pre>
+</div>
+
+<p>
+Lorsque ce programme est exécuté, le message d'erreur affiché est le suivant :
+</p>
+
+<p>
+<textarea cols="80" rows="8">
+Exception in thread "main" java.lang.Error: java.lang.IllegalArgumentException: radius < 0
+      at cs108.Main2.printCircleArea(Main2.java:15)
+      at cs108.Main2.main(Main2.java:20)
+Caused by: java.lang.IllegalArgumentException: radius < 0
+      at cs108.Main2.circleArea(Main2.java:6)
+      at cs108.Main2.printCircleArea(Main2.java:13)
+      ... 1 more</textarea>
+</p>
+
+<p>
+Comme on le voit, la trace de l'exception originale levée par <code>printCircleArea</code> est affichée <i>après</i> celle de l'exception qui a provoqué le plantage du programme. C'est souvent l'exception originale qui permet de comprendre le problème, et il est donc utile de commencer la lecture d'un message d'erreur provoqué par une exception à la <i>dernière</i> ligne commençant par <i>Caused by</i> &#x2014; en prenant garde au fait qu'il peut y en avoir plusieurs.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb2f450f" class="outline-3">
+<h3 id="orgb2f450f"><span class="section-number-3">5.2.</span> Lire la documentation</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+Lorsque le problème se manifeste sous la forme d'une exception, et que celle-ci est levée par une méthode d'une bibliothèque écrite par une tierce partie &#x2014; p. ex. la bibliothèque Java &#x2014; il est important de (re)lire la documentation de cette méthode. Cela permet de s'assurer que l'on a bien compris le fonctionnement de la méthode, et ses éventuelles préconditions &#x2014; c.-à-d. les exigences qu'elle impose sur ses arguments. En général, les situations dans lesquelles les différents types d'exceptions sont levées par une méthode sont décrites dans cette documentation.
+</p>
+
+<p>
+IntelliJ permet de consulter la documentation d'une méthode en plaçant le curseur sur son nom puis en exécutant la commande <i>Quick documentation</i> &#x2014; CTRL-Q sur Windows/Linux, F1 sur macOS.
+</p>
+
+<p>
+Si la documentation est incomplète ou peu claire, le type de l'exception peut également donner une indication quant à la raison de sa levée. Les exceptions fréquemment utilisées par les méthodes de la bibliothèque Java sont :
+</p>
+
+<ul class="org-ul">
+<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html"><code>IllegalArgumentException</code></a>, qui signale qu'un argument passé à la méthode a une valeur incorrecte,</li>
+<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IndexOutOfBoundsException.html"><code>IndexOutOfBoundsException</code></a>, qui signale qu'un index passé à la méthode est hors des bornes,</li>
+<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html"><code>NullPointerException</code></a>, qui signale qu'une valeur <code>null</code> inattendue a été rencontrée &#x2014; p. ex. car elle a été passée en argument,</li>
+<li><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html"><code>UnsupportedOperationException</code></a>, qui signale que l'opération demandée (la méthode appelée) n'est pas disponible sur l'objet auquel on l'applique &#x2014; p. ex. car on essaie de modifier une collection immuable.</li>
+</ul>
+
+<p>
+Bien entendu, en plus du type de l'exception, le message qui lui est éventuellement attaché peut être d'une grande aide, et il faut donc toujours le lire attentivement.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf59eed4" class="outline-3">
+<h3 id="orgf59eed4"><span class="section-number-3">5.3.</span> Identifier la cause première</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+Souvent, l'erreur qui est observée n'est qu'un symptôme de la <b>cause première</b> (<i>root cause</i>) du problème, qui se trouve à un autre endroit du programme et qu'il faut identifier.
+</p>
+
+<p>
+Ainsi, dans le programme d'exemple plus haut, l'erreur ne se trouve pas dans la méthode qui a levé l'exception (<code>circleArea</code>), ni d'ailleurs dans la méthode qui l'a appelée (<code>printCircleArea</code>) mais bien dans la méthode principale du programme, qui passe un rayon invalide &#x2014; car négatif &#x2014; à <code>printCircleArea</code>.
+</p>
+
+<p>
+De manière générale, lorsqu'une erreur se produit dans un programme, cela est dû au fait qu'une ou plusieurs valeurs qu'il manipule sont incorrectes. Par exemple, un nombre qui ne devrait pas être négatif mais qui l'est, une référence qui ne devrait pas être nulle mais qui l'est, etc. Pour trouver la cause première du problème, il faut donc comprendre pourquoi ces valeurs sont incorrectes, ce qui peut se faire en « remontant » dans le programme pour comprendre comment les valeurs incorrectes ont été créées.
+</p>
+
+<p>
+Par exemple, si un nombre qui ne devrait pas être négatif dans une méthode lui a été passé en argument, il convient d'examiner le code de l'appelant, afin de voir comment lui a calculé la valeur. Si le code du calcul semble correct, cela signifie qu'une des valeur utilisées dans le calcul est incorrecte. Il faut donc commencer par identifier laquelle (ou lesquelles) de ces valeurs sont incorrectes, puis continuer la procédure pour comprendre pourquoi elles le sont.
+</p>
+
+<p>
+Lors de ce processus, il est important de collecter de l'information au sujet des valeurs manipulées par le programme, par exemple en les imprimant à l'écran. En Java, cela peut se faire facilement au moyen d'appels à la méthode <code>println</code> de <code>System.out</code>.
+</p>
+
+<p>
+IntelliJ offre plusieurs « patrons dynamiques » (<i>live templates</i>) facilitant l'insertion de tels appels à <code>println</code> dans un programme. Le plus important d'entre eux se nomme <code>soutv</code> et permet d'insérer un appel à <code>println</code> affichant non seulement la valeur d'une expression quelconque, mais aussi la représentation textuelle de cette expression. Pour entrer ce patron, il suffit de taper <code>soutv</code> (sans oublier le <code>v</code> à la fin) dans le corps d'une méthode, puis d'appuyer sur la touche entrée (⮐) et enfin d'écrire l'expression à afficher. D'autres patrons similaires peuvent également être utiles, entre autres :
+</p>
+
+<ul class="org-ul">
+<li><code>soutp</code>, qui insère un appel à <code>println</code> affichant les noms et les valeurs des arguments passés à la méthode courante,</li>
+<li><code>soutm</code>, qui insère un appel à <code>println</code> affichant le nom de la classe et de la méthode courante.</li>
+</ul>
+
+<p>
+L'utilisation de ces patrons permet de gagner beaucoup de temps.
+</p>
+
+<p>
+L'affichage des valeurs manipulées par le programme permet souvent d'identifier lesquelles sont erronées. Parfois, il peut néanmoins être utile d'examiner le fonctionnement du programme en plus de détails, au moyen d'un <b>débogueur</b> (<i>debugger</i>) &#x2014; un programme qui permet d'exécuter un programme pas à pas, d'examiner les valeurs qu'il manipule, d'arrêter l'exécution sous certaines conditions, etc. IntelliJ inclut un tel débogueur, mais la description de son utilisation sort du cadre de ce document ; les personnes intéressées se rapporteront donc à <a href="https://www.jetbrains.com/help/idea/debugging-code.html">sa documentation</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf9f7904" class="outline-3">
+<h3 id="orgf9f7904"><span class="section-number-3">5.4.</span> Relire, simplifier et nettoyer le code</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+Rechercher la cause d'un problème implique de relire le code qui pourrait la contenir. Cette relecture doit être faite de manière très attentive, en remettant en cause chaque partie du code. Il peut être utile de l'effectuer à deux, une personne expliquant et justifiant chaque ligne à l'autre, dont le rôle est de mettre en doute ces explications.
+</p>
+
+<p>
+Lors de la relecture, il n'est pas rare de constater que certaines parties du code ne sont pas aussi claires ou bien écrites qu'elles pourraient l'être. Dans ce cas, il peut valoir la peine de nettoyer et clarifier le code, par exemple en donnant de meilleurs noms aux variables, simplifiant certains algorithmes, introduisant des méthodes auxiliaires, et ainsi de suite. Cela peut rendre visible la cause du problème, voire même la faire disparaître.
+</p>
+
+<p>
+Bien entendu, il faut prendre garde à ne pas introduire de nouvelles erreurs lors de ce processus.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org78c721d" class="outline-3">
+<h3 id="org78c721d"><span class="section-number-3">5.5.</span> Autres stratégies</h3>
+<div class="outline-text-3" id="text-5-5">
+<p>
+Si les stratégies ci-dessus ne permettent pas de comprendre la cause du problème, il peut valoir la peine d'essayer d'utiliser les techniques suivantes :
+</p>
+
+<dl class="org-dl">
+<dt>Faire un dessin</dt><dd>De nombreux algorithmes peuvent très bien être représentés par un dessin, de même que l'organisation en mémoire d'un certain nombre d'objets liés entre eux, et ces représentations graphiques sont souvent extrêmement utiles lors de la recherche d'un problème.</dd>
+
+<dt>Expliquer le problème</dt><dd>Lorsqu'un problème est difficile à comprendre, il peut être utile d'essayer de l'expliquer à quelqu'un d'autre, de manière aussi détaillée que possible, car il n'est pas rare qu'en faisant cela, on en comprenne la cause. Cette technique s'appelle la <a href="https://fr.wikipedia.org/wiki/M%C3%A9thode_du_canard_en_plastique">méthode du canard en plastique</a> (<a href="https://en.wikipedia.org/wiki/Rubber_duck_debugging"><i>rubber duck debugging</i></a>) car elle fonctionne même si la « personne » à laquelle on explique le problème est un simple canard en plastique &#x2014; ou n'importe quelle autre créature inanimée.</dd>
+
+<dt>Passer à autre chose</dt><dd>Il arrive que même après avoir passé un temps considérable à la recherche de la cause d'un problème, celle-ci reste introuvable. Dans ce cas, il est souvent préférable d'abandonner temporairement la recherche plutôt que de persévérer. Le subconscient continue à travailler, et il n'est pas rare que la solution finisse par apparaître comme par magie, à un moment où on a cessé d'y penser consciemment.</dd>
+</dl>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec/fix" class="outline-2">
+<h2 id="sec/fix"><span class="section-number-2">6.</span> Corriger</h2>
+<div class="outline-text-2" id="text-sec/fix">
+<p>
+Une fois que le problème a été compris, il faut corriger l'erreur qui l'a provoqué.
+</p>
+
+<p>
+Avant de faire cela, et dans la mesure du possible, il peut être utile d'écrire un test unitaire provoquant le problème &#x2014; si celui-ci n'existe pas déjà. Un tel test, qui doit initialement échouer, permet d'une part de s'assurer que le problème a bien été compris, et d'autre part que le problème a bien disparu une fois que l'on pense avoir corrigé sa cause. Finalement, en relançant périodiquement ce test, on peut s'assurer que le problème n'a pas été réintroduit lors de modifications ultérieures.
+</p>
+
+<p>
+Après avoir corrigé une erreur, il est également important de relancer tous les tests unitaires à disposition, afin de s'assurer qu'un nouveau problème détecté par l'un de ces tests n'a pas été introduit.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org55355a6" class="outline-2">
+<h2 id="org55355a6"><span class="section-number-2">7.</span> Références</h2>
+<div class="outline-text-2" id="text-7">
+<ul class="org-ul">
+<li><a href="https://wizardzines.com/zines/debugging-guide/"><i>The Pocket Guide to Debugging</i></a> de Julia Evans.</li>
+<li><i>Debugging</i> de David Agans.</li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>

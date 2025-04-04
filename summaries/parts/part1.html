@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 1 - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .class-card .card-title {
+            margin: 0;
+        }
+
+        .class-card, .concept-card {
+            min-height: 100px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .concept-card {
+            margin-bottom: 1rem;
+        }
+
+        .concept-card:hover, .class-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .concept-content {
+            font-size: 0.95em;
+            color: var(--text-color);
+            overflow: auto;
+            max-height: 300px;
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 0.5rem 0;
+        }
+
+        .concept-content ol, .concept-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+            list-style: none;
+            padding: 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+
+        .concepts-section {
+            margin: 2rem 0;
+        }
+
+        .concepts-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .class-card a {
+            text-decoration: none;
+        }
+
+        .introduction {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin: 1rem 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h2>Étape 1 - Mise en place</h2>
+<p class="subtitle">ReCHor – étape 1</p>
+            <div class="introduction">
+                <div class="outline-text-2" id="text-1">
+<p>
+Le but de cette première étape est d'écrire des classes et interfaces représentant quelques concepts importants du projet — les arrêts de transport public, les voyages (relations), etc. — ainsi que le code permettant de les représenter sous forme textuelle.
+</p>
+<p>
+Comme toutes les descriptions d'étapes, celle-ci commence par une introduction aux concepts nécessaires à sa réalisation (§<a href="#sec/concepts">2</a>), suivie d'une présentation de leur mise en œuvre en Java (§<a href="#sec/implementation">3</a>).
+</p>
+<p>
+Si vous travaillez en groupe, vous êtes toutefois priés de lire, avant de continuer, les guides <a href="../g/group-work.html"><i>Travailler en groupe</i></a> et <a href="../g/sync.html"><i>Synchroniser son travail</i></a>, qui vous aideront à bien vous organiser.
+</p>
+</div>
+            </div>
+        
+                <div class="concepts-section">
+                    <h3>Concepts clés</h3>
+                    <div class="concept-grid">
+            
+        <div class="concept-card">
+            <h3 class="card-title">Arrêt</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-1">
+<p>
+Un <b>arrêt</b> (<i>stop</i> en anglais) est un endroit où un véhicule de transport public peut s'arrêter afin de laisser monter et/ou descendre des passagers. Dans ce projet, nous en distinguerons deux types :
+</p>
+<ol class="org-ol">
+<li>les <b>gares</b> (<i>stations</i>), qui correspondent soit à ce que l'on entend effectivement par « gare » dans le langage courant, comme la gare de Lausanne, soit à des arrêts assez petits pour que la distinction entre les différentes voies/quais ne soit pas jugée nécessaire,</li>
+<li>les <b>voies</b> ou <b>quais</b> (<i>platforms</i>), qui correspondent aux différentes voies ou quais d'une gare ferroviaire ou routière.</li>
+</ol>
+<p>
+Les arrêts possèdent un nom (p.ex. <i>Lausanne</i>) et une position géographique, donnée par un couple longitude/latitude (p.ex. <a href="https://www.openstreetmap.org/?mlat=46.516789&amp;mlon=6.629092#map=19/46.516789/6.629092">6.62909°, 46.51679°</a>). Les voies ou quais possèdent de plus un nom de voie (ou de quai). En Suisse, ce nom est généralement — mais pas toujours — un nombre pour les voies ferroviaires, éventuellement accompagné d'une désignation de secteur (1, 3BC, etc.) et une lettre pour les quais de gare routière (A, B, etc.).
+</p>
+<p>
+Il n'est pas forcément évident de décider ce qui constitue un arrêt, et des choix qui peuvent sembler surprenants ont parfois été faits en Suisse.
+</p>
+<p>
+Par exemple, dans les données d'horaires officielles que nous utiliserons, l'arrêt du métro m1 à l'EPFL est représenté par un unique arrêt — une gare —, malgré le fait qu'il y ait deux voies.
+</p>
+<p>
+À l'inverse, de nombreux arrêts existent pour la gare de Lausanne. Non seulement l'arrêt nommé <i>Lausanne</i>, qui correspond à la gare elle-même, ainsi que des arrêts correspondants aux différentes voies ferroviaires (1, 3 à 8 et 70), mais aussi l'arrêt de bus nommé <i>Lausanne, gare</i>, qui n'est représenté que par un seul arrêt alors que les différents bus s'arrêtent à plusieurs endroits assez distants les uns des autres.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Ligne</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-2">
+<p>
+Un véhicule de transport public se déplace toujours en suivant une <b>ligne</b> (<i>route</i>), p. ex. la ligne de métro m1, ou alors <a href="https://network.sbb.ch/fr/ligne/IR15">la ligne IR 15 des CFF</a> qui relie <i>Genève-Aéroport</i> à <i>Lucerne</i> en desservant une dizaine d'arrêts intermédiaires entre les deux.
+</p>
+<p>
+Le sens dans lequel un véhicule se déplace sur une ligne est généralement indiqué par sa destination finale — <i>Genève-Aéroport</i> ou <i>Lucerne</i> dans le cas de la ligne IR 15.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Voyage</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-sec/journey">
+<p>
+Nous nommerons <b>voyage</b> (<i>journey</i>) un déplacement entre deux arrêts de transports publics. Un voyage est ce que nous avons appelé une relation dans <a href="00.html">l'introduction au projet</a>, terme que nous n'utiliserons plus par la suite.
+</p>
+<p>
+Un voyage est constitué d'une ou plusieurs <b>étapes</b> (<i>legs</i>), chacune d'entre elles partant d'un arrêt de départ à un instant donné et arrivant à un arrêt d'arrivée à un instant ultérieur. Il existe deux types différents d'étapes :
+</p>
+<ol class="org-ol">
+<li>celles effectuées à pied, soit entre deux arrêts voisins ou alors au sein d'un même arrêt lors d'un changement,</li>
+<li>celles effectuées en transport public — train, bus, métro, etc.</li>
+</ol>
+<p>
+Les étapes effectuées en transport public peuvent éventuellement comporter des arrêts intermédiaires entre l'arrêt de départ de l'étape et celui d'arrivée. De plus, elles sont toujours effectuées à bord d'un unique véhicule qui suit une ligne donnée, dans une direction donnée.
+</p>
+<p>
+Un voyage est valide si et seulement si ses étapes satisfont les conditions suivantes :
+</p>
+<ol class="org-ol">
+<li>l'instant de départ d'une étape ne précède pas l'instant d'arrivée de l'étape précédente, s'il y en a une,</li>
+<li>l'arrêt de départ d'une étape est identique à l'arrêt d'arrivée de l'étape précédente, s'il y en a une,</li>
+<li>les étapes à pied alternent avec les étapes en transport public.</li>
+</ol>
+<p>
+Un exemple de voyage valide pourrait être celui présenté dans l'introduction au projet qui va de l'arrêt <i>Ecublens VD, EPFL</i> (départ à 16h13 le 18 février 2025) à l'arrêt <i>Gruyères</i> (arrivée à 17h57). Il est constitué de neuf étapes, les cinq premières étant :
+</p>
+<ol class="org-ol">
+<li>de <i>Ecublens VD, EPFL</i> (dép. à 16h13) à <i>Renens VD, gare</i> (arr. à 16h19), avec le métro de la ligne m1 en direction de <i>Renens VD, gare</i>,</li>
+<li>de <i>Renens VD, gare</i> (dép. à 16h19) à <i>Renens VD</i>, voie 4 (arr. à 16h22), à pied (trajet entre deux arrêts voisins),</li>
+<li>de <i>Renens VD</i>, voie 4 (dép. à 16h26) à <i>Lausanne</i>, voie 5 (arr. à 16h33) avec le train de la ligne R 4 en direction de <i>Bex</i>,</li>
+<li>de <i>Lausanne</i>, voie 5 (dép. à 16h33) à <i>Lausanne</i>, voie 1 (arr. à 16h38), à pied (changement au sein de la même gare),</li>
+<li>de <i>Lausanne</i>, voie 1 (dép. à 16h40) à <i>Romont FR</i>, voie 2 (arr. à 17h13) avec le train de la ligne IR 15 en direction de <i>Luzern</i> (Lucerne).</li>
+</ol>
+<p>
+Il va sans dire que les voyages jouent un rôle central dans ce projet, dont le but principal est de calculer l'ensemble des voyages permettant de relier de manière optimale deux arrêts, à une date et une heure donnée.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Représentation textuelle</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-sec/text-repr">
+<p>
+Plusieurs des concepts décrits ci-dessus, par exemple les étapes d'un voyage, doivent pouvoir être représentés sous forme de texte afin d'être affichés à l'écran ou alors inclus dans un événement de calendrier. Les sections qui suivent décrivent la manière dont nous représenterons textuellement ces concepts — et d'autres — dans ce projet.
+</p>
+</div></div>
+        </div>
+    
+                    </div>
+                </div>
+            
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+        
+        <div class="class-card">
+            <a href="classes/Preconditions.html">
+                <h3 class="card-title">Preconditions</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.3. Classe Preconditions</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/s Java.html">
+                <h3 class="card-title">s Java</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.5. Enregistrements Java</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Stop.html">
+                <h3 class="card-title">Stop</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.6. Enregistrement Stop</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Journey.html">
+                <h3 class="card-title">Journey</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.7. Enregistrement Journey</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Journey.Leg.html">
+                <h3 class="card-title">Journey.Leg</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.8. Interface Journey.Leg</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Journey.Leg.IntermediateStop.html">
+                <h3 class="card-title">Journey.Leg.IntermediateStop</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.9. Enregistrement Journey.Leg.IntermediateStop</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Journey.Leg.Transport.html">
+                <h3 class="card-title">Journey.Leg.Transport</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.10. Enregistrement Journey.Leg.Transport</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/Journey.Leg.Foot.html">
+                <h3 class="card-title">Journey.Leg.Foot</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.11. Enregistrement Journey.Leg.Foot</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/s scellées en Java.html">
+                <h3 class="card-title">s scellées en Java</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.12. Interfaces scellées en Java</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/FormatterFr.html">
+                <h3 class="card-title">FormatterFr</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.13. Classe FormatterFr</p>
+        </div>
+    
+                </div>
+            </div>
+        
+            </div>
+        </body>
+        </html>
+        

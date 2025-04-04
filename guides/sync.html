@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- 2025-02-17 Lun 14:14 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Synchroniser son travail</title>
+<meta name="author" content="Michel Schinz" />
+<meta name="generator" content="Org Mode" />
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="../a/cs108.css" type="text/css"><link rel="stylesheet" href="../a/highlight/styles/github.min.css" type="text/css">
+<script src="../a/highlight/highlight.min.js"></script>
+<script>
+function orgHighlight() {
+  document
+    .querySelectorAll('pre.src, .implementation dt>code')
+    .forEach((el) => { hljs.highlightElement(el); });
+}
+addEventListener('DOMContentLoaded', orgHighlight, false);
+addEventListener('load', orgHighlight, false);
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<header>
+<h1 class="title">Synchroniser son travail</h1>
+<p class="subtitle" role="doc-subtitle">CS-108</p>
+</header><p>
+Les groupes dont les membres travaillent individuellement doivent décider comment synchroniser leur travail, c-à-d comment combiner les dernières versions des fichiers écrits par chaque membre pour obtenir un projet complet. Plusieurs solutions à ce problème existent, et nous vous en proposons deux ci-dessous :
+</p>
+
+<ol class="org-ol">
+<li>l'utilisation d'un système de partage de fichiers « dans le nuage »,</li>
+
+<li>l'utilisation d'un système de gestion de versions.</li>
+</ol>
+
+<p>
+La première solution est plus simple que la seconde, mais aussi plus risquée car la probabilité d'effectuer une fausse manœuvre est plus grande.
+</p>
+
+<div id="outline-container-org62c5e1b" class="outline-2">
+<h2 id="org62c5e1b">Partage des fichiers dans le nuage</h2>
+<div class="outline-text-2" id="text-org62c5e1b">
+<p>
+De nombreux systèmes de stockage de fichiers « dans le nuage » existent (Dropbox, Google Drive, iCloud Drive, etc.) et permettent à plusieurs utilisateurs de partager un dossier.
+</p>
+
+<p>
+Un dossier partagé peut être utilisé par les membres d'un groupe pour synchroniser leur travail. L'idée est simple : chaque membre possède une version « privée » du projet sur son ordinateur, qui ne se trouve <i>pas</i> dans le dossier partagé. La totalité du développement se fait dans ce dossier privé, et lorsqu'un fichier (contenant p.ex. une classe) est terminé et prêt à être partagé, il est copié dans dans le dossier partagé, d'où l'autre membre peut le copier dans son dossier privé.
+</p>
+
+<p>
+Avec une telle organisation, il existe à tout moment trois versions, généralement différentes, du projet : une par membre du groupe, stockée dans un dossier privé, et la version commune, stockée dans le dossier partagé.
+</p>
+
+<p>
+Il faut bien prendre garde à ne pas faire de fausse manœuvre lors de la copie de fichiers entre ces différentes versions. De manière générale, le propriétaire d'un fichier donné ne devrait copier celui-ci que depuis son dossier privé vers le dossier partagé. A l'inverse, il ne devrait copier les fichiers dont il n'est pas propriétaire que depuis le dossier partagé vers son dossier privé.
+</p>
+
+<p>
+Notez que certains systèmes de partage de fichiers, entre autres Dropbox, permettent d'accéder aux fichiers récemment effacés, ou aux anciennes versions de fichiers existants. Cette fonctionnalité peut être fort utile en cas de mauvaise manipulation.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5e79d12" class="outline-2">
+<h2 id="org5e79d12">Système de gestion de version</h2>
+<div class="outline-text-2" id="text-org5e79d12">
+<p>
+Une autre solution existe au problème du partage du projet, plus propre et plus sûre, mais aussi considérablement plus difficile à mettre en œuvre : l'utilisation d'un <i>système de gestion de version</i> (<i>version control system</i> en anglais).
+</p>
+
+<p>
+Un système de gestion de version est un programme permettant à plusieurs personnes de travailler en commun sur un projet. L'idée de base n'est pas très différente de celle consistant à utiliser un dossier partagé pour communiquer. Toutefois, avec un système de gestion de version, le transfert des fichiers entre les dossiers contenant les différentes versions du projet est faite par le système de gestion de version lui-même, ce qui réduit le risque de fausse manœuvre.
+</p>
+
+<p>
+L'utilisation d'un système de gestion de version sort du cadre de ce cours, et aucune instruction détaillée n'est donc fournie ici. De même, aucun soutien n'est offert par l'équipe du cours en cas de problème avec un système de gestion de version, quel qu'il soit.
+</p>
+
+<p>
+Néanmoins, nous conseillons aux groupes désireux d'utiliser un système de gestion de version de choisir <a href="https://git-scm.com/">git</a>. Il s'agit du système de gestion de version le plus en vogue actuellement, ce qui présente plusieurs avantages, en particulier une documentation assez abondante &#x2014; dont l'excellent livre <a href="https://git-scm.com/book/fr/v2"><i>Pro Git</i></a>, disponible gratuitement &#x2014; et plusieurs programmes facilitant son utilisation. Cela dit, il faut noter que l'utilisation de git est généralement complexe, même pour les personnes averties.
+</p>
+
+<p>
+A l'EPFL, l'association <a href="https://gnugeneration.epfl.ch/">GNU Generation</a> met à disposition <a href="https://gitlab.gnugen.ch/">une instance de la plateforme GitLab</a>, qui permet aux membres d'un groupe de partager leur travail. GitLab offre la possibilité d'avoir un entrepôt git <i>privé</i>, c-à-d visible uniquement à certaines personnes. Cela est très important pour ce cours, étant donné que vous ne devez jamais partager publiquement votre travail, sous peine d'être accusé de plagiat.
+</p>
+
+<p>
+Notez que <a href="https://github.com/">github</a> offre également des entrepôts git privés et gratuits.
+</p>
+</div>
+</div>
+</div>
+</body>
+</html>

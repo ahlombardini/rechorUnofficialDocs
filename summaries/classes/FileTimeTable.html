@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileTimeTable - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 6 - Profil et extraction de voyage</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>FileTimeTable</h1>
+                <p>3.1. Enregistrement FileTimeTable</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-1">
+<p>
+L'enregistrement <code>FileTimeTable</code> du sous-paquetage <code>timetable.mapped</code>, public, implémente l'interface <code>TimeTable</code> et représente un horaire de transport public dont les données (aplaties) sont stockées dans des fichiers. Il possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>Path directory</code></dt><dd>le chemin d'accès au dossier contenant les fichiers des données horaires,</dd>
+<dt><code>List&lt;String&gt; stringTable</code></dt><dd>la table des chaînes de caractères,</dd>
+<dt><code>Stations stations</code></dt><dd>les gares,</dd>
+<dt><code>StationAliases stationAliases</code></dt><dd>les noms alternatifs des gares,</dd>
+<dt><code>Platforms platforms</code></dt><dd>les voies/quai,</dd>
+<dt><code>Routes routes</code></dt><dd>les lignes,</dd>
+<dt><code>Transfers transfers</code></dt><dd>les changements.</dd>
+</dl>
+<p>
+<code>FileTimeTable</code> possède une méthode publique et statique facilitant la création d'une instance à partir du chemin d'accès au dossier contenant les données horaires :
+</p>
+<dl class="org-dl">
+<dt><code>TimeTable in(Path directory) throws IOException</code></dt><dd>qui retourne une nouvelle instance de <code>FileTimeTable</code> dont les données aplaties ont été obtenues à partir des fichiers se trouvant dans le dossier dont le chemin d'accès est donné, en faisant l'hypothèse que ce dossier est organisé de la même manière que le dossier <code>timetable</code> de l'archive que nous vous fournissons ; lève une <code>IOException</code> en cas d'erreur d'entrée/sortie.</dd>
+</dl>
+<p>
+En dehors de cette méthode statique, les seules méthodes publiques offertes par <code>FileTimeTable</code> sont des versions concrètes des méthodes abstraites de <code>TimeTable</code>.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

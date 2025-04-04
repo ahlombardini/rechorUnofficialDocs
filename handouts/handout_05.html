@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<!-- 2025-03-10 Lun 08:34 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Horaire aplati (II)</title>
+<meta content="Michel Schinz" name="author"/>
+<meta content="Org Mode" name="generator"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="../a/cs108.css" rel="stylesheet" type="text/css"/><link href="../a/highlight/styles/github.min.css" rel="stylesheet" type="text/css"/>
+<script src="../a/highlight/highlight.min.js"></script>
+
+<style>
+                body { font-family: Arial, sans-serif; margin: 2em; line-height: 1.6; }
+                .class-section {
+                    margin: 2em 0;
+                    padding: 1.5em;
+                    background: #f5f5f5;
+                    border-left: 4px solid #4CAF50;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .class-section:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .method-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .tip-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #fffaf0;
+                    border-left: 4px solid #FFA500;
+                    border-radius: 3px;
+                }
+                .code-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #f8f8f8;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                    font-family: monospace;
+                }
+                .section-dropdown {
+                    margin: 2em 0;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .section-header {
+                    padding: 1em;
+                    background: #f8f9fa;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .section-header:hover {
+                    background: #e9ecef;
+                }
+                .section-header::after {
+                    content: '▼';
+                    font-size: 0.8em;
+                    transition: transform 0.3s ease;
+                }
+                .section-header.collapsed::after {
+                    transform: rotate(-90deg);
+                }
+                .section-content {
+                    padding: 1em;
+                    display: none;
+                }
+                .section-content.expanded {
+                    display: block;
+                }
+                pre { white-space: pre-wrap; margin: 0; }
+                h1 { color: #1976D2; }
+                h2 { color: #2196F3; margin: 0; }
+                h3 { color: #4CAF50; }
+                h4 { color: #FF9800; }
+                .class-link {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                }
+                .class-link:hover {
+                    color: inherit;
+                }
+            </style></head>
+<body>
+<div class="content" id="content">
+<header>
+<h1 class="title">Horaire aplati (II)</h1>
+<p class="subtitle" role="doc-subtitle">ReCHor – étape 5</p>
+</header>
+<div class="outline-2" id="outline-container-org3f5d857">
+<div class="outline-text-2" id="text-1">
+<p>
+Le but de cette étape est de continuer la rédaction les classes permettant de manipuler l'horaire aplati, en écrivant celles gérant les lignes, les courses, les liaisons et les changements.
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org3f3d423">
+<div class="outline-text-2" id="text-2">
+<p>
+Cette étape est très similaire à la précédente, et seule la manière dont les différents types de données aplaties sont représentés doit être décrite, ce qui est fait dans les section suivantes.
+</p>
+</div>
+<div class="outline-3" id="outline-container-sec/routes">
+<h3 id="sec/routes"><span class="section-number-3">2.1.</span> Lignes</h3>
+<div class="outline-text-3" id="text-sec/routes">
+<p>
+Pour mémoire, une ligne est un itinéraire le long duquel des véhicules de transport public se déplacent régulièrement. Un exemple est la ligne de métro m1 reliant la gare de Renens à celle du Flon.
+</p>
+<p>
+Les deux seules caractéristiques des lignes qui nous intéressent pour ce projet sont leur nom et le type de véhicule qui les dessert. La structure des lignes aplaties est donc particulièrement simple :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>NAME_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne du nom de la ligne</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>KIND</code></td>
+<td class="org-left"><code>U8</code></td>
+<td class="org-left">Type de véhicule desservant la ligne</td>
+</tr>
+</tbody>
+</table>
+<p>
+Le type du véhicule est représenté comme un entier compris entre 0 (inclus) et 6 (inclus) qui correspond directement au type énuméré <code>Vehicle</code> défini à <a href="01.html">l'étape 1</a> — 0 correspond à <code>TRAM</code>, 1 à <code>METRO</code>, etc.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/trips">
+<h3 id="sec/trips"><span class="section-number-3">2.2.</span> Courses</h3>
+<div class="outline-text-3" id="text-sec/trips">
+<p>
+Pour mémoire, une course est un trajet effectué par un véhicule de transport public entre les deux extrémités d'une ligne, dans l'un des deux sens possibles.
+</p>
+<p>
+Les deux seules caractéristiques des courses qui nous intéressent pour ce projet sont leur ligne et le nom de leur destination finale. La structure des courses aplaties est donc également simple :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>ROUTE_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de la ligne de la course</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>DESTINATION_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne de la destination finale</td>
+</tr>
+</tbody>
+</table>
+<p>
+<code>ROUTE_ID</code> est un index de ligne, donc il fait référence à un élément de la table des lignes dont la structure a été décrite à la section précédente. Sachant que dans les données horaires que nous utiliserons il y a un peu moins de 8 000 lignes, le type <code>U16</code> convient bien pour représenter un tel index.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/connections">
+<h3 id="sec/connections"><span class="section-number-3">2.3.</span> Liaisons</h3>
+<div class="outline-text-3" id="text-sec/connections">
+<p>
+Pour mémoire, une liaison est un trajet effectué par un véhicule de transport public, dans le cadre d'une course, entre deux arrêts successifs — donc sans arrêt intermédiaire. Dans les données aplaties, les liaisons ont la structure suivante :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>DEP_STOP_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de l'arrêt de départ</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>DEP_MINUTES</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Heure de départ, en minutes après minuit</td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left"><code>ARR_STOP_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de l'arrêt d'arrivée</td>
+</tr>
+<tr>
+<td class="org-right">3</td>
+<td class="org-left"><code>ARR_MINUTES</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Heure d'arrivée, en minutes après minuit</td>
+</tr>
+<tr>
+<td class="org-right">4</td>
+<td class="org-left"><code>TRIP_POS_ID</code></td>
+<td class="org-left"><code>S32</code></td>
+<td class="org-left">Index de la course et position en son sein</td>
+</tr>
+</tbody>
+</table>
+<p>
+Les champs <code>DEP_STOP_ID</code> et <code>ARR_STOP_ID</code> sont des index d'arrêts, qui pour mémoire peuvent soit référencer une gare, soit une voie/quai. Les données horaires que nous utiliserons comportant un peu plus de 54 000 arrêts au total — environ 33 000 gares et 21 000 voies/quai — le type <code>U16</code> convient bien pour les indexer.
+</p>
+<p>
+Les champs <code>DEP_MINUTES</code> et <code>ARR_MINUTES</code> contiennent les heures de départ et d'arrivée de la liaison, exprimées en minutes après minuit. Ces minutes sont <i>forcément</i> positives ou nulles dans les données horaires, donc le type <code>U16</code> convient bien pour les représenter. Comme nous le verrons plus tard, le fait que des heures négatives puissent apparaître, et doivent donc être stockées dans les critères d'optimisation, est dû aux trajets à pied (changements).
+</p>
+<p>
+Le champ <code>TRIP_POS_ID</code> contient une valeur empaquetée dont les 24 bits de poids fort sont l'index dans la table des courses de celle à laquelle la liaison appartient, et les 8 bits de poids faible sont la position de la liaison dans la course en question, à partir de 0. Sachant qu'il y a un peu moins de 3 millions de courses par jour, et que la plus longue course de Suisse comporte 78 liaisons, l'empaquetage utilisé convient tout à fait.
+</p>
+<p>
+La table des liaisons aplaties est ordonnée, dans le sens où les liaisons y apparaissent ordonnées par heure de départ décroissante. Donc la première liaison, d'index 0, est celle partant le plus tard de toutes. Cet ordre est utilisé par l'algorithme de calcul de voyages optimaux, comme nous le verrons.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/connections-succ">
+<h3 id="sec/connections-succ"><span class="section-number-3">2.4.</span> Liaison suivante</h3>
+<div class="outline-text-3" id="text-sec/connections-succ">
+<p>
+En examinant la structure des liaisons aplaties présentée à la section précédente, on constate qu'une information qu'il n'est pas évident d'en extraire est la liaison qui suit une liaison donnée dans une course. Or l'interface <code>Connections</code> possède justement une méthode permettant d'obtenir la liaison suivant une liaison donnée.
+</p>
+<p>
+En théorie, cette information pourrait être déterminée à partir des liaisons aplaties, puisque chacune d'entre elles contient l'index de la course à laquelle elle appartient, ainsi que sa propre position dans cette course. Dès lors, pour déterminer la liaison suivant une liaison donnée, on pourrait chercher, parmi toutes les liaisons, celle ayant le même index de course mais la position suivante — qui existe pour toutes les liaisons sauf la dernière d'une course.
+</p>
+<p>
+Bien que cela soit possible, procéder à une telle recherche serait coûteux sachant qu'il y a, pour un jour donné, entre 2 et 3 millions de liaisons. Il semble dès lors plus judicieux de pré-calculer, pour chaque liaison, l'index de celle qui la suit dans la course, et de stocker cette information dans les données aplaties.
+</p>
+<p>
+C'est donc ce que nous ferons dans ce projet, mais plutôt que de stocker cette information directement dans la table des liaisons, nous utiliserons une table auxiliaire, ne contenant rien d'autre que cette information. Ce choix a été fait afin que la table des liaisons — décrite à la section précédente — ne contienne <i>que</i> les informations nécessaires à l'algorithme de calcul des voyages optimaux, et la liaison suivant une autre n'en fait pas partie. Cette séparation en deux tables permet à celle des liaisons d'être aussi petite que possible, ce qui accélère la recherche de voyages optimaux.
+</p>
+<p>
+La structure de la table auxiliaire contenant, pour chaque liaison, l'index de la suivante dans la course est donc extrêmement simple :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>NEXT_CONNECTION_ID</code></td>
+<td class="org-left"><code>S32</code></td>
+<td class="org-left">Index de la liaison suivante / première</td>
+</tr>
+</tbody>
+</table>
+<p>
+Il faut noter que, comme la dernière liaison d'une course n'a pas de liaison suivante, cette table associe la <i>première</i> liaison d'une course à la dernière. En d'autres termes, les liaisons sont liées entre elles de manière circulaire.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/transfers">
+<h3 id="sec/transfers"><span class="section-number-3">2.5.</span> Changements</h3>
+<div class="outline-text-3" id="text-sec/transfers">
+<p>
+Pour mémoire, un changement est un trajet à pied qui peut être effectué soit entre deux gares voisines, soit au sein d'une même gare. Dans les données aplaties, les changements ont la structure suivante :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>DEP_STATION_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de la gare de départ</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>ARR_STATION_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de la gare d'arrivée</td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left"><code>TRANSFER_MINUTES</code></td>
+<td class="org-left"><code>U8</code></td>
+<td class="org-left">Durée du changement, en minutes</td>
+</tr>
+</tbody>
+</table>
+<p>
+Les champs <code>DEP_STATION_ID</code> et <code>ARR_STATION_ID</code> sont des index de <i>gares</i> (et jamais de voie/quai), car dans les données horaires à notre disposition, seuls les changements entre gares — ou au sein d'une seule gare — existent.
+</p>
+<p>
+Le plus long changement dans les données horaires à notre disposition fait 99 minutes — une valeur au demeurant suspecte, qui indique probablement un problème — donc le type <code>U8</code> convient bien à la représentation de la durée du changement.
+</p>
+<p>
+La table des changements aplatis est ordonnée de manière à ce que tous les changements arrivant à la même gare y soient consécutifs. Cette propriété permet de représenter l'ensemble des changements arrivant à une gare donnée au moyen de l'intervalle des index des changements qui y arrivent.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2 implementation" id="outline-container-orgcb135e5">
+<div class="outline-text-2" id="text-3">
+<p>
+Comme celles de l'étape précédente, les classes de cette étape font toutes partie du sous-paquetage <code>timetable.mapped</code>. La plupart d'entre elles sont simples à mettre en œuvre, sauf peut-être celle donnant accès aux changements aplatis.
+</p>
+</div>
+<div class="outline-3" id="outline-container-org67ba970">
+<div class="class-section"><a class="class-link" href="classes/class_handout_05.html_3.1._classe_bufferedroutes.html"><div class="class-section"><a class="class-link" href="classes/class_handout_05.html_bufferedroutes.html"><div class="class-section"><h3 id="org67ba970"><span class="section-number-3">3.1.</span> Classe <code>BufferedRoutes</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-1">
+<p>
+La classe <code>BufferedRoutes</code> du sous-paquetage <code>timetable.mapped</code>, publique et finale, implémente l'interface <code>Routes</code> et permet d'accéder à une table de lignes représentée de manière aplatie comme décrit à la §<a href="#sec/routes">2.1</a>. Elle possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>BufferedRoutes(List&lt;String&gt; stringTable, ByteBuffer buffer)</code></dt><dd>qui construit une instance donnant accès aux données aplaties disponibles dans le tableau <code>buffer</code>, en utilisant la table de chaînes <code>stringTable</code> pour déterminer la valeur des chaînes référencées par ces données.</dd>
+</dl>
+<p>
+Les seules méthodes publiques offertes par cette classe sont les versions concrètes des méthodes abstraites de <code>Routes</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgbbd0d2b">
+<div class="class-section"><a class="class-link" href="classes/class_handout_05.html_3.2._classe_bufferedtrips.html"><div class="class-section"><a class="class-link" href="classes/class_handout_05.html_bufferedtrips.html"><div class="class-section"><h3 id="orgbbd0d2b"><span class="section-number-3">3.2.</span> Classe <code>BufferedTrips</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-2">
+<p>
+La classe <code>BufferedTrips</code> du sous-paquetage <code>timetable.mapped</code>, publique et finale, implémente l'interface <code>Trips</code> et permet d'accéder à une table de courses représentée de manière aplatie comme décrit à la §<a href="#sec/trips">2.2</a>. Elle possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>BufferedTrips(List&lt;String&gt; stringTable, ByteBuffer buffer)</code></dt><dd>qui construit une instance donnant accès aux données aplaties disponibles dans le tableau <code>buffer</code>, en utilisant la table de chaînes <code>stringTable</code> pour déterminer la valeur des chaînes référencées par ces données.</dd>
+</dl>
+<p>
+Les seules méthodes publiques offertes par cette classe sont les versions concrètes des méthodes abstraites de <code>Trips</code>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org05980f6">
+<div class="class-section"><a class="class-link" href="classes/class_handout_05.html_3.3._classe_bufferedconnections.html"><div class="class-section"><a class="class-link" href="classes/class_handout_05.html_bufferedconnections.html"><div class="class-section"><h3 id="org05980f6"><span class="section-number-3">3.3.</span> Classe <code>BufferedConnections</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-3">
+<p>
+La classe <code>BufferedConnections</code> du sous-paquetage <code>timetable.mapped</code>, publique et finale, implémente l'interface <code>Connections</code> et permet d'accéder à une table de liaisons représentée de manière aplatie comme décrit aux §<a href="#sec/connections">2.3</a> et <a href="#sec/connections-succ">2.4</a>. Elle possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>BufferedConnections(ByteBuffer buffer, ByteBuffer succBuffer)</code></dt><dd>qui construit une instance donnant accès aux données aplaties réparties entre le tableau <code>buffer</code>, qui contient les liaisons aplaties (§<a href="#sec/connections">2.3</a>), et le tableau <code>succBuffer</code>, qui contient les liaisons suivantes (§<a href="#sec/connections-succ">2.4</a>).</dd>
+</dl>
+<p>
+Les seules méthodes publiques offertes par cette classe sont les versions concrètes des méthodes abstraites de <code>Connections</code>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org2349962">
+<h4 id="org2349962"><span class="section-number-4">3.3.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+Pour accéder aux données de la seconde table, qui contient uniquement les liaisons suivantes, il est bien entendu techniquement possible d'utiliser une instance de <code>StructuredBuffer</code> comme pour les autres tables. Toutefois, au vu de la structure extrêmement simple de cette table-ci, il est plus facile de transformer le tableau de type <code>ByteBuffer</code> passé au constructeur en un tableau de type <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/IntBuffer.html"><code>IntBuffer</code></a>, au moyen de la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/ByteBuffer.html#asIntBuffer()"><code>asIntBuffer</code></a>.
+</p>
+<p>
+Au même titre que <code>ByteBuffer</code> est similaire à un tableau d'octets de type <code>byte[]</code>, <code>IntBuffer</code> est similaire à un tableau d'entiers de type <code>int[]</code>, et la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/IntBuffer.html#get(int)"><code>get</code></a> permet d'obtenir un élément (de type <code>int</code>) d'index donné.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgaa68096">
+<div class="class-section"><a class="class-link" href="classes/class_handout_05.html_3.4._classe_bufferedtransfers.html"><div class="class-section"><a class="class-link" href="classes/class_handout_05.html_bufferedtransfers.html"><div class="class-section"><h3 id="orgaa68096"><span class="section-number-3">3.4.</span> Classe <code>BufferedTransfers</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-4">
+<p>
+La classe <code>BufferedTransfers</code> du sous-paquetage <code>timetable.mapped</code>, publique et finale, implémente l'interface <code>Transfers</code> et permet d'accéder à une table de changements représentée de manière aplatie comme décrit à la §<a href="#sec/transfers">2.5</a>. Elle possède un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>BufferedTransfers(ByteBuffer buffer)</code></dt><dd>qui construit une instance donnant accès aux données aplaties disponibles dans le tableau <code>buffer</code>.</dd>
+</dl>
+<p>
+Les seules méthodes publiques offertes par cette classe sont les versions concrètes des méthodes abstraites de <code>Transfers</code>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orga29f849">
+<h4 id="orga29f849"><span class="section-number-4">3.4.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-4-1">
+<p>
+Pour mémoire, la méthode <code>arrivingAt</code> de l'interface <code>Transfers</code> retourne l'intervalle (empaqueté) des index de tous les changements arrivant à une gare donnée. Comme expliqué à la §<a href="#sec/transfers">2.5</a>, la table des changements aplatis est organisée de manière à ce que tous les arrêts arrivant à une gare donnée soient consécutifs.
+</p>
+<p>
+Malheureusement, à elle seule, cette propriété ne permet pas à <code>arrivingAt</code> de déterminer <i>rapidement</i> l'intervalle à retourner, car sans information supplémentaire, elle ne peut pas connaître l'intervalle correspondant à une gare d'arrivée et doit donc parcourir la totalité de la table à sa recherche.
+</p>
+<p>
+Comme un tel parcours est cher et que la méthode <code>arrivingAt</code> — utilisée par l'algorithme de recherche des voyages optimaux — doit être efficace, une autre solution s'impose. Elle consiste à calculer, dans le constructeur de la classe, une table associant à toutes les gares l'intervalle des index des changements qui y arrivent.
+</p>
+<p>
+Cette table est un simple tableau de type <code>int[]</code> contenant, à l'index <i>i</i>, l'intervalle empaqueté des index des changements arrivant à la gare d'index <i>i</i>. On peut la construire en parcourant deux fois la totalité des changements aplatis : la première fois pour déterminer la taille de la table, la seconde pour déterminer son contenu.
+</p>
+<p>
+Grâce à cette table, la méthode <code>arrivingAt</code> est triviale à écrire puisqu'elle n'a rien d'autre à faire que retourner l'élément de la table dont l'index est celui de la gare, reçu en argument.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orga58413a">
+<h3 id="orga58413a"><span class="section-number-3">3.5.</span> Tests</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+Comme d'habitude, nous ne vous fournissons plus de tests mais <a href="f/SignatureChecks_5.java">un fichier de vérification de signatures</a> à importer dans votre projet.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgcbb5190">
+<div class="outline-text-2" id="text-4">
+<p>
+Pour cette étape, vous devez :
+</p>
+<ul class="org-ul">
+<li>écrire les classes <code>BufferedRoutes</code>, <code>BufferedTrips</code>, <code>BufferedConnections</code> et <code>BufferedTransfers</code> selon les indications données plus haut,</li>
+<li>tester votre code,</li>
+<li>documenter la totalité des entités publiques que vous avez définies,</li>
+<li>rendre votre code au plus tard le <b>21 mars 2025 à 18h00</b>, au moyen du programme <code>Submit.java</code> fourni et des jetons disponibles sur votre <a href="https://cs108.epfl.ch/my/">page privée</a>.</li>
+</ul>
+<p>
+Ce rendu est un rendu testé, auquel 20 points sont attribués, au prorata des tests unitaires passés avec succès.
+</p>
+<div class="cs108warning" id="org2d9c684">
+<p>
+N'attendez surtout pas le dernier moment pour effectuer votre rendu, car vous n'êtes pas à l'abri d'imprévus.
+</p>
+<p>
+Si vous manquez la date limite de rendu, vous avez encore la possibilité de faire un rendu tardif au moyen des jetons prévus à cet effet, et ce durant les 2 heures qui suivent, mais il vous en coûtera une pénalité <b>inconditionnelle</b> de 2 points.
+</p>
+</div>
+</div>
+</div>
+</div>
+<script>
+                window.addEventListener('load', function() {
+                    document.querySelectorAll('.section-header').forEach(header => {
+                        header.addEventListener('click', function() {
+                            this.classList.toggle('collapsed');
+                            const content = this.nextElementSibling;
+                            content.classList.toggle('expanded');
+                        });
+                    });
+                });
+            </script></body>
+</html>

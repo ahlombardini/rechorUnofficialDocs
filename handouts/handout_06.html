@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<!-- 2025-03-18 Mar 14:07 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Profil et extraction de voyage</title>
+<meta content="Michel Schinz" name="author"/>
+<meta content="Org Mode" name="generator"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="../a/cs108.css" rel="stylesheet" type="text/css"/><link href="../a/highlight/styles/github.min.css" rel="stylesheet" type="text/css"/>
+<script src="../a/highlight/highlight.min.js"></script>
+
+<script src="../a/mathjax/tex-chtml.js" type="text/javascript"></script>
+<style>
+                body { font-family: Arial, sans-serif; margin: 2em; line-height: 1.6; }
+                .class-section {
+                    margin: 2em 0;
+                    padding: 1.5em;
+                    background: #f5f5f5;
+                    border-left: 4px solid #4CAF50;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .class-section:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .method-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .tip-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #fffaf0;
+                    border-left: 4px solid #FFA500;
+                    border-radius: 3px;
+                }
+                .code-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #f8f8f8;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                    font-family: monospace;
+                }
+                .section-dropdown {
+                    margin: 2em 0;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .section-header {
+                    padding: 1em;
+                    background: #f8f9fa;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .section-header:hover {
+                    background: #e9ecef;
+                }
+                .section-header::after {
+                    content: '▼';
+                    font-size: 0.8em;
+                    transition: transform 0.3s ease;
+                }
+                .section-header.collapsed::after {
+                    transform: rotate(-90deg);
+                }
+                .section-content {
+                    padding: 1em;
+                    display: none;
+                }
+                .section-content.expanded {
+                    display: block;
+                }
+                pre { white-space: pre-wrap; margin: 0; }
+                h1 { color: #1976D2; }
+                h2 { color: #2196F3; margin: 0; }
+                h3 { color: #4CAF50; }
+                h4 { color: #FF9800; }
+                .class-link {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                }
+                .class-link:hover {
+                    color: inherit;
+                }
+            </style></head>
+<body>
+<div class="content" id="content">
+<header>
+<h1 class="title">Profil et extraction de voyage</h1>
+<p class="subtitle" role="doc-subtitle">ReCHor – étape 6</p>
+</header>
+<div class="outline-2" id="outline-container-orgced3046">
+<div class="outline-text-2" id="text-1">
+<p>
+Le but de cette sixième étape — la dernière de la première partie du projet — est d'une part de terminer la rédaction des classes représentant l'horaire aplati, et d'autre part d'écrire celles permettant de représenter ce que nous appellerons un <i>profil</i>, et d'en extraire des voyages.
+</p>
+<div class="cs108warning" id="orga24b9f6">
+<p>
+Notez que cette étape devra être rendue deux fois :
+</p>
+<ol class="org-ol">
+<li>pour le rendu testé habituel (délai : le <b>28/3</b> à <b>18h00</b>),</li>
+<li>pour le rendu intermédiaire (délai : le <b>4/4</b> à <b>18h00</b>).</li>
+</ol>
+<p>
+Le deuxième de ces rendus sera corrigé par lecture du code de vos étapes 1 à 6, et il vous faudra donc soigner sa qualité et sa documentation. Il est fortement conseillé de lire <a href="../g/style.html">notre guide à ce sujet</a>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org57e9214">
+<div class="outline-text-2" id="text-2">
+</div>
+<div class="outline-3" id="outline-container-orgaaec68a">
+<h3 id="orgaaec68a"><span class="section-number-3">2.1.</span> « Mappage » de fichiers en mémoire</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Les deux étapes précédentes ont été consacrées à la rédaction de classes permettant de manipuler les différents éléments de l'horaire aplati — gares, voies/quais, liaisons, etc. — se trouvant dans des tableaux d'octets. Il reste à savoir comment obtenir ces tableaux d'octets.
+</p>
+<p>
+Comme expliqué à la §<a href="#sec/implementation">3</a>, nous mettons à votre disposition un certain nombre de fichiers dont le contenu correspond exactement à celui des tableaux d'octets attendus. Par exemple, un des fichiers que nous vous fournissons, nommé <code>stations.bin</code>, contient la totalité des gares aplaties au format décrit à <a href="04.html#sec/stations">la §2.3 de l'étape 4</a>.
+</p>
+<p>
+Il serait donc techniquement possible de charger le contenu de ce fichier et de le placer dans un tableau d'octets — de type <code>ByteBuffer</code> — passé ensuite à la classe <code>BufferedStations</code>.  Cette solution aurait toutefois l'inconvénient de ralentir le démarrage du programme, la quantité de données à charger étant relativement grande.
+</p>
+<p>
+Heureusement, une autre solution existe, le « mappage » de fichier en mémoire (<i>memory mapping</i>). Cet anglicisme désigne la possibilité de faire apparaître le contenu d'un fichier en mémoire, comme s'il avait effectivement été chargé, mais sans qu'il ne le soit réellement. Au lieu de cela, le contenu du fichier n'est chargé que lorsqu'on accède aux données, et seules les parties effectivement nécessaires de ce contenu sont chargées.
+</p>
+<p>
+Cette possibilité est intéressante, car elle nous permet d'écrire le programme comme si la totalité des données de l'horaire était chargée en mémoire au démarrage du programme, alors qu'en réalité seules les parties effectivement utilisées le sont, au moment de leur première utilisation.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org43ffb6c">
+<h3 id="org43ffb6c"><span class="section-number-3">2.2.</span> Profil</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Comme nous le verrons à l'étape suivante, l'algorithme de recherche de voyage optimaux produit en résultat une table donnant, pour chaque gare du réseau, la frontière de Pareto des critères d'optimisation — heure de départ et d'arrivée, nombre de changements — des voyages permettant d'atteindre la destination choisie, le jour choisi. Nous nommerons cette table un <b>profil</b> (<i>profile</i>).
+</p>
+<p>
+Par exemple, si on utilise l'algorithme de recherche pour trouver les voyages optimaux permettant de se rendre à Gruyères le 18 février 2025, il produit un profil associant une frontière de Pareto à <i>chacune</i> des plus de 30 000 gares existantes. Parmi ces frontières figure celle correspondant à la gare <i>Ecublens VD, EPFL</i> et contenant, entre autres, les tuples suivant :
+</p>
+<p>
+\[
+\ldots,
+(\textrm{15h55}, \textrm{17h57}, 3),
+(\textrm{16h13}, \textrm{17h57}, 4),
+(\textrm{16h38}, \textrm{18h21}, 3),
+(\textrm{16h38}, \textrm{18h28}, 2),
+\ldots
+\]
+</p>
+<p>
+qui correspondent aux quatre premiers voyages visibles dans la copie d'écran de l'interface graphique finale du programme ci-dessous, déjà présentée dans l'introduction au projet.
+</p>
+<figure id="org946948d">
+<img alt="rechor-gui.png" class="shadowed" src="i/rechor-gui.png" width="100%"/>
+<figcaption><span class="figure-number">Figure 1 : </span>Voyages de <i>Ecublens VD, EPFL</i> à <i>Gruyères</i></figcaption>
+</figure>
+<p>
+Il est important de comprendre qu'un profil contient la frontière de Pareto de <i>chacune</i> des gares pour une destination et un jour de voyage donnés, et n'est donc pas lié à une gare de départ particulière.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orge8bb523">
+<h3 id="orge8bb523"><span class="section-number-3">2.3.</span> Profil augmenté</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Un profil contient, pour chaque gare, la frontière de Pareto de tous les voyages optimaux permettant de se rendre de cette gare-là à la gare de destination, à la date de voyage donnée. Il permet donc à un voyageur se trouvant dans une gare quelconque du réseau ce jour-là de déterminer quand il peut arriver à la destination, et au prix de combien de changements.
+</p>
+<p>
+Lors du calcul des voyages optimaux, il se trouve qu'il est utile d'avoir cette information-là non seulement pour toutes les <i>gares</i> du réseau, mais aussi pour toutes les <i>courses</i> circulant ce jour-là. En d'autres termes, d'offrir un profil permettant également à un voyageur se trouvant à bord d'un véhicule effectuant une course donnée de déterminer quand il peut arriver à destination, et au prix de combien de changements. Contrairement aux frontières de Pareto associées aux gares, celles associées aux courses ne comportent que deux critères d'optimisation (l'heure d'arrivée et le nombre de changements), car l'heure de départ d'une course ne peut pas être choisie.
+</p>
+<p>
+Nous appellerons <b>profil augmenté</b> un profil possédant non seulement les frontières de Pareto correspondant aux gares, mais aussi celles correspondant aux courses.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org57c12e4">
+<h3 id="org57c12e4"><span class="section-number-3">2.4.</span> Extraction de voyages</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+À eux seuls, les tuples associés à une gare dans un profil ne contiennent pas assez d'information pour permettre à un voyageur de déterminer comment se rendre à destination. Par exemple, le tuple \((\textrm{15h55}, \textrm{17h57}, 3)\) de la frontière de Pareto donnée en exemple plus haut permet uniquement de savoir qu'il est possible de partir de l'EPFL à 15h55 pour arriver à Gruyères à 17h57 après avoir effectué 3 changements, mais sans savoir comment. Ainsi, si deux métros partent de l'EPFL à 15h55, l'un en direction de Renens, l'autre en direction de Lausanne, il est impossible de savoir lequel prendre sans autre information que le tuple.
+</p>
+<p>
+Dès lors, pour pouvoir extraire d'un profil la totalité des voyages optimaux pour un arrêt de départ donné, des informations supplémentaires sont nécessaires. Ces informations seront calculées par l'algorithme de recherche des voyages optimaux, et stockées dans ce que nous avons appelé la charge utile (<i>payload</i>) associée aux tuples.
+</p>
+<p>
+Pour les tuples des frontières de Pareto des gares, contenant trois critères (heure de départ et d'arrivée, nombre de changements), la charge utile contient deux informations :
+</p>
+<ul class="org-ul">
+<li>l'identité de la première liaison à emprunter pour débuter le voyage,</li>
+<li>le nombre d'arrêts intermédiaires à laisser passer avant de descendre du véhicule.</li>
+</ul>
+<p>
+Ces deux informations sont empaquetées dans les 32 bits de la charge utile, les 24 bits de poids fort contenant l'identité de la liaison, les 8 bits de poids faible contenant le nombre d'arrêts intermédiaires.
+</p>
+<p>
+Par exemple, au tuple \((\textrm{15h55}, \textrm{17h57}, 3)\) mentionné plus haut pourrait être associée une charge utile contenant :
+</p>
+<ul class="org-ul">
+<li>l'identité de la liaison partant à 15h55 de <i>Ecublens VD, EPFL</i> pour arriver à 15h56 à <i>Ecublens VD, Bassenges</i>,</li>
+<li>un nombre d'arrêts intermédiaires valant 4.</li>
+</ul>
+<p>
+Grâce à cette information, on peut déterminer que la première étape du voyage part à 15h55 de <i>Ecublens VD, EPFL</i> pour arriver à 16h01 à <i>Renens VD, gare</i>, simplement en consultant les liaisons qui suivent la première dans la course à laquelle elle appartient.
+</p>
+<p>
+Une fois la première étape déterminée, on peut consulter la frontière de Pareto de sa gare d'arrivée (<i>Renens VD, gare</i>) pour déterminer comment continuer le voyage. En effet, on sait que le tuple qui nous intéresse est celui permettant d'arriver à destination à 17h57 en effectuant encore 2 changements supplémentaires — étant donné que le premier des 3 changements totaux vient d'être fait.
+</p>
+<p>
+En consultant la frontière de Pareto de <i>Renens VD, gare</i>, on y trouve le tuple \((\textrm{16h08}, \textrm{17h57}, 2)\) dont la charge utile contient :
+</p>
+<ul class="org-ul">
+<li>l'identité de la liaison partant à 16h08 de <i>Renens VD</i> pour arriver à 16h14 à <i>Lausanne</i>,</li>
+<li>un nombre d'arrêts intermédiaires valant 0.</li>
+</ul>
+<p>
+On peut en déterminer :
+</p>
+<ol class="org-ol">
+<li>la prochaine étape du voyage, qui <i>doit</i> être une étape à pied allant de <i>Renens VD, gare</i> à <i>Renens VD</i>, car pour qu'un voyage soit valide il doit alterner les étapes en véhicule et à pied,</li>
+<li>la prochaine étape en véhicule du voyage, qui part de <i>Renens VD</i> à 16h08 et arrive à <i>Lausanne</i> à 16h14.</li>
+</ol>
+<p>
+Pour continuer, il suffit de rechercher dans la frontière de Pareto associée à l'arrêt <i>Lausanne</i> le tuple permettant d'arriver à destination à 17h57 en effectuant encore 1 changement, puis de procéder comme ci-dessus. Et ainsi de suite jusqu'à ce qu'il ne reste plus de changements à effectuer.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orga3cc05b">
+<h3 id="orga3cc05b"><span class="section-number-3">2.5.</span> Étapes initiales et finales</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+La technique d'extraction de voyage présentée à la section précédente produit toujours des voyages dont la première et la dernière étape se font en véhicule et non à pied. Or parfois, l'une ou l'autre, ou les deux, de ces étapes doivent se faire à pied.
+</p>
+<p>
+Par exemple, si au lieu de partir depuis l'arrêt <i>Ecublens VD, EPFL</i>, on désire partir depuis l'arrêt <i>Ecublens VD, EPFL (bus)</i> — l'arrêt de bus se trouvant juste à côté de l'arrêt du m1 —, la première étape consiste à marcher jusqu'à l'arrêt du m1. Bien entendu, une situation similaire peut se produire pour la dernière étape d'un voyage.
+</p>
+<p>
+Dès lors, la technique d'extraction mentionnée précédemment doit être légèrement augmentée afin d'ajouter une étape à pied initiale si la première liaison part d'un arrêt différent de l'arrêt de départ choisi. De même, une étape à pied finale doit être ajoutée si, après avoir effectué tous les changements requis, on se trouve à un arrêt qui n'est pas encore l'arrêt de destination.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2 implementation" id="outline-container-sec/implementation">
+<div class="outline-text-2" id="text-sec/implementation">
+<p>
+Avant de commencer à travailler à cette étape, il vous faut télécharger <a href="f/rechor_timetable_12.zip">l'archive Zip que nous mettons à votre disposition</a> et qui contient les données horaire aplaties. Cette archive est constituée d'un dossier nommé <code>timetable</code> dans lequel se trouvent les fichiers suivants :
+</p>
+<ul class="org-ul">
+<li><code>strings.txt</code> contenant la table des chaînes, avec une chaîne par ligne, et dont les caractères sont encodés en ISO 8859-1,</li>
+<li><code>stations.bin</code> contenant les gares,</li>
+<li><code>station-aliases.bin</code> contenant les noms alternatifs des gares,</li>
+<li><code>platforms.bin</code> contenant les voies/quais,</li>
+<li><code>routes.bin</code> contenant les lignes,</li>
+<li><code>transfers.bin</code> contenant les changements.</li>
+</ul>
+<p>
+Dans le dossier <code>timetable</code> se trouvent de plus 7 dossiers journaliers dont le nom est la date d'un jour de <a href="https://fr.wikipedia.org/wiki/Num%C3%A9rotation_ISO_des_semaines">la semaine 12</a> de 2025 — qui va du 17 au 23 mars — et contenant chacun les trois fichiers dont les données varient de jour en jour, à savoir :
+</p>
+<ul class="org-ul">
+<li><code>trips.bin</code> contenant les courses du jour,</li>
+<li><code>connections.bin</code> contenant les liaisons du jour,</li>
+<li><code>connections-succ.bin</code> contenant les successeurs des liaisons du jour.</li>
+</ul>
+<p>
+Nous vous recommandons d'extraire le contenu de cette archive directement dans le dossier principal de votre projet, de manière à ce que le dossier <code>timetable</code> qu'elle contient se trouve au même niveau que le dossier <code>src</code> contenant votre code.
+</p>
+<div class="cs108warning" id="orgc428de2">
+<p>
+<b>Attention</b> : si vous utilisez git, ne stockez en aucun cas les données horaires dans votre entrepôt ! Pour éviter toute fausse manipulation, ajoutez une ligne à votre fichier <code>.gitignore</code> pour que git ignore le dossier les contenant (<code>/timetable/</code>).
+</p>
+</div>
+<p>
+Chaque lundi jusqu'à la fin du semestre, nous publierons sur <a href="index.html">la page consacrée au projet</a> une nouvelle archive contenant les données de la semaine.
+</p>
+</div>
+<div class="outline-3" id="outline-container-orgf993fb8">
+<a class="class-link" href="classes/class_handout_06.html_filetimetable.html"><div class="class-section"><h3 id="orgf993fb8"><span class="section-number-3">3.1.</span> Enregistrement <code>FileTimeTable</code></h3></div></a>
+<div class="outline-text-3" id="text-3-1">
+<p>
+L'enregistrement <code>FileTimeTable</code> du sous-paquetage <code>timetable.mapped</code>, public, implémente l'interface <code>TimeTable</code> et représente un horaire de transport public dont les données (aplaties) sont stockées dans des fichiers. Il possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>Path directory</code></dt><dd>le chemin d'accès au dossier contenant les fichiers des données horaires,</dd>
+<dt><code>List&lt;String&gt; stringTable</code></dt><dd>la table des chaînes de caractères,</dd>
+<dt><code>Stations stations</code></dt><dd>les gares,</dd>
+<dt><code>StationAliases stationAliases</code></dt><dd>les noms alternatifs des gares,</dd>
+<dt><code>Platforms platforms</code></dt><dd>les voies/quai,</dd>
+<dt><code>Routes routes</code></dt><dd>les lignes,</dd>
+<dt><code>Transfers transfers</code></dt><dd>les changements.</dd>
+</dl>
+<p>
+<code>FileTimeTable</code> possède une méthode publique et statique facilitant la création d'une instance à partir du chemin d'accès au dossier contenant les données horaires :
+</p>
+<dl class="org-dl">
+<dt><code>TimeTable in(Path directory) throws IOException</code></dt><dd>qui retourne une nouvelle instance de <code>FileTimeTable</code> dont les données aplaties ont été obtenues à partir des fichiers se trouvant dans le dossier dont le chemin d'accès est donné, en faisant l'hypothèse que ce dossier est organisé de la même manière que le dossier <code>timetable</code> de l'archive que nous vous fournissons ; lève une <code>IOException</code> en cas d'erreur d'entrée/sortie.</dd>
+</dl>
+<p>
+En dehors de cette méthode statique, les seules méthodes publiques offertes par <code>FileTimeTable</code> sont des versions concrètes des méthodes abstraites de <code>TimeTable</code>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orgd8220ae">
+<h4 id="orgd8220ae"><span class="section-number-4">3.1.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-1-1">
+</div>
+<ol class="org-ol">
+<li><a id="orgd76a782"></a>Chemins d'accès<br/>
+<div class="outline-text-5" id="text-3-1-1-1">
+<p>
+La classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html"><code>Path</code></a> de la bibliothèque Java représente un chemin d'accès à un fichier ou un dossier. Les deux seules méthodes de cette classe nécessaires à cette étape sont :
+</p>
+<ul class="org-ul">
+<li>la méthode statique <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html#of(java.lang.String,java.lang.String...)"><code>of</code></a>, qui permet de créer un chemin d'accès à un dossier à partir de son nom,</li>
+<li>la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html#resolve(java.lang.String)"><code>resolve</code></a>, qui permet d'obtenir un chemin d'accès à un fichier ou un sous-dossier inclu dans celui auquel on applique la méthode.</li>
+</ul>
+<p>
+L'extrait de code suivant illustre leur utilisation en obtenant d'abord un chemin d'accès vers le dossier <code>timetable</code> contenant les données horaires, puis un chemin vers le fichier <code>strings.txt</code> contenant la table des chaînes :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">Path directory = Path.of("timetable");
+Path strings = directory.resolve("strings.txt");
+</pre>
+</div>
+</div>
+</li>
+<li><a id="org0fc81d9"></a>Lecture de la table des chaînes<br/>
+<div class="outline-text-5" id="text-3-1-1-2">
+<p>
+La lecture de la table des chaînes peut se faire aisément au moyen de la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Files.html#readAllLines(java.nio.file.Path,java.nio.charset.Charset)"><code>readAllLines</code></a> de <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Files.html"><code>Files</code></a>. N'oubliez pas que les caractères du fichier <code>strings.txt</code> fourni sont encodés en ISO 8859-1, et <i>pas</i> en UTF-8.
+</p>
+<p>
+Comme <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Files.html#readAllLines(java.nio.file.Path,java.nio.charset.Charset)">sa documentation</a> le mentionne, <code>readAllLines</code> retourne une liste qui peut être modifiable ou non. Pour garantir l'immuabilité de cette liste, on peut donc vouloir la copier au moyen de <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"><code>copyOf</code></a> avant de la passer aux constructeurs des différentes classes <code>Buffered…</code>.
+</p>
+<p>
+Notez que cette copie est <i>obligatoire</i> lorsque les constructeurs des classes <code>Buffered…</code> eux-mêmes copient la table reçue avec <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"><code>copyOf</code></a>. En effet, au vu de sa taille, il est crucial qu'une seule copie de la table des chaînes existe dans tout le programme. Or si les constructeurs utilisent <code>copyOf</code>, la seule manière de garantir l'unicité de la table est de leur fournir une liste qui a déjà été préalablement copiée avec cette méthode, car dans ce cas elle retourne la liste reçue sans la copier, comme l'explique <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)">sa documentation</a>.
+</p>
+</div>
+</li>
+<li><a id="org24115d3"></a>« Mappage » mémoire<br/>
+<div class="outline-text-5" id="text-3-1-1-3">
+<p>
+Pour obtenir les tableaux d'octets de type <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/ByteBuffer.html"><code>ByteBuffer</code></a> avec le contenu des différents fichiers, il faut utiliser le « mappage » mémoire, comme expliqué plus haut. Cela peut se faire au moyen de la classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/channels/FileChannel.html"><code>FileChannel</code></a> du paquetage <code>java.nio</code>, qui n'a pas été vue au cours mais qui a un but similaire à <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/InputStream.html"><code>InputStream</code></a>. Pour les besoins de ce projet, il n'est pas nécessaire de la comprendre en détail, le « mappage » d'un fichier pouvant se faire simplement en :
+</p>
+<ul class="org-ul">
+<li>obtenant un « canal » de type <code>FileChannel</code> permettant de lire les données du fichier qui nous intéresse, au moyen de la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/channels/FileChannel.html#open(java.nio.file.Path,java.nio.file.OpenOption...)"><code>open</code></a> à laquelle on ne passe aucune option,</li>
+<li>« mappant » le contenu du fichier au moyen de la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/channels/FileChannel.html#map(java.nio.channels.FileChannel.MapMode,long,long)"><code>map</code></a>, à laquelle on passe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/channels/FileChannel.MapMode.html#READ_ONLY"><code>READ_ONLY</code></a> comme mode, 0 comme position et la valeur retournée par la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/channels/FileChannel.html#size()"><code>size</code></a> du canal comme taille — afin de « mapper » en lecture seule la totalité des données du fichier,</li>
+<li>fermant le canal, de préférence de manière implicite avec un <i>try-with-resource</i>.</li>
+</ul>
+<p>
+La méthode <code>map</code> retourne un tableau d'octets de type <code>ByteBuffer</code> contenant la totalité des données du fichier. Toutefois, comme elle fait cela par « mappage » de son contenu en mémoire, ces données sont en réalité lues à la demande, au moment de leur première utilisation. Il faut noter que les tableaux retournés par <code>map</code> restent utilisables même après la fermeture du canal, et sont immuables.
+</p>
+</div>
+</li>
+<li><a id="orge9b8bee"></a>Gestion des exceptions<br/>
+<div class="outline-text-5" id="text-3-1-1-4">
+<p>
+Les fichiers contenant les données qui ne dépendent pas de la date du voyage doivent tous être « mappés » dans la méthode <code>in</code>. Par contre, ceux qui dépendent de la date ne doivent l'être que dans les méthodes <code>connectionsFor</code> et <code>tripsFor</code>. Cela pose un petit problème, car lors du « mappage », une <code>IOException</code> pourrait être levée, et il s'agit d'une exception de type <i>checked</i>. La manière standard de résoudre ce problème serait d'ajouter un <code>throws IOException</code> à ces méthodes, mais nous ne pouvons le faire car il s'agit de redéfinitions de méthodes, et les méthodes originales ne lèvent pas d'exception.
+</p>
+<p>
+Nous résoudrons donc ce problème en attrapant les exceptions de type <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html"><code>IOException</code></a> et en levant une <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/UncheckedIOException.html"><code>UncheckedIOException</code></a> qui, comme son nom l'indique, est de type <i>unchecked</i>. Cela peut se faire ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">try {
+  // … code pouvant lever une IOException
+} catch (IOException e) {
+  throw new UncheckedIOException(e);
+}
+</pre>
+</div>
+<p>
+Attention : seules les méthodes <code>connectionsFor</code> et <code>tripsFor</code> doivent utiliser cette technique !
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org7d54e59">
+<a class="class-link" href="classes/class_handout_06.html_profile.html"><div class="class-section"><h3 id="org7d54e59"><span class="section-number-3">3.2.</span> Enregistrement <code>Profile</code></h3></div></a>
+<div class="outline-text-3" id="text-3-2">
+<p>
+L'enregistrement <code>Profile</code> du sous-paquetage <code>journey</code>, public et immuable, représente un profil. Il possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>TimeTable timeTable</code></dt><dd>l'horaire auquel correspond le profil,</dd>
+<dt><code>LocalDate date</code></dt><dd>la date à laquelle correspond le profil,</dd>
+<dt><code>int arrStationId</code></dt><dd>l'index de la gare d'arrivée à laquelle correspond le profil,</dd>
+<dt><code>List&lt;ParetoFront&gt; stationFront</code></dt><dd>la table des frontières de Pareto de toutes les gares, qui contient, à un index donné, la frontière de la gare de même index.</dd>
+</dl>
+<p>
+Le constructeur compact de <code>Profile</code> copie la table des frontières de Pareto afin de garantir l'immuabilité de la classe.
+</p>
+<p>
+<code>Profile</code> possède les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>Connections connections()</code></dt><dd>qui retourne les liaisons correspondant au profil, qui sont simplement celles de l'horaire, à la date à laquelle correspond le profil,</dd>
+<dt><code>Trips trips()</code></dt><dd>qui retourne les courses correspondant au profil, qui sont simplement celles de l'horaire, à la date à laquelle correspond le profil,</dd>
+<dt><code>ParetoFront forStation(int stationId)</code></dt><dd>qui retourne la frontière de Pareto pour la gare d'index donné, ou lève une <code>IndexOutOfBoundsException</code> si cet index est invalide.</dd>
+</dl>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgf547e28">
+<div class="class-section"><a class="class-link" href="classes/class_handout_06.html_3.3._classe_profile.builder.html"><div class="class-section"><a class="class-link" href="classes/class_handout_06.html_profile.html"><div class="class-section"><h3 id="orgf547e28"><span class="section-number-3">3.3.</span> Classe <code>Profile.Builder</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-3">
+<p>
+La classe <code>Builder</code>, publique, finale et imbriquée statiquement dans l'enregistrement <code>Profile</code>, représente un bâtisseur de profil. Ce bâtisseur étant destiné à être utilisé lors du calcul des voyages optimaux, il stocke non seulement les frontières de Pareto en cours de construction pour les gares, mais aussi pour les courses. En d'autres termes, il représente un profil <i>augmenté</i> en cours de construction, mais finit par bâtir un profil simple.
+</p>
+<p>
+<code>Builder</code> offre un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>Builder(TimeTable timeTable, LocalDate date, int arrStationId)</code></dt><dd>qui construit un bâtisseur de profil pour l'horaire, la date et la gare de destination donnés.</dd>
+</dl>
+<p>
+Le constructeur stocke non seulement les arguments qu'on lui a passé dans des attributs, afin de pouvoir les passer plus tard au constructeur de <code>Profile</code>, mais il initialise également deux tableaux primitifs destinés à contenir les bâtisseurs des frontières de Pareto des gares et des courses. Ces tableaux ne doivent <i>pas</i> être remplis initialement, donc leurs éléments doivent tous être <code>null</code>.
+</p>
+<p>
+En plus de ce constructeur, <code>Builder</code> offre les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>ParetoFront.Builder forStation(int stationId)</code></dt><dd>qui retourne le bâtisseur de la frontière de Pareto pour la gare d'index donné, qui est <code>null</code> si aucun appel à <code>setForStation</code> n'a été fait précédemment pour cette gare, ou lève une <code>IndexOutOfBoundsException</code> si l'index est invalide,</dd>
+<dt><code>void setForStation(int stationId, ParetoFront.Builder builder)</code></dt><dd>qui associe le bâtisseur de frontière de Pareto donné à la gare d'index donné, ou lève une <code>IndexOutOfBoundsException</code> si l'index est invalide,</dd>
+<dt><code>ParetoFront.Builder forTrip(int tripId)</code></dt><dd>qui fait la même chose que <code>forStation</code> mais pour la course d'index donné,</dd>
+<dt><code>void setForTrip(int tripId, ParetoFront.Builder builder)</code></dt><dd>qui fait la même chose que <code>setForStation</code> mais pour la course d'index donné,</dd>
+<dt><code>Profile build()</code></dt><dd>qui retourne le profil simple — sans les frontières de Pareto correspondant aux courses — en cours de construction.</dd>
+</dl>
+</div>
+<div class="outline-4" id="outline-container-org7f08f07">
+<h4 id="org7f08f07"><span class="section-number-4">3.3.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+La liste des frontières de Pareto passée au constructeur de <code>Profile</code> ne doit pas contenir de valeur <code>null</code>, entre autres car cela provoquerait la levée d'une exception par <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"><code>copyOf</code></a>. La méthode <code>build</code> doit donc utiliser la constante <code>ParetoFront.EMPTY</code> chaque fois qu'elle rencontre un bâtisseur de gare valant <code>null</code>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgf079f85">
+<div class="class-section"><a class="class-link" href="classes/class_handout_06.html_3.4._classe_journeyextractor.html"><div class="class-section"><a class="class-link" href="classes/class_handout_06.html_journeyextractor.html"><div class="class-section"><h3 id="orgf079f85"><span class="section-number-3">3.4.</span> Classe <code>JourneyExtractor</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-4">
+<p>
+La classe <code>JourneyExtractor</code> du sous-paquetage <code>journey</code>, publique et non instanciable, représente un « extracteur de voyages » et contient une seule méthode publique :
+</p>
+<dl class="org-dl">
+<dt><code>List&lt;Journey&gt; journeys(Profile profile, int depStationId)</code></dt><dd>qui retourne la totalité des voyages optimaux correspondant au profil et à la gare de départ donnés, triés d'abord par heure de départ (croissante) puis par heure d'arrivée (croissante).</dd>
+</dl>
+</div>
+<div class="outline-4" id="outline-container-orgfce7e20">
+<h4 id="orgfce7e20"><span class="section-number-4">3.4.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-4-1">
+</div>
+<ol class="org-ol">
+<li><a id="org46ca4cf"></a>Parcours des frontières de Pareto<br/>
+<div class="outline-text-5" id="text-3-4-1-1">
+<p>
+L'extraction de tous les voyages se fait en parcourant tous les éléments de la frontière de Pareto de la gare de départ. Ce parcours ne peut se faire qu'au moyen de la méthode <code>forEach</code> de <code>ParetoFront</code>, et la manière la plus simple d'utiliser cette méthode consiste à lui passer une lambda. Nous n'avons pas encore vu ce concept au cours, mais il n'est pas nécessaire de le comprendre en détail pour cette étape, il suffit juste de savoir qu'au moyen de la syntaxe suivante :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">ParetoFront pf = profile.forStation(stationId);
+pf.forEach((long criteria) -&gt; {
+    // … code qui utilise criteria
+  });
+</pre>
+</div>
+<p>
+on peut parcourir la totalité des critères de la frontière de Pareto <code>pf</code>, chacun d'entre eux étant à tour de rôle assigné à la variable <code>criteria</code>. En d'autres termes, cette syntaxe permet de faire la même chose que la syntaxe suivante, que vous connaissez déjà et que nous utiliserions si la frontière de Pareto était stockée dans un tableau de type <code>long[]</code> :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">long[] pf = profile.forStation(stationId);
+for (long criteria : pf) {
+  // … code qui utilise criteria
+}
+</pre>
+</div>
+</div>
+</li>
+<li><a id="orga1515b7"></a>Tri des voyages<br/>
+<div class="outline-text-5" id="text-3-4-1-2">
+<p>
+Une fois les voyages extraits, il faut les trier par ordre croissant d'heure de départ, puis par ordre croissant d'heure d'arrivée. Une liste peut être triée au moyen de la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#sort(java.util.Comparator)"><code>sort</code></a>, qui attend en argument un comparateur. Comme la notion de comparateur n'a pas encore été vue au cours, et que la création du comparateur requis nécessite l'utilisation d'une syntaxe que vous ne connaissez pas encore, nous vous donnons le code à écrire pour effectuer le tri :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">List&lt;Journey&gt; journeys = …;
+journeys.sort(Comparator
+              .comparing(Journey::depTime)
+              .thenComparing(Journey::arrTime))
+</pre>
+</div>
+<p>
+Même si cette syntaxe vous est encore inconnue, il ne devrait pas être difficile de comprendre que le tri est fait :
+</p>
+<ul class="org-ul">
+<li>d'abord par heure de départ (<code>comparing(Journey::depTime)</code>),</li>
+<li>puis par heure d'arrivée (<code>thenComparing(Journey::arrTime)</code>).</li>
+</ul>
+<p>
+Les arguments passés à <code>comparing</code> et <code>thenComparing</code> sont des lambdas obtenues au moyen de ce qu'on appelle des références de méthodes.
+</p>
+</div>
+</li>
+<li><a id="org33be1b9"></a>Gares et voies/quais<br/>
+<div class="outline-text-5" id="text-3-4-1-3">
+<p>
+Lors de l'extraction des voyages, il faut faire bien attention au fait que les liaisons partent et arrivent à des arrêts qui peuvent être des voies/quais, et pas seulement des gares. Par contre, les changements se font toujours entre deux gares, ou au sein d'une seule gare. De même, les frontières de Pareto stockées dans le profil sont toujours associées aux gares, et jamais aux voies/quai.
+</p>
+<p>
+Gardez toujours cela à l'esprit, et utilisez la méthode <code>stationId</code> de <code>TimeTable</code> pour obtenir la gare correspondant à un arrêt chaque fois que cela est nécessaire.
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgc22e067">
+<h3 id="orgc22e067"><span class="section-number-3">3.5.</span> Tests</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+Comme d'habitude, nous ne vous fournissons plus de tests mais <a href="f/SignatureChecks_6.java">un fichier de vérification de signatures</a> à importer dans votre projet.
+</p>
+<p>
+Pour vous aider à tester l'extraction de voyage, nous vous fournissons <a href="f/rechor_profile.zip">une archive Zip</a> contenant un fichier nommé <code>profile_2025-03-18_11486.txt</code>. Il contient la représentation textuelle d'un profil pour le 18 mars 2025, avec la gare 11486 (<i>Gruyères</i>) comme destination. Chaque ligne correspond à une gare, dont les éléments de la frontière de Pareto sont représentés en base 16, séparés par des virgules. Par exemple, la première ligne du fichier commence ainsi :
+</p>
+<pre class="example">
+552b298408159611,56db1b070a9ad404,570b0b840ad9ae11,…
+</pre>
+<p>
+ce qui signifie que la frontière de Pareto associée à la gare d'index 0 dans le profil a comme premier tuple empaqueté 552b298408159611<sub>16</sub> — soit \((\textrm{18h50}, \textrm{22h59}, 4)\) avec une charge utile dont la liaison est celle d'index 529814 (81596<sub>16</sub>) et le nombre d'arrêts intermédiaires est 17 (11<sub>16</sub>).
+</p>
+<p>
+Pour lire ce profil, vous pouvez vous inspirer du code ci-dessous, qui n'utilise que des concepts que vous connaissez déjà et que vous devriez donc pouvoir comprendre sans difficulté majeure :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">Profile readProfile(TimeTable timeTable,
+                    LocalDate date,
+                    int arrStationId) throws IOException {
+  Path path =
+    Path.of("profile_" + date + "_" + arrStationId + ".txt");
+  try (BufferedReader r = Files.newBufferedReader(path)) {
+    Profile.Builder profileB =
+      new Profile.Builder(timeTable, date, arrStationId);
+    int stationId = -1;
+    String line;
+    while ((line = r.readLine()) != null) {
+      stationId += 1;
+      if (line.isEmpty()) continue;
+      ParetoFront.Builder frontB = new ParetoFront.Builder();
+      for (String t : line.split(","))
+        frontB.add(Long.parseLong(t, 16));
+      profileB.setForStation(stationId, frontB);
+    }
+    return profileB.build();
+  }
+}
+</pre>
+</div>
+<p>
+Une fois le profil lu, vous pouvez vérifier que votre code est correct en extrayant tous les voyages au départ de la gare 7872 (<i>Ecublens VD, EPFL</i>), et en convertissant celui d'index 32 en événement iCalendar, au moyen de code similaire à celui-ci :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">TimeTable t = FileTimeTable.in(Path.of("timetable"));
+LocalDate date = LocalDate.of(2025, Month.MARCH, 18);
+Profile p = readProfile(t, date, 11486);
+List&lt;Journey&gt; js = JourneyExtractor.journeys(p, 7872);
+String j = JourneyIcalConverter.toIcalendar(js.get(32));
+System.out.println(j);
+</pre>
+</div>
+<p>
+Vous devriez voir un événement iCalendar presque identique à celui de la <a href="02.html#sec/ical/example">§2.1.8 de l'étape 2</a>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgc2fb42c">
+<div class="outline-text-2" id="text-4">
+<p>
+Pour cette étape, vous devez :
+</p>
+<ul class="org-ul">
+<li>écrire les classes <code>FileTimeTable</code>, <code>Profile</code>, <code>Profile.Builder</code> et <code>JourneyExtractor</code> selon les indications plus haut,</li>
+<li>tester votre code,</li>
+<li>documenter la totalité des entités publiques que vous avez définies,</li>
+<li>rendre votre code au plus tard le <b>28 mars 2025 à 18h00</b>, au moyen du programme <code>Submit.java</code> fourni et des jetons disponibles sur votre <a href="https://cs108.epfl.ch/my/">page privée</a>.</li>
+</ul>
+<p>
+Ce rendu est un rendu testé, auquel 20 points sont attribués, au prorata des tests unitaires passés avec succès.
+</p>
+<div class="cs108warning" id="org6cded25">
+<p>
+N'attendez surtout pas le dernier moment pour effectuer votre rendu, car vous n'êtes pas à l'abri d'imprévus.
+</p>
+<p>
+Si vous manquez la date limite de rendu, vous avez encore la possibilité de faire un rendu tardif au moyen des jetons prévus à cet effet, et ce durant les 2 heures qui suivent, mais il vous en coûtera une pénalité <b>inconditionnelle</b> de 2 points.
+</p>
+</div>
+</div>
+</div>
+</div>
+<script>
+                window.addEventListener('load', function() {
+                    document.querySelectorAll('.section-header').forEach(header => {
+                        header.addEventListener('click', function() {
+                            this.classList.toggle('collapsed');
+                            const content = this.nextElementSibling;
+                            content.classList.toggle('expanded');
+                        });
+                    });
+                });
+            </script></body>
+</html>

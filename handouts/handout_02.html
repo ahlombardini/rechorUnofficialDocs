@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<!-- 2025-02-28 Ven 12:33 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>iCalendar et valeurs empaquetées</title>
+<meta content="Michel Schinz" name="author"/>
+<meta content="Org Mode" name="generator"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="../a/cs108.css" rel="stylesheet" type="text/css"/><link href="../a/highlight/styles/github.min.css" rel="stylesheet" type="text/css"/>
+<script src="../a/highlight/highlight.min.js"></script>
+
+<script src="../a/mathjax/tex-chtml.js" type="text/javascript"></script>
+<style>
+                body { font-family: Arial, sans-serif; margin: 2em; line-height: 1.6; }
+                .class-section {
+                    margin: 2em 0;
+                    padding: 1.5em;
+                    background: #f5f5f5;
+                    border-left: 4px solid #4CAF50;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .class-section:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .method-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .tip-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #fffaf0;
+                    border-left: 4px solid #FFA500;
+                    border-radius: 3px;
+                }
+                .code-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #f8f8f8;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                    font-family: monospace;
+                }
+                .section-dropdown {
+                    margin: 2em 0;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .section-header {
+                    padding: 1em;
+                    background: #f8f9fa;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .section-header:hover {
+                    background: #e9ecef;
+                }
+                .section-header::after {
+                    content: '▼';
+                    font-size: 0.8em;
+                    transition: transform 0.3s ease;
+                }
+                .section-header.collapsed::after {
+                    transform: rotate(-90deg);
+                }
+                .section-content {
+                    padding: 1em;
+                    display: none;
+                }
+                .section-content.expanded {
+                    display: block;
+                }
+                pre { white-space: pre-wrap; margin: 0; }
+                h1 { color: #1976D2; }
+                h2 { color: #2196F3; margin: 0; }
+                h3 { color: #4CAF50; }
+                h4 { color: #FF9800; }
+                .class-link {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                }
+                .class-link:hover {
+                    color: inherit;
+                }
+            </style></head>
+<body>
+<div class="content" id="content">
+<header>
+<h1 class="title">iCalendar et valeurs empaquetées</h1>
+<p class="subtitle" role="doc-subtitle">ReCHor – étape 2</p>
+</header>
+<div class="outline-2" id="outline-container-org76351a3">
+<div class="outline-text-2" id="text-1">
+<p>
+Le but de cette seconde étape est double : premièrement, écrire le code permettant d'exporter un voyage au format iCalendar, et deuxièmement écrire celui permettant de manipuler deux types de valeurs « empaquetées » dans des entiers Java — les intervalles d'entiers, et les critères d'optimisation des voyages.
+</p>
+<p>
+Avant de la commencer, lisez le guide <a href="../g/backups.html"><i>Sauvegarder son travail</i></a>, qui vous donnera des conseils importants concernant la sauvegarde de votre projet au cours du semestre.
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgac76cb9">
+<div class="outline-text-2" id="text-2">
+</div>
+<div class="outline-3" id="outline-container-orgcd70de4">
+<h3 id="orgcd70de4"><span class="section-number-3">2.1.</span> Format iCalendar</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Comme nous l'avons vu dans <a href="00.html">l'introduction au projet</a>, une des fonctionnalités offertes par ReCHor est l'exportation d'un voyage sous la forme d'un <b>événement</b> (<i>event</i>) destiné à être importé dans un calendrier électronique.
+</p>
+<p>
+Cette fonctionnalité repose sur la norme <a href="https://icalendar.org/">iCalendar</a> qui décrit la représentation, sous forme textuelle, d'événements dans un calendrier. Cette norme — adoptée par la plupart des calendriers électroniques — est très complète et complexe, mais dans le cadre de ce projet, nous n'en utiliserons qu'un petit sous-ensemble, décrit ci-après.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orgbdb130d">
+<h4 id="orgbdb130d"><span class="section-number-4">2.1.1.</span> Format général</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+Le format iCalendar est un format textuel, c.-à-d. que les données qu'il permet de représenter le sont sous la forme d'une séquence de caractères — exactement comme les programmes Java qui, eux aussi, ne sont rien d'autre que du texte.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org182f4b1">
+<h4 id="org182f4b1"><span class="section-number-4">2.1.2.</span> Terminaison des lignes</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+Dans le format iCalendar, le texte est composé d'une suite de lignes. Chacune d'entre elles est terminée par une « séquence CRLF », constituée de deux caractères spéciaux nommés CR (pour <i>carriage return</i>) et LF (pour <i>line feed</i>). CR et LF sont ce que l'on nomme des <b>caractères de contrôle</b> (<i>control characters</i>), notion examinée plus en détail dans le cours sur les entrées/sorties mais décrite brièvement ci-après.
+</p>
+<p>
+Contrairement aux caractères « normaux » comme les lettres de l'alphabet latin, ou encore les chiffres, les caractères de contrôle n'ont pas de représentation propre et ne sont donc généralement pas visibles à l'écran. Leur but est simplement de contrôler l'affichage du texte dans lequel ils se trouvent, par exemple en terminant la ligne actuelle pour passer à la suivante.
+</p>
+<p>
+Comme ces caractères n'ont pas de représentation propre, des <b>séquences d'échappement</b> (<i>escape sequences</i>) sont utilisées en Java et dans d'autres langages pour les représenter. Ainsi, en Java, LF est représenté par la séquence d'échappement <code>\n</code> que vous connaissez déjà, tandis que CR est représenté par la séquence d'échappement <code>\r</code>. Dès lors, une chaîne Java ne contenant rien d'autre que la séquence CRLF peut s'écrire ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">String CRLF = "\r\n";
+</pre>
+</div>
+<p>
+Il faut bien comprendre que même si 4 caractères sont nécessaires à l'écriture du contenu de cette chaîne en Java — deux barres obliques inverses (<code>\</code>) ainsi que les lettres <code>r</code> et <code>n</code> —, elle ne contient en fait que deux caractères, qui sont justement CR et LF. Dès lors, la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#length()"><code>length</code></a> appliquée à cette chaîne retourne 2.
+</p>
+<p>
+Comme nous le verrons dans le cours sur les entrées/sorties, les caractères CR et LF sont souvent utilisés pour représenter la fin d'une ligne, et c'est la raison pour laquelle dans le format iCalendar, toutes les lignes — y compris la dernière — se terminent par une séquence CRLF.
+</p>
+<p>
+Il en va d'ailleurs de même avec les autres formats textuels, comme les programmes Java. Ainsi, lorsque vous écrivez un programme dans IntelliJ et que vous appuyez sur la touche <i>Entrée</i> (⮐) pour terminer une ligne, IntelliJ insère une séquence CRLF à la position du curseur<sup><a class="footref" href="#fn.1" id="fnr.1" role="doc-backlink">1</a></sup>.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org21f3f21">
+<h4 id="org21f3f21"><span class="section-number-4">2.1.3.</span> Format des lignes</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<p>
+Dans le format iCalendar, les lignes sont composées d'un <b>nom</b> (<i>name</i>) et d'une <b>valeur</b> (<i>value</i>) qui lui est associée. Le nom et la valeur sont séparés l'un de l'autre par un deux-points (<code>:</code>). Par exemple, la ligne suivante :
+</p>
+<pre class="example">
+SUMMARY:Ecublens VD, EPFL → Gruyères
+</pre>
+<p>
+est composée du nom <code>SUMMARY</code> auquel est associée la valeur <code>Ecublens VD, EPFL → Gruyères</code>.
+</p>
+<p>
+Les noms qu'il est possible d'utiliser sont définis par la norme iCalendar. Dans le cadre de ce projet, nous n'en utiliserons qu'un petit nombre, décrits plus loin.
+</p>
+<p>
+La norme iCalendar spécifie qu'une ligne ne devrait pas faire plus de 75 caractères<sup><a class="footref" href="#fn.2" id="fnr.2" role="doc-backlink">2</a></sup>. Cela peut poser problème si la valeur associée à un nom est un long texte. Dans un tel cas, la norme spécifie que la ligne doit être « pliée » (<i>folded</i>), c.-à-d. découpée en plusieurs lignes ne faisant pas plus de 75 caractères chacune et commençant toutes — sauf la première — par une espace. Lorsqu'une telle longue ligne « logique » est pliée en plusieurs lignes « physiques », les séquences CRLF à la fin de chaque ligne physique sont ignorées — sauf la dernière —, de même que les espaces initiales de toutes les lignes physiques dès la seconde.
+</p>
+<p>
+Par exemple, la ligne « logique » donnée en exemple plus haut :
+</p>
+<pre class="example">
+SUMMARY:Ecublens VD, EPFL → Gruyères
+</pre>
+<p>
+peut également être « pliée » en trois lignes « physiques » ainsi :
+</p>
+<pre class="example">
+SUMMA
+ RY:Ecublens VD, EPFL → Gr
+ uyères
+</pre>
+<p>
+Ces deux représentations sont totalement équivalentes, mais en général un tel « pliage » n'est fait que pour les lignes dépassant effectivement les 75 caractères. Un exemple d'une telle ligne est visible dans l'exemple de la §<a href="#sec/ical/example">2.1.8</a> plus bas.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-orgeed83e9">
+<h4 id="orgeed83e9"><span class="section-number-4">2.1.4.</span> Objets et composants</h4>
+<div class="outline-text-4" id="text-2-1-4">
+<p>
+La norme iCalendar définit deux notions très similaires qui sont les <b>objets</b> (<i>objects</i>) et les <b>composants</b> (<i>components</i>). Le terme « objet » doit être compris au sens large, et pas au sens restreint qu'il a en Java.
+</p>
+<p>
+Tout objet (ou composant) iCalendar est entouré d'une paire de lignes ayant respectivement <code>BEGIN</code> et <code>END</code> comme nom, et le type de l'objet (ou composant) comme valeur. Les deux seuls types que nous utiliserons dans ce projet sont :
+</p>
+<dl class="org-dl">
+<dt><code>VCALENDAR</code></dt><dd>qui représente un « objet iCalendar »,</dd>
+<dt><code>VEVENT</code></dt><dd>qui représente un composant « événement dans un calendrier ».</dd>
+</dl>
+<p>
+En général, une donnée iCalendar est constituée d'un seul objet <code>VCALENDAR</code> qui contient un ou plusieurs composants. Dans le cadre de ce projet, tout objet <code>VCALENDAR</code> contiendra un unique composant <code>VEVENT</code> représentant un événement, ainsi que des attributs qui lui sont propres.
+</p>
+<p>
+Les lignes qui se trouvent entre les <code>BEGIN</code> et <code>END</code> d'un objet (ou composant) décrivent soit ses <b>attributs</b> (<i>attributes</i>), soit des composants imbriqués, entourés eux-même d'une paire de lignes <code>BEGIN</code> et <code>END</code>.
+</p>
+<p>
+Pour les objets <code>VCALENDAR</code>, nous n'utiliserons que les deux attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>VERSION</code></dt><dd>qui donne la version de la norme iCalendar à laquelle correspond l'objet et qui sera toujours <code>2.0</code> — la version actuelle — pour nous,</dd>
+<dt><code>PRODID</code></dt><dd>qui identifie le logiciel utilisé pour créer l'objet, p. ex. ReCHor dans notre cas.</dd>
+</dl>
+<p>
+Pour les composants <code>VEVENT</code>, nous n'utiliserons que les six attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>UID</code></dt><dd>qui identifie de manière unique l'événement,</dd>
+<dt><code>DTSTAMP</code></dt><dd>qui donne la date et l'heure à laquelle l'événement a été créé ou modifié pour la dernière fois (et <b>pas</b> celle de l'événement lui-même !),</dd>
+<dt><code>DTSTART</code></dt><dd>qui donne la date et l'heure du début de l'événement,</dd>
+<dt><code>DTEND</code></dt><dd>qui donne la date et l'heure de la fin de l'événement,</dd>
+<dt><code>SUMMARY</code></dt><dd>qui donne une description sommaire de l'événement, qui est généralement toujours visible dans un calendrier électronique,</dd>
+<dt><code>DESCRIPTION</code></dt><dd>qui donne une description détaillée de l'événement, qui n'est généralement visible que pour l'éventuel événement sélectionné dans un calendrier électronique.</dd>
+</dl>
+<p>
+Ces attributs sont décrits plus en détail dans les sections qui suivent.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org18c6bf7">
+<h4 id="org18c6bf7"><span class="section-number-4">2.1.5.</span> Attribut <code>UID</code></h4>
+<div class="outline-text-4" id="text-2-1-5">
+<p>
+La valeur de l'attribut <code>UID</code> (pour <i>unique identifier</i>, soit <b>identifiant unique</b>) est une chaîne de caractères identifiant de manière unique l'événement. Il est utilisé par les gestionnaires de calendrier pour déterminer si deux événements sont les mêmes ou non. Par exemple, si on importe successivement deux événements dans un gestionnaire de calendrier, alors le second ne remplacera le premier que si la valeur de leur attribut <code>UID</code> est identique.
+</p>
+<p>
+Le format exact de la chaîne à utiliser comme valeur de l'attribut <code>UID</code> n'est pas spécifié par la norme iCalendar, mais pour ce projet nous utiliserons un identifiant unique de type <a href="https://fr.wikipedia.org/wiki/Universally_unique_identifier">UUID</a> (avec deux <code>U</code>). Il s'agit d'une valeur de 128 bits représentée comme un entier en base 16 séparé en 5 parties au moyen de tirets, par exemple :
+</p>
+<pre class="example">
+EEBABA70-83B9-4342-A046-BC949F562DC0
+</pre>
+<p>
+La raison pour laquelle une telle valeur est séparée par des tirets importe peu, de même que la manière exacte dont elle peut être générée. Comme nous le verrons plus loin, la bibliothèque Java offre une classe permettant de créer un UUID aléatoire ayant une très grande probabilité d'être unique, que nous pourrons utiliser sans devoir comprendre son fonctionnement.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-sec/ical/dt">
+<h4 id="sec/ical/dt"><span class="section-number-4">2.1.6.</span> Attributs <code>DTSTAMP</code>, <code>DTSTART</code> et <code>DTEND</code></h4>
+<div class="outline-text-4" id="text-sec/ical/dt">
+<p>
+Les valeurs associées aux attributs <code>DTSTAMP</code> (pour <i>date/time stamp</i>), <code>DTSTART</code> (pour <i>date/time start</i>) et <code>DTEND</code> (pour <i>date/time end</i>) sont des couples date/heure. <code>DTSTAMP</code> spécifie le moment où l'événement a été créé ou modifié pour la dernière fois, <code>DTSTART</code> celui auquel il commence, <code>DTEND</code> celui auquel il se termine.
+</p>
+<p>
+Les date/heure associées à ces attributs sont représentées sous forme textuelle en concaténant :
+</p>
+<ul class="org-ul">
+<li>l'année, sur 4 chiffres,</li>
+<li>le mois, sur 2 chiffres (de 01 à 12),</li>
+<li>le jour du mois, sur 2 chiffres (de 01 à 31),</li>
+<li>la lettre <code>T</code>,</li>
+<li>les heures, sur 2 chiffres (de 00 à 23),</li>
+<li>les minutes, sur 2 chiffres (de 00 à 59),</li>
+<li>les secondes, sur 2 chiffres (de 00 à 59).</li>
+</ul>
+<p>
+Par exemple, le 18 février 2025 à 16h13 est représenté par la chaîne suivante :
+</p>
+<pre class="example">
+20250218T161300
+</pre>
+<p>
+Une telle date/heure est <b>flottante</b> (<i>floating</i>) dans la terminologie iCalendar, car le fuseau horaire dans lequel elle est exprimée n'est pas spécifié. Il s'agit implicitement du fuseau dans lequel se trouve l'utilisateur du gestionnaire de calendrier.
+</p>
+<p>
+L'utilisation de date/heure flottantes convient bien à ce projet, sachant que tous les voyages qu'il permet de créer se déroulent dans un seul fuseau horaire, sauf ceux chevauchant les changements d'heure (été/hiver), que nous ignorerons.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-orgb5c8e7d">
+<h4 id="orgb5c8e7d"><span class="section-number-4">2.1.7.</span> Attributs <code>SUMMARY</code> et <code>DESCRIPTION</code></h4>
+<div class="outline-text-4" id="text-2-1-7">
+<p>
+Les valeurs associées aux attributs <code>SUMMARY</code> et <code>DESCRIPTION</code> sont des chaînes de caractères qui représentent respectivement un résumé de l'événement et une description plus détaillée. La plupart des gestionnaires de calendrier affichent le résumé comme « nom » de l'événement, tandis que la description n'est visible que lorsque l'événement est sélectionné.
+</p>
+<p>
+La chaîne associée à <code>SUMMARY</code> est généralement courte, et composée d'une seule ligne de texte. Celle associée à <code>DESCRIPTION</code> est par contre souvent longue, et peut comporter plusieurs lignes. Dans ce cas, les lignes doivent être séparées les unes des autres par la séquence de caractères <code>\n</code>, soit la même que celle utilisée par Java pour représenter le caractère LF — mais attention, il s'agit bien d'une séquence de 2 caractères, et <i>pas</i> d'un unique caractère LF.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-sec/ical/example">
+<h4 id="sec/ical/example"><span class="section-number-4">2.1.8.</span> Exemple</h4>
+<div class="outline-text-4" id="text-sec/ical/example">
+<p>
+L'événement iCalendar correspondant au voyage donné en exemple à l'étape précédente pourrait ressembler à ceci :
+</p>
+<p>
+<small>
+</small></p>
+<pre class="example" id="orgf3a05b7">
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:ReCHor
+BEGIN:VEVENT
+UID:bbff399f-d276-4052-8798-9c2f227353de
+DTSTAMP:20250216T182750
+DTSTART:20250218T161300
+DTEND:20250218T175700
+SUMMARY:Ecublens VD, EPFL → Gruyères
+DESCRIPTION:16h13 Ecublens VD, EPFL → Renens VD, gare (arr. 16h19)\ntrajet 
+ à pied (3 min)\n16h26 Renens VD (voie 4) → Lausanne (arr. 16h33 voie 5)\nc
+ hangement (5 min)\n16h40 Lausanne (voie 1) → Romont FR (arr. 17h13 voie 2)
+ \nchangement (3 min)\n17h22 Romont FR (voie 1) → Bulle (arr. 17h41 voie 2)
+ \nchangement (3 min)\n17h50 Bulle (voie 4) → Gruyères (arr. 17h57 voie 2)
+END:VEVENT
+END:VCALENDAR
+</pre>
+<p>
+</p>
+<p>
+Notez bien qu'aucune des lignes ne fait plus de 75 caractères, et que pour garantir cela la ligne de l'attribut <code>DESCRIPTION</code> a été « pliée » en cinq lignes « physiques » dont toutes — sauf la première — commencent par une espace. Ni ces espaces initiales ni les séquences CRLF qui les précèdent ne font partie de la valeur elle-même.
+</p>
+<p>
+Notez également la présence de plusieurs séquences de caractères <code>\n</code> dans la valeur associée au nom <code>DESCRIPTION</code>, qui représentent des retours à la ligne, visibles dans la copie d'écran ci-dessous.
+</p>
+<p>
+Cet événement est disponible sous la forme d'<a href="f/voyage_2025-02-18.ics">un fichier que vous pouvez télécharger</a> sur votre ordinateur si vous désirez l'examiner ou voir comment il est importé dans votre gestionnaire de calendrier. Par exemple, en l'important dans l'application <i>Calendrier</i> de macOS, cet événement est présenté ainsi :
+</p>
+<figure id="orgf1c22a7">
+<img alt="icalendar.png" class="shadowed" src="i/icalendar.png" width="100%"/>
+<figcaption><span class="figure-number">Figure 1 : </span>L'événement d'exemple importé dans <i>Calendrier</i> sur macOS</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org90d632a">
+<h3 id="org90d632a"><span class="section-number-3">2.2.</span> Valeurs empaquetées</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Comme expliqué dans le cours sur les types entiers, l'empaquetage consiste à stocker plusieurs valeurs dans les bits d'un « entier » Java, généralement pour économiser de la mémoire et améliorer les performances du programme.
+</p>
+<p>
+Dans ce projet, nous représenterons plusieurs types de valeurs de manière empaquetée, dont les intervalles et les critères d'optimisations, décrits dans les sections qui suivent.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orgbd0fa80">
+<h4 id="orgbd0fa80"><span class="section-number-4">2.2.1.</span> Intervalles empaquetés</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+Nous aurons ultérieurement besoin de représenter des intervalles d'entiers, par exemple tous les entiers allant de 1234 (inclus)  à 1278 (exclu).
+</p>
+<p>
+La manière naturelle de représenter de tels intervalles en Java serait de définir un enregistrement qui pourrait ressembler à ceci :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">record IntInterval(int startInclusive, int endExclusive) {
+  // … méthodes
+}
+</pre>
+</div>
+<p>
+L'intervalle mentionné en exemple plus haut pourrait alors être construit ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">new IntInterval(1234, 1278)
+</pre>
+</div>
+<p>
+Cette représentation est tout à fait valide et facile à utiliser, et c'est elle que nous vous recommanderions d'utiliser dans la plupart des cas.
+</p>
+<p>
+Toutefois, dans ce projet, nous utiliserons des intervalles d'entiers dans l'algorithme de recherche de voyages, qui doit absolument être aussi rapide que possible. Il peut dès lors valoir la peine d'essayer de trouver une représentation plus compacte de ces intervalles, qui ne nécessite pas la création d'un nouvel objet pour chacun d'entre eux.
+</p>
+<p>
+Une solution consiste bien entendu à représenter un intervalle de manière empaquetée. Comme nous le verrons, les intervalles que nous devrons représenter auront les caractéristiques suivantes :
+</p>
+<ol class="org-ol">
+<li>leur borne inférieure est toujours positive ou nulle, et plus petite que 2<sup>24</sup>,</li>
+<li>leur taille — la différence entre la borne supérieure et inférieure — est toujours plus petite que 256.</li>
+</ol>
+<p>
+Dès lors, ces intervalles peuvent être empaquetés dans un entier de type <code>int</code> (32 bits), en plaçant par exemple la taille de l'intervalle dans les 8 bits de poids faible, et la borne inférieure dans les 24 bits de poids fort.
+</p>
+<p>
+Avec cette technique, l'intervalle mentionné plus haut serait représenté par les 32 bits suivants (les 8 bits de poids faible ont été séparés des 24 de poids fort pour faciliter la lecture) :
+</p>
+<pre class="example">
+000000000000010011010010 00101100
+</pre>
+<p>
+En effet, en base 2, 1234<sub>10</sub> s'écrit 10011010010<sub>2</sub>, tandis que 44<sub>10</sub> (la taille de l'intervalle) s'écrit 101100<sub>2</sub>.
+</p>
+<p>
+Par rapport à la représentation objet (enregistrement), cette représentation empaquetée a les avantages suivants :
+</p>
+<ul class="org-ul">
+<li>elle consomme moins de mémoire, puisqu'un intervalle se représente au moyen de 32 bits, alors qu'une instance d'une classe comme <code>IntInterval</code> en nécessite environ 3 ou 4 fois plus,</li>
+<li>la création d'un intervalle peut se faire par simple manipulation de bits, et ne nécessite pas d'allouer de la mémoire pour y stocker les attributs.</li>
+</ul>
+<p>
+Bien entendu, la représentation empaquetée possède également de nombreux inconvénients par rapport à la représentation objet :
+</p>
+<ul class="org-ul">
+<li>aucun type spécifique n'existe pour les intervalles, qui sont de simples valeurs de type <code>int</code> qu'il est très facile de confondre avec d'autres valeurs du même type,</li>
+<li>il n'est pas possible de définir des méthodes sur les valeurs empaquetées, comme p.ex. <code>toString</code>, car ce ne sont pas des objets.</li>
+</ul>
+<p>
+Dès lors, comme nous l'avons dit, une représentation empaquetée ne devrait être utilisée que lorsque les gains en performance sont conséquents et justifient ces inconvénients.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org896bf63">
+<h4 id="org896bf63"><span class="section-number-4">2.2.2.</span> Critères d'optimisation</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+Une des caractéristiques importantes de ReCHor est que, lors de la recherche d'horaires, il essaie d'optimiser simultanément trois critères, qui sont :
+</p>
+<ul class="org-ul">
+<li>l'heure de départ, \(d\), que l'on désire maximiser,</li>
+<li>l'heure d'arrivée, \(a\), que l'on désire minimiser,</li>
+<li>le nombre de changements, \(c\), que l'on désire minimiser.</li>
+</ul>
+<p>
+Nous grouperons généralement ces trois critères dans un triplet \((d, a, c)\).
+</p>
+<p>
+Lorsqu'un triplet de critères est meilleur qu'un autre pour au moins l'un des trois critères, tout en étant au moins aussi bon pour les critères restants, on dit que le premier triplet <b>domine</b> (<i>dominates</i>) le second.
+</p>
+<p>
+Par exemple, le triplet \((\textrm{8h05}, \textrm{9h00}, 1)\) domine le triplet \((\textrm{8h00}, \textrm{9h00}, 2)\) car il est meilleur pour au moins l'un des critères — ici l'heure de départ, car \(\textrm{8h05} &gt; \textrm{8h00}\), et le nombre de changements, car \(1 &lt; 2\) — et au moins aussi bon pour les critères restants — l'heure d'arrivée, qui est identique.
+</p>
+<p>
+Comme nous le verrons plus en détail dans une étape ultérieure, les voyages affichés par ReCHor en réponse à une requête sont tous ceux dont le triplet de critères d'optimisation n'est pas dominé par celui d'un autre voyage. Ainsi, s'il n'y avait que deux voyages possibles pour relier un arrêt à un autre :
+</p>
+<ol class="org-ol">
+<li>un partant à 8h05, arrivant à 9h00 et nécessitant 1 changement, et</li>
+<li>un partant à 8h00, arrivant à 9h00 et nécessitant 2 changements,</li>
+</ol>
+<p>
+alors ReCHor ne montrerait que le premier, car le second est dominé par lui, comme nous l'avons vu ci-dessus. Intuitivement, cela est tout à fait sensé : à quoi bon partir 5 minutes plut tôt et faire un changement de plus pour arriver à destination à la même heure ?
+</p>
+<p>
+Formellement, un triplet \(t_1 = (d_1, a_1, c_1)\) domine un triplet \(t_2 = (d_2, a_2, c_2)\) si et seulement si :
+</p>
+<p>
+\[(d_1 \ge d_2) \wedge (a_1 \le a_2) \wedge (c_1 \le c_2) \wedge (t_1\ne t_2)\]
+</p>
+<p>
+ce que l'on note :
+</p>
+<p>
+\[t_1\prec t_2\]
+</p>
+<p>
+On dit également qu'un triplet \(t_1\) <b>domine ou est égal à</b> (<i>dominates or is equal to</i>) un triplet \(t_2\) si :
+</p>
+<p>
+\[(d_1 \ge d_2) \wedge (a_1 \le a_2) \wedge (c_1 \le c_2)\]
+</p>
+<p>
+ce que l'on note :
+</p>
+<p>
+\[t_1\preceq t_2\]
+</p>
+<p>
+En d'autres termes, on peut définir la domination ainsi :
+</p>
+<p>
+\[t_1\prec t_2 \ \Leftrightarrow\ (t_1\preceq t_2) \wedge (t_1\ne t_2)\]
+</p>
+<p>
+Il faut noter que, étant donné deux triplets, il est tout à fait possible qu'aucun des deux ne domine l'autre. Par exemple, le triplet \(t_1 = (\textrm{8h05}, \textrm{9h00}, 1)\) ne domine pas, ni n'est dominé par, le triplet \(t_2 = (\textrm{8h00}, \textrm{8h55}, 1)\). En effet, \(t_1\) est meilleur que \(t_2\) du point de vue de l'heure de départ, mais moins bon que lui du point de vue de l'heure d'arrivée, et équivalent du point de vue des changements.
+</p>
+<p>
+En termes mathématiques, cela signifie que la relation de domination est un ordre partiel et pas un ordre total.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org9dd1433">
+<h4 id="org9dd1433"><span class="section-number-4">2.2.3.</span> Critères d'optimisation empaquetés</h4>
+<div class="outline-text-4" id="text-2-2-3">
+<p>
+Comme les intervalles, les critères d'optimisation (triplets) pourraient être représentés naturellement en Java au moyen d'un enregistrement, qui pourrait ressembler à ceci :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">record Criteria(LocalTime depTime,
+                LocalTime arrTime,
+                int changes) { /* … méthodes */ }
+</pre>
+</div>
+<p>
+Toutefois, l'algorithme de recherche utilisé par ReCHor nécessite le calcul et le stockage de plusieurs millions de critères pour chaque requête, et donc l'utilisation d'une représentation empaquetée semble justifiée.
+</p>
+<p>
+Pour trouver une représentation empaquetée qui convienne, il faut trouver comment représenter les heures de départ et d'arrivée sous la forme d'entiers. Sachant que, dans les horaires de transports publics, ces heures sont données à une précision qui ne dépasse pas la minute, il paraît naturel de les représenter au moyen du nombre de minutes écoulées depuis une origine arbitraire.
+</p>
+<p>
+Même si le choix de l'origine est arbitraire, il semble raisonnable d'en choisir une qui garantisse que toutes les heures — exprimées en minutes depuis elle — soient positives. À première vue, on pourrait penser que minuit (0h00) convient, mais pour des raisons qui deviendront claires dans une étape ultérieure, il se trouve que nous devrons parfois représenter des heures avant minuit. Afin d'avoir un peu de marge, nous choisirons 4h avant minuit, soit –240 minutes, comme origine des heures.
+</p>
+<p>
+Une fois l'origine choisie, il faut encore déterminer la plus grande heure possible afin de connaître la plage des heures qu'il faut pouvoir représenter. On pourrait penser que la plus grande heure qu'il est nécessaire de représenter est 23h59, mais ce n'est pas le cas. En effet, les transports publics utilisent généralement une notion de jour, appelé <b>jour de service</b> (<i>service day</i>), qui diffère de celle de jour civil.
+</p>
+<p>
+L'une des raisons en est que la gestion des horaires est simplifiée si toutes les courses arrivent le même jour qu'elles sont parties, entre autres car cela évite de devoir stocker deux dates. Dès lors, toutes les courses se terminant après minuit utilisent des heures supérieures à 23h59. Par exemple, un train partant de Lausanne à 23h30 et arrivant à Genève à 0h23 le jour (civil) d'après sera considéré comme arrivant à 24h23 le même jour (de service).
+</p>
+<p>
+En conséquence, et afin d'avoir un peu de marge, nous considérerons que la plus grande heure qui doit être représentable est 47h59, soit 3119 minutes après l'origine choisie (–240 min). Sachant que \(\log_2 3119 \approx 11.6\) on en conclut que les heures de départ et d'arrivée d'un triplet peuvent être représentées avec 12 bits chacune.
+</p>
+<p>
+Une dernière amélioration peut encore être apportée à la représentation des heures. Comme cela a été dit plus haut, des trois critères d'optimisations utilisés, deux doivent être minimisés (l'heure d'arrivée et le nombre de changements), tandis que le dernier doit être maximisé (l'heure de départ). Cette asymétrie peut compliquer certaines choses, et il serait préférable que tous les critères doivent être soit minimisés, soit maximisés.
+</p>
+<p>
+Pour garantir cela, nous pouvons remplacer l'heure de départ par ce que nous appellerons son <b>complément</b>, c.-à-d. le nombre de minutes qui sépare cette heure de l'heure maximale représentable, à savoir 4095 (\(2^{12}-1\)).
+</p>
+<p>
+Ainsi, l'heure 12h34 sera représentée par l'entier 994 (\(240 + 12\cdot60 + 34\)) s'il s'agit d'une heure d'arrivée, mais par l'entier 3101 (\(4095 - 994\)) s'il s'agit d'une heure de départ.
+</p>
+<p>
+La question des heures de départ et d'arrivée étant réglée, il nous reste maintenant à considérer le dernier critère d'optimisation, le nombre de changements. Il est clair que celui-ci est un entier positif ou nul, et on peut raisonnablement faire l'hypothèse qu'il est inférieur à 128. Dès lors, 7 bits suffisent à le représenter.
+</p>
+<p>
+En résumé, un triplet de critères d'optimisation peut être représenté au moyen d'un total de 31 bits : 12 pour (le complément de) l'heure de départ, 12 pour l'heure d'arrivée, et 7 pour le nombre de changements. Il serait donc possible d'empaqueter un tel triplet dans un entier de type <code>int</code> ayant la structure suivante :
+</p>
+<table>
+<colgroup>
+<col class="org-left"/>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-left" scope="col"><b>Bits</b></th>
+<th class="org-right" scope="col">31</th>
+<th class="org-left" scope="col">30 à 19</th>
+<th class="org-left" scope="col">18 à 7</th>
+<th class="org-left" scope="col">6 à 0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><b>Contenu</b></td>
+<td class="org-right">0</td>
+<td class="org-left">heure de départ</td>
+<td class="org-left">heure d'arrivée</td>
+<td class="org-left">changements</td>
+</tr>
+</tbody>
+</table>
+<p>
+Le fait que le bit de poids le plus fort (d'index 31) vaille 0 garantit qu'un tel entier est toujours interprété comme positif, ce qui simplifiera certaines étapes ultérieures.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org356fe2b">
+<h4 id="org356fe2b"><span class="section-number-4">2.2.4.</span> Critères d'optimisation augmentés</h4>
+<div class="outline-text-4" id="text-2-2-4">
+<p>
+L'algorithme de recherche d'horaire utilisé par ReCHor devra associer aux critères d'optimisation des informations permettant de reconstruire les voyages.
+</p>
+<p>
+Comme nous le verrons, les informations qui doivent être associées à un triplet tiennent dans 32 bits. Dès lors, il est possible de les empaqueter avec les critères dans un entier de 64 bits — de type <code>long</code> en Java — en plaçant les critères d'optimisation dans les 32 bits de poids fort, et les informations associées — que nous nommerons la <b>charge utile</b> (<i>payload</i>) — dans les 32 bits de poids faible. En résumé, ces « critères augmentés » seront empaquetés dans un entier de type <code>long</code> ayant la structure suivante :
+</p>
+<table>
+<colgroup>
+<col class="org-left"/>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-left" scope="col"><b>Bits</b></th>
+<th class="org-right" scope="col">63</th>
+<th class="org-left" scope="col">62 à 51</th>
+<th class="org-left" scope="col">50 à 39</th>
+<th class="org-left" scope="col">38 à 32</th>
+<th class="org-left" scope="col">31 à 0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><b>Contenu</b></td>
+<td class="org-right">0</td>
+<td class="org-left">h. de dép.</td>
+<td class="org-left">h. d'arr.</td>
+<td class="org-left">chg.</td>
+<td class="org-left">charge utile</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="outline-4" id="outline-container-sec/packed/criteria">
+<h4 id="sec/packed/criteria"><span class="section-number-4">2.2.5.</span> Critères d'optimisation sans heure de départ</h4>
+<div class="outline-text-4" id="text-sec/packed/criteria">
+<p>
+Une dernière caractéristique de l'algorithme de recherche d'horaires utilisé par ReCHor est que dans certains cas, il devra représenter et stocker des <i>paires</i> de critères plutôt que des triplets. Ces paires sont composées uniquement d'une heure d'arrivée et d'un nombre de changements, sans heure de départ.
+</p>
+<p>
+Nous pourrions bien entendu représenter ces paires de critères différemment des triplets, mais il est plus simple de les représenter en utilisant une valeur spéciale — et invalide — pour l'heure de départ, afin de signaler son absence. Dans un tel cas, les bits correspondant à l'heure de départ vaudront tous 0, et les paires de critères augmentés seront donc empaquetés dans un entier de type <code>long</code> ayant la structure suivante :
+</p>
+<table>
+<colgroup>
+<col class="org-left"/>
+<col class="org-right"/>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-left" scope="col"><b>Bits</b></th>
+<th class="org-right" scope="col">63</th>
+<th class="org-right" scope="col">62 à 51</th>
+<th class="org-left" scope="col">50 à 39</th>
+<th class="org-left" scope="col">38 à 32</th>
+<th class="org-left" scope="col">31 à 0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><b>Contenu</b></td>
+<td class="org-right">0</td>
+<td class="org-right">0</td>
+<td class="org-left">h. d'arr.</td>
+<td class="org-left">chg.</td>
+<td class="org-left">charge utile</td>
+</tr>
+</tbody>
+</table>
+<p>
+L'heure de départ représentée par ces 12 bits valant 0 est 64h15, ce qui est effectivement au-delà de la limite de 47h59 que nous nous sommes fixé.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-org11648f0">
+<h4 id="org11648f0"><span class="section-number-4">2.2.6.</span> Exemple</h4>
+<div class="outline-text-4" id="text-2-2-6">
+<p>
+Pour illustrer la représentation empaquetée des critères d'optimisations, voyons comment représenter le triplet \((\textrm{8h00}, \textrm{9h00}, 2)\) donné en exemple plus haut.
+</p>
+<p>
+L'heure de départ, 8h00, exprimée en minutes depuis l'origine à –4h, est 720. Son complément, qui est ce qui est stocké dans la représentation empaquetée, vaut 3375, soit 110100101111<sub>2</sub> en binaire.
+</p>
+<p>
+L'heure d'arrivée, 9h00, exprimée en minutes depuis l'origine, est 780, soit 1100001100<sub>2</sub> en binaire.
+</p>
+<p>
+Le nombre de changements est 2, soit 10<sub>2</sub> en binaire.
+</p>
+<p>
+En combinant ces trois informations, on en déduit que les 32 bits de poids fort de la représentation empaquetée de ce triplet valent (avec des espaces séparant les différentes parties afin de faciliter la lecture) :
+</p>
+<pre class="example">
+0 110100101111 001100001100 0000010
+</pre>
+<p>
+Quant aux 32 bits de poids faible, leur valeur est simplement celle de la charge utile, qui peut être quelconque.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class="outline-2 implementation" id="outline-container-org509428c">
+<div class="outline-text-2" id="text-3">
+</div>
+<div class="outline-3" id="outline-container-orgc064acd">
+<div class="class-section"><a class="class-link" href="classes/class_handout_02.html_3.1._classe_icalbuilder.html"><div class="class-section"><a class="class-link" href="classes/class_handout_02.html_icalbuilder.html"><div class="class-section"><h3 id="orgc064acd"><span class="section-number-3">3.1.</span> Classe <code>IcalBuilder</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-1">
+<p>
+La classe <code>IcalBuilder</code> du paquetage principal, publique et finale, représente un bâtisseur d'événement au format iCalendar. Elle possède deux types énumérés publics imbriqués, qui sont :
+</p>
+<dl class="org-dl">
+<dt><code>Component</code></dt><dd>qui représente un composant ou un objet, et dont les valeurs sont (dans l'ordre) : <code>VCALENDAR</code> et <code>VEVENT</code>,</dd>
+<dt><code>Name</code></dt><dd>qui représente un nom d'une ligne, et dont les valeurs sont (dans l'ordre) : <code>BEGIN</code>, <code>END</code>, <code>PRODID</code>, <code>VERSION</code>, <code>UID</code>, <code>DTSTAMP</code>, <code>DTSTART</code>, <code>DTEND</code>, <code>SUMMARY</code> et <code>DESCRIPTION</code>.</dd>
+</dl>
+<p>
+De plus, <code>IcalBuilder</code> possède les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>IcalBuilder add(Name name, String value)</code></dt><dd>qui ajoute à l'événement en cours de construction une ligne dont le nom et la valeur sont ceux donnés, en prenant garde à « plier » la ligne au besoin afin de respecter la contrainte qu'aucune ligne d'une donnée iCalendar ne devrait dépasser 75 caractères,</dd>
+<dt><code>IcalBuilder add(Name name, LocalDateTime dateTime)</code></dt><dd>qui ajoute à l'événement en cours de construction une ligne dont le nom est celui donné et la valeur est la représentation textuelle de la date/heure donnée, au format spécifié à la §<a href="#sec/ical/dt">2.1.6</a>,</dd>
+<dt><code>IcalBuilder begin(Component component)</code></dt><dd>qui commence un composant en ajoutant une ligne dont le nom est <code>BEGIN</code> et la valeur est le nom du composant donné,</dd>
+<dt><code>IcalBuilder end()</code></dt><dd>qui termine le dernier composant qui a été commencé précédemment par <code>begin</code> mais pas encore terminé par un appel à <code>end</code> précédent, ou lève une <code>IllegalArgumentException</code> s'il n'y en a aucun (voir les conseils de programmation),</dd>
+<dt><code>String build()</code></dt><dd>qui retourne la chaîne de caractères au format iCalendar représentant l'événement en cours de construction, ou lève une <code>IllegalArgumentException</code> si un composant qui a été commencé par un appel à <code>begin</code> n'a, à ce stade, pas été terminé par un appel à <code>end</code>.</dd>
+</dl>
+</div>
+<div class="outline-4" id="outline-container-orga3bbd6d">
+<h4 id="orga3bbd6d"><span class="section-number-4">3.1.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<p>
+Pour que la méthode <code>end</code> puisse terminer le bon composant, vous pouvez garder dans un tableau dynamique de type <code>ArrayList&lt;Component&gt;</code> les composants commencés mais pas terminés. La méthode <code>begin</code> ajoute le type du nouveau composant à la fin de ce tableau, tandis que <code>end</code> consulte le dernier élément de ce tableau pour savoir quel composant fermer, puis le supprime du tableau — en levant bien entendu l'exception demandée si le tableau est vide au moment de l'appel à <code>end</code>.
+</p>
+<p>
+En plus de cet attribut contenant les composants commencés mais pas encore terminés, il est conseillé d'en avoir un second qui soit un bâtisseur de chaîne, de type <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuilder.html"><code>StringBuilder</code></a>, et qui contienne la chaîne représentant l'événement au format iCalendar en cours de construction.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org7480e03">
+<div class="class-section"><a class="class-link" href="classes/class_handout_02.html_3.2._classe_journeyicalconverter.html"><div class="class-section"><a class="class-link" href="classes/class_handout_02.html_journeyicalconverter.html"><div class="class-section"><h3 id="org7480e03"><span class="section-number-3">3.2.</span> Classe <code>JourneyIcalConverter</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-2">
+<p>
+La classe <code>JourneyIcalConverter</code> du sous-paquetage <code>journey</code>, publique et non instanciable, offre une méthode permettant de convertir un voyage en un événement :
+</p>
+<dl class="org-dl">
+<dt><code>String toIcalendar(Journey journey)</code></dt><dd>qui retourne une chaîne de caractères au format iCalendar représentant l'événement qui correspond au voyage donné.</dd>
+</dl>
+<p>
+L'événement retourné par <code>toIcalendar</code> doit avoir exactement la même structure que celui donné en exemple à la §<a href="#sec/ical/example">2.1.8</a>, et doit donc consister en :
+</p>
+<ul class="org-ul">
+<li>un objet <code>VCALENDAR</code> à la racine avec :
+<ul class="org-ul">
+<li>un attribut <code>VERSION</code> valant <code>2.0</code>,</li>
+<li>un attribut <code>PRODID</code> valant <code>ReCHor</code>,</li>
+<li>un composant <code>VEVENT</code> imbriqué avec :
+<ul class="org-ul">
+<li>un attribut <code>UID</code> dont la valeur est un UUID aléatoire (voir les conseils de programmation),</li>
+<li>un attribut <code>DTSTAMP</code> dont la valeur est la date/heure au moment de l'appel de la méthode (voir les conseils de programmation),</li>
+<li>un attribut <code>DTSTART</code> dont la valeur est la date/heure du début du voyage,</li>
+<li>un attribut <code>DTEND</code> dont la valeur est la date/heure de la fin du voyage,</li>
+<li>un attribut <code>SUMMARY</code> dont la valeur est le nom de la gare de départ et celle d'arrivée, séparés d'une flèche (<code>→</code>) entourée d'espaces,</li>
+<li>un attribut <code>DESCRIPTION</code> dont la valeur est la représentation textuelle des différentes étapes du voyage, chacune sur une ligne, obtenue au moyen des méthodes de <code>FormatterFr</code>.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>
+Pour vérifier que les événements produits par votre méthode sont syntaxiquement corrects, vous pouvez utiliser <a href="https://icalendar.org/validator.html">le validateur iCalendar en ligne</a>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org32aed65">
+<h4 id="org32aed65"><span class="section-number-4">3.2.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<p>
+La méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html#randomUUID()"><code>randomUUID</code></a> de la classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html"><code>UUID</code></a> permet d'obtenir un UUID aléatoire, qui peut être transformé en chaîne de caractères au moyen de la méthode <code>toString</code> puis utilisé tel quel comme valeur associée au nom <code>UID</code>.
+</p>
+<p>
+La méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html#now()"><code>now</code></a> de la classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html"><code>LocalDateTime</code></a> permet d'obtenir la date/heure actuelle, qui doit être associée au nom <code>DTSTAMP</code>.
+</p>
+<p>
+Pour construire la chaîne à associer à l'attribut <code>DESCRIPTION</code>, qui doit comporter une étape par ligne, les lignes étant séparées par les deux caractères <code>\n</code>, vous pouvez utiliser une instance de <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/StringJoiner.html"><code>StringJoiner</code></a>. La classe <code>StringJoiner</code> est une espèce de bâtisseur de chaîne mais qui offre la possibilité d'insérer un séparateur entre les différentes chaînes qu'on lui ajoute. Par exemple, elle peut être utilisée ainsi pour obtenir la chaîne <code>a+b+c</code> :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">StringJoiner j = new StringJoiner("+");
+String abc = j.add("a").add("b").add("c").toString();
+</pre>
+</div>
+<p>
+Lors de la construction de la chaîne à associer à l'attribut <code>DESCRIPTION</code> toujours, vous devrez parcourir les étapes du voyage et déterminer, pour chacune d'elle, s'il s'agit d'une étape à pied ou en transport, pour appeler la bonne variante de la méthode <code>formatLeg</code> de <code>FormatterFr</code>. Pour ce faire, vous pouvez bien entendu utiliser un <code>instanceof</code>, mais une solution plus propre consiste à faire du <b>filtrage de motifs</b> (<i>pattern-matching</i>) dans un <code>switch</code>. La syntaxe est la suivante :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">Journey.Leg leg = …;
+switch (leg) {
+  case Journey.Leg.Foot f -&gt;
+    System.out.println("étape à pied : " + f);
+  case Journey.Leg.Transport t -&gt;
+    System.out.println("étape en transport : " + t);
+}
+</pre>
+</div>
+<p>
+L'idée est que le premier cas sera exécuté si et seulement si <code>leg</code> est de type <code>Foot</code>, et dans ce cas la variable <code>f</code>, de type <code>Journey.Leg.Foot</code>, fera référence à l'étape (c.-à-d. le même objet que <code>leg</code>, mais avec un type différent). Le second cas sera exécuté si et seulement si <code>leg</code> est de type <code>Transport</code>, et dans ce cas la variable <code>t</code>, de type <code>Journey.Leg.Transport</code>, fera référence à l'étape (c.-à-d. une fois encore le même objet que <code>leg</code>, mais avec un type différent). Ces deux cas sont exhaustifs, et Java le sait car l'interface <code>Leg</code> est scellée.
+</p>
+<p>
+Nous n'examinerons pas le filtrage de motifs en détail dans ce cours, car il ne jouera qu'un rôle mineur — et optionnel — dans le projet, mais les personnes intéressées par les détails pourront lire le guide <a href="https://docs.oracle.com/en/java/javase/21/language/pattern-matching-switch.html"><i>Pattern Matching for switch Expressions and Statements</i></a>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org1aff925">
+<div class="class-section"><a class="class-link" href="classes/class_handout_02.html_3.3._classe_bits32_24_8.html"><div class="class-section"><a class="class-link" href="classes/class_handout_02.html_bits32_24_8.html"><div class="class-section"><h3 id="org1aff925"><span class="section-number-3">3.3.</span> Classe <code>Bits32_24_8</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-3">
+<p>
+La classe <code>Bits32_24_8</code> du paquetage principal, publique et non instanciable, contient des méthodes statiques permettant de manipuler une paire de valeurs — de 24 et 8 bits respectivement — empaquetées dans un entier de 32 bits de type <code>int</code>.
+</p>
+<p>
+Cette classe existe car il se trouve que plusieurs paires de valeurs utiles dans ce projet, dont les intervalles d'entiers, peuvent être empaquetées de la sorte, et il semble donc raisonnable de partager le code les manipulant.
+</p>
+<p>
+Les méthodes publiques (et statiques) offertes par <code>Bits32_24_8</code> sont :
+</p>
+<dl class="org-dl">
+<dt><code>int pack(int bits24, int bits8)</code></dt><dd>qui retourne le vecteur de 32 bits dont les 24 bits de poids fort sont <code>bits24</code> et les 8 bits de poids faible sont <code>bits8</code>, ou lève une <code>IllegalArgumentException</code> si l'une des deux valeurs nécessite plus de bits qu'elle ne devrait (24 et 8, respectivement, voir les conseils de programmation),</dd>
+<dt><code>int unpack24(int bits32)</code></dt><dd>qui retourne les 24 bits de poids fort du vecteur de 32 bits donné,</dd>
+<dt><code>int unpack8(int bits32)</code></dt><dd>qui retourne les 8 bits de poids faible du vecteur de 32 bits donné.</dd>
+</dl>
+</div>
+<div class="outline-4" id="outline-container-org8e7a6fe">
+<h4 id="org8e7a6fe"><span class="section-number-4">3.3.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+Il existe de nombreuses manières de déterminer si une valeur ne nécessite pas plus d'un certain nombre de bits pour être représentée. L'une d'entre elles consiste à décaler la valeur à droite du nombre de bits en question, puis de voir si le résultat vaut 0. Ainsi, pour déterminer si la valeur <code>someValue</code> tient dans 4 bits, on peut écrire :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int someValue = …;
+boolean someValueFitsIn4Bits = (someValue &gt;&gt; 4) == 0;
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org2d4db45">
+<div class="class-section"><a class="class-link" href="classes/class_handout_02.html_3.4._classe_packedrange.html"><div class="class-section"><a class="class-link" href="classes/class_handout_02.html_packedrange.html"><div class="class-section"><h3 id="org2d4db45"><span class="section-number-3">3.4.</span> Classe <code>PackedRange</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-4">
+<p>
+La classe <code>PackedRange</code> du paquetage principal, publique et non instanciable, offre des méthodes permettant de manipuler des intervalles d'entiers empaquetés dans un entier de type <code>int</code>. Dans cette représentation, les 24 bits de poids fort contiennent la borne inférieure de l'intervalle, tandis que les 8 bits de poids faible contiennent sa longueur.
+</p>
+<p>
+<code>PackedRange</code> offre les méthodes publiques (et statiques) suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int pack(int startInclusive, int endExclusive)</code></dt><dd>qui retourne la valeur de type <code>int</code> représentant l'intervalle d'entiers allant de <code>startInclusive</code> (inclus) à <code>endExclusive</code> (exclu), ou lève une <code>IllegalArgumentException</code> si cet intervalle ne peut pas être empaqueté (soit parce que sa borne inférieure ne peut être représentée avec 24 bits, ou parce que sa longueur ne peut être représentée avec 8 bits),</dd>
+<dt><code>int length(int interval)</code></dt><dd>qui retourne la longueur de l'intervalle d'entiers empaqueté donné,</dd>
+<dt><code>int startInclusive(int interval)</code></dt><dd>qui retourne le début de l'intervalle d'entiers empaqueté donné, c.-à-d. le plus petit entier qui en fait partie,</dd>
+<dt><code>int endExclusive(int interval)</code></dt><dd>qui retourne le plus petit entier strictement supérieur à tous les entiers de l'intervalle.</dd>
+</dl>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orga8c8151">
+<div class="class-section"><a class="class-link" href="classes/class_handout_02.html_3.5._classe_packedcriteria.html"><div class="class-section"><a class="class-link" href="classes/class_handout_02.html_packedcriteria.html"><div class="class-section"><h3 id="orga8c8151"><span class="section-number-3">3.5.</span> Classe <code>PackedCriteria</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-5">
+<p>
+La classe <code>PackedCriteria</code> du sous-paquetage <code>journey</code>, publique et non instanciable, contient des méthodes statiques permettant de manipuler des critères d'optimisation augmentés, empaquetés dans des valeurs de type <code>long</code>.
+</p>
+<p>
+Plusieurs de ses méthodes reçoivent en argument ou retournent en résultat une heure de départ ou d'arrivée. Attention, ces heures sont exprimées en minutes écoulées depuis minuit (!) et ne sont valides que si elles sont comprises entre -240 (inclus) et 2880 (exclu). Ce n'est qu'au moment d'être empaquetées que ces minutes sont « translatées » afin d'être exprimées en fonction de l'origine choisie plus haut (-240). Cette « translation » garantit que les minutes empaquetées sont toujours positives, ce qui simplifie le code.
+</p>
+<p>
+<code>PackedCriteria</code> offre les méthodes publiques (et statiques) suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>long pack(int arrMins, int changes, int payload)</code></dt><dd>qui retourne la valeur de type <code>long</code> résultant de l'empaquetage de l'heure d'arrivée, du nombre de changements et de la « charge utile » donnés, selon le format décrit à la §<a href="#sec/packed/criteria">2.2.5</a> — c.-à-d. sans heure (minutes) de départ — ou lève une <code>IllegalArgumentException</code> si l'heure d'arrivée est invalide, ou si le nombre de changements ne tient pas dans 7 bits,</dd>
+<dt><code>boolean hasDepMins(long criteria)</code></dt><dd>qui retourne vrai ssi les critères empaquetés donnés incluent une heure de départ,</dd>
+<dt><code>int depMins(long criteria)</code></dt><dd>qui retourne l'heure de départ (en minutes après minuit) des critères empaquetés donnés, ou lève <code>IllegalArgumentException</code> si ces critères n'incluent pas une heure de départ,</dd>
+<dt><code>int arrMins(long criteria)</code></dt><dd>qui retourne l'heure d'arrivée (en minutes après minuit) des critères empaquetés donnés,</dd>
+<dt><code>int changes(long criteria)</code></dt><dd>qui retourne le nombre de changements des critères empaquetés donnés,</dd>
+<dt><code>int payload(long criteria)</code></dt><dd>qui retourne la « charge utile » associée aux critères empaquetés donnés,</dd>
+<dt><code>boolean dominatesOrIsEqual(long criteria1, long criteria2)</code></dt><dd>qui retourne vrai si et seulement si les premiers critères empaquetés dominent ou sont égaux aux seconds, ou lève une <code>IllegalArgumentException</code> l'un des ensembles de critères possède une heure de départ mais l'autre pas,</dd>
+<dt><code>long withoutDepMins(long criteria)</code></dt><dd>qui retourne des critères empaquetés identiques à ceux donnés, mais sans heure de départ,</dd>
+<dt><code>long withDepMins(long criteria, int depMins1)</code></dt><dd>qui retourne des critères empaquetés identiques à ceux donnés, mais avec l'heure de départ donnée,</dd>
+<dt><code>long withAdditionalChange(long criteria)</code></dt><dd>qui retourne des critères empaquetés identiques à ceux donnés, mais avec un changement de plus,</dd>
+<dt><code>long withPayload(long criteria, int payload1)</code></dt><dd>qui retourne des critères empaquetés identiques à ceux donnés, mais avec la « charge utile » donnée.</dd>
+</dl>
+</div>
+<div class="outline-4" id="outline-container-orgf8020f3">
+<h4 id="orgf8020f3"><span class="section-number-4">3.5.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-5-1">
+<p>
+Lorsque vous utilisez des décalages bit à bit, faites bien attention au fait que c'est le type de l'opérande de gauche qui détermine le type du résultat. Ainsi, si vous écrivez :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">long l = 1 &lt;&lt; 32;
+</pre>
+</div>
+<p>
+alors le décalage est fait sur une valeur de type <code>int</code>, car <code>1</code> a ce type-là. Dès lors, le résultat du décalage est <code>1</code> (avec le type <code>int</code>) qui est ensuite converti en valeur de type <code>long</code>, puis stocké dans <code>l</code>. Par contre, si vous écrivez :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">long l = 1L &lt;&lt; 32;
+</pre>
+</div>
+<p>
+alors le décalage est fait sur une valeur de type <code>long</code>, car <code>1L</code> a ce type-là, et la valeur stockée dans <code>l</code> vaut <code>4294967296</code>.
+</p>
+<p>
+Dans les méthodes <code>pack</code> et <code>withPayload</code>, passez la charge utile reçue en argument à la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html#toUnsignedLong(int)"><code>toUnsignedLong</code></a> pour la convertir en valeur de type <code>long</code> sans effectuer une extension de signe, qui pourrait poser des problèmes.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgbadaa42">
+<h3 id="orgbadaa42"><span class="section-number-3">3.6.</span> Vérification des signatures</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+Pour faciliter votre travail, nous mettons à votre disposition <a href="f/SignatureChecks_2.java">un fichier de vérification de signatures</a>, nommé <code>SignatureChecks_2.java</code>, à importer dans votre projet dans le même dossier que celui contenant le fichier <code>SignatureChecks_1.java</code>. La classe qu'il contient fait référence à la totalité des classes et méthodes de cette étape, ce qui vous permet de vérifier que leurs noms et types sont corrects. Cela est capital, car la moindre faute à ce niveau empêcherait l'exécution de nos tests unitaires.
+</p>
+<p>
+Nous vous fournirons de tels fichiers pour toutes les étapes jusqu'à la sixième (incluse), et il vous faudra penser à vérifier systématiquement qu'aucune erreur n'est signalée à leur sujet. Faute de cela, votre rendu pourrait se voir refusé par notre système.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orga1dc079">
+<h3 id="orga1dc079"><span class="section-number-3">3.7.</span> Tests</h3>
+<div class="outline-text-3" id="text-3-7">
+<p>
+À partir de cette étape, nous ne vous fournissons plus de tests unitaires, et il vous faut donc les écrire vous-même.
+</p>
+<p>
+Notez que, pour les étapes 2 à 6, nous mettrons à disposition nos tests le lundi suivant le jour de rendu de chaque étape. Vous aurez alors tout intérêt à les incorporer à votre projet, ce qui peut poser un problème de nommage.
+</p>
+<p>
+En effet, si vous nommez vos tests selon la convention standard, en ajoutant simplement le suffixe <code>Test</code> au nom de la classe testée, vos tests auront le même nom que les nôtres, et il ne vous sera pas possible d'avoir vos tests et les nôtres dans un même projet. Pour cette raison, nous vous recommandons d'adopter une autre convention de nommage pour vos tests, par exemple en entourant le nom de la classe testée au moyen du préfixe <code>My</code> et du suffixe <code>Test</code>. Ainsi, votre test pour la classe <code>Rational</code> pourrait être nommé <code>MyRationalTest</code>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org19c92e3">
+<div class="outline-text-2" id="text-4">
+<p>
+Pour cette étape, vous devez :
+</p>
+<ul class="org-ul">
+<li>écrire les classes <code>IcalBuilder</code>, <code>JourneyIcalConverter</code>, <code>Bits32_24_8</code>, <code>PackedRange</code> et <code>PackedCriteria</code> selon les indications plus haut,</li>
+<li>tester votre code,</li>
+<li>documenter la totalité des entités publiques que vous avez définies,</li>
+<li>rendre votre code au plus tard le <b>28 février 2025 à 18h00</b>, au moyen du programme <code>Submit.java</code> fourni et des jetons disponibles sur votre <a href="https://cs108.epfl.ch/my/">page privée</a>.</li>
+</ul>
+<p>
+Ce rendu est un rendu testé, auquel 20 points sont attribués, au prorata des tests unitaires passés avec succès.
+</p>
+<div class="cs108warning" id="orgccb697a">
+<p>
+N'attendez surtout pas le dernier moment pour effectuer votre rendu, car vous n'êtes pas à l'abri d'imprévus.
+</p>
+<p>
+Si vous manquez la date limite de rendu, vous avez encore la possibilité de faire un rendu tardif au moyen des jetons prévus à cet effet, et ce durant les 2 heures qui suivent, mais il vous en coûtera une pénalité <b>inconditionnelle</b> de 2 points.
+</p>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<div id="text-footnotes">
+<div class="footdef"><sup><a class="footnum" href="#fnr.1" id="fn.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+En réalité, cela n'est vrai que si vous utilisez IntelliJ sur Windows, car malheureusement les caractères utilisés pour terminer une ligne dépendent du système d'exploitation :
+</p>
+<ul class="org-ul">
+<li>sur Windows, il s'agit des deux caractères CR et LF (dans cet ordre),</li>
+<li>sur les systèmes Unix comme Linux ou les versions récentes de macOS, il s'agit du caractère LF seul,</li>
+<li>sur les anciennes version de macOS (avant la version 10), il s'agissait du caractère CR seul.</li>
+</ul>
+<p class="footpara">
+Le format iCalendar utilise donc la représentation des fins de ligne de Windows, comme plusieurs autres formats textuels.
+</p></div></div>
+<div class="footdef"><sup><a class="footnum" href="#fnr.2" id="fn.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+En réalité, la norme iCalendar spécifie que chaque ligne ne devrait pas faire plus de 75 <i>octets</i> une fois encodée en UTF-8, ce qui n'est pas la même chose. Toutefois, comme la norme ne fait que conseiller le respect de cette contrainte, sans l'exiger absolument, et que la question de l'encodage des caractères (en UTF-8 ou autre) n'a pas encore été vu au cours, nous nous contenterons de garantir que les lignes ne font pas plus de 75 caractères.
+</p></div></div>
+</div>
+</div></div>
+<script>
+                window.addEventListener('load', function() {
+                    document.querySelectorAll('.section-header').forEach(header => {
+                        header.addEventListener('click', function() {
+                            this.classList.toggle('collapsed');
+                            const content = this.nextElementSibling;
+                            content.classList.toggle('expanded');
+                        });
+                    });
+                });
+            </script></body>
+</html>

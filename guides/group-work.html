@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- 2025-02-17 Lun 14:14 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Travailler en groupe</title>
+<meta name="author" content="Michel Schinz" />
+<meta name="generator" content="Org Mode" />
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="../a/cs108.css" type="text/css"><link rel="stylesheet" href="../a/highlight/styles/github.min.css" type="text/css">
+<script src="../a/highlight/highlight.min.js"></script>
+<script>
+function orgHighlight() {
+  document
+    .querySelectorAll('pre.src, .implementation dt>code')
+    .forEach((el) => { hljs.highlightElement(el); });
+}
+addEventListener('DOMContentLoaded', orgHighlight, false);
+addEventListener('load', orgHighlight, false);
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<header>
+<h1 class="title">Travailler en groupe</h1>
+<p class="subtitle" role="doc-subtitle">CS-108</p>
+</header><p>
+Les membres d'un groupe de deux personnes peuvent travailler soit en binôme, soit chacun de leur côté. Ces différentes manières de s'organiser sont décrites et comparées ci-dessous.
+</p>
+
+<div id="outline-container-orga3a152c" class="outline-2">
+<h2 id="orga3a152c">Travail en binôme</h2>
+<div class="outline-text-2" id="text-orga3a152c">
+<p>
+Le travail en binôme consiste à travailler en même temps, soit en étant à deux devant un même ordinateur, soit en partageant un écran à distance. Un premier membre du groupe, le conducteur, tape au clavier, tandis que l'autre, l'observateur, l'assiste. Pour qu'une telle organisation soit efficace et profitable à chacun, il convient de respecter quelques règles :
+</p>
+
+<ol class="org-ol">
+<li>aucun des deux membres ne doit être passif, et l'observateur ne doit donc jamais faire autre chose qu'assister le conducteur,</li>
+
+<li>les rôles de conducteur et d'observateur doivent être fréquemment échangés, même (surtout !) dans le cas où un membre est plus expérimenté que l'autre,</li>
+
+<li>l'observateur ne doit jamais laisser le conducteur s'échapper, c-à-d qu'il doit toujours comprendre ce que le conducteur fait, et poser des questions lorsque ce n'est pas le cas.</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org96ab9af" class="outline-2">
+<h2 id="org96ab9af">Travail individuel</h2>
+<div class="outline-text-2" id="text-org96ab9af">
+<p>
+Le travail individuel consiste à travailler chacun de son côté sur des aspects différents du projet, et à se synchroniser périodiquement. Avec une telle organisation, il est très important de trouver une bonne répartition des tâches, qui soit à la fois efficace et juste. Nous vous conseillons de procéder ainsi :
+</p>
+
+<ul class="org-ul">
+<li>la totalité du travail à effectuer est répartie de manière égale entre les deux membres du groupe, en tenant compte de la difficulté des différentes tâches,</li>
+
+<li>la division du travail se fait au niveau des classes, c-à-d qu'une classe (ou interface) donnée est développée en totalité par une seule personne qui en est propriétaire,</li>
+
+<li>les tests unitaires d'une classe donnée sont écrits par le membre du groupe qui n'en n'est <i>pas</i> propriétaire.</li>
+</ul>
+
+<p>
+L'avantage d'une telle organisation est que le partage du code écrit est relativement simple : comme chaque fichier Java ne contient qu'une seule classe et comme chaque classe a un propriétaire, chaque fichier a un propriétaire. Dès lors, chaque fichier n'est susceptible d'être modifié que par une personne &#x2014; son propriétaire &#x2014; ce qui évite les problèmes de modifications concurrentes.
+</p>
+
+<p>
+Néanmoins, les groupes décidant de travailler individuellement feront bien de réfléchir à comment synchroniser leur travail. Quelques conseils sont donnés dans notre <a href="sync.html">guide à ce sujet</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8bbdc5a" class="outline-2">
+<h2 id="org8bbdc5a">Conseils</h2>
+<div class="outline-text-2" id="text-org8bbdc5a">
+<p>
+Même s'il peut, à première vue, paraître plus efficace de travailler individuellement, nous vous conseillons de travailler si possible en binôme car cela présente plusieurs avantages :
+</p>
+
+<ol class="org-ol">
+<li>les membres du binôme peuvent s'aider mutuellement à comprendre le projet et à trouver des solutions aux problèmes rencontrés,</li>
+
+<li>le projet a plus de chances d'être correct lorsqu'il a été écrit par deux personnes réfléchissant simultanément que par une seule,</li>
+
+<li>chaque membre du binôme connaît et comprend à tout moment la totalité du projet et en a ainsi une meilleure vue d'ensemble,</li>
+
+<li>il n'existe qu'une seule copie du code du projet, ce qui élimine tous les problèmes de synchronisation.</li>
+</ol>
+
+<p>
+Néanmoins, les groupes qui le désirent peuvent également travailler individuellement, bien entendu.
+</p>
+</div>
+</div>
+</div>
+</body>
+</html>

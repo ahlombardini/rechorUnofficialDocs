@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<!-- 2025-02-21 Ven 12:39 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Mise en place</title>
+<meta content="Michel Schinz" name="author"/>
+<meta content="Org Mode" name="generator"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="../a/cs108.css" rel="stylesheet" type="text/css"/><link href="../a/highlight/styles/github.min.css" rel="stylesheet" type="text/css"/>
+<script src="../a/highlight/highlight.min.js"></script>
+
+<script src="../a/mathjax/tex-chtml.js" type="text/javascript"></script>
+<style>
+                body { font-family: Arial, sans-serif; margin: 2em; line-height: 1.6; }
+                .class-section {
+                    margin: 2em 0;
+                    padding: 1.5em;
+                    background: #f5f5f5;
+                    border-left: 4px solid #4CAF50;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .class-section:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .method-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .tip-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #fffaf0;
+                    border-left: 4px solid #FFA500;
+                    border-radius: 3px;
+                }
+                .code-block {
+                    margin: 1em 0;
+                    padding: 1em;
+                    background: #f8f8f8;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                    font-family: monospace;
+                }
+                .section-dropdown {
+                    margin: 2em 0;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                .section-header {
+                    padding: 1em;
+                    background: #f8f9fa;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .section-header:hover {
+                    background: #e9ecef;
+                }
+                .section-header::after {
+                    content: '▼';
+                    font-size: 0.8em;
+                    transition: transform 0.3s ease;
+                }
+                .section-header.collapsed::after {
+                    transform: rotate(-90deg);
+                }
+                .section-content {
+                    padding: 1em;
+                    display: none;
+                }
+                .section-content.expanded {
+                    display: block;
+                }
+                pre { white-space: pre-wrap; margin: 0; }
+                h1 { color: #1976D2; }
+                h2 { color: #2196F3; margin: 0; }
+                h3 { color: #4CAF50; }
+                h4 { color: #FF9800; }
+                .class-link {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                }
+                .class-link:hover {
+                    color: inherit;
+                }
+            </style></head>
+<body>
+<div class="content" id="content">
+<header>
+<h1 class="title">Mise en place</h1>
+<p class="subtitle" role="doc-subtitle">ReCHor – étape 1</p>
+</header>
+<div class="outline-2" id="outline-container-orgbeadda7">
+<div class="outline-text-2" id="text-1">
+<p>
+Le but de cette première étape est d'écrire des classes et interfaces représentant quelques concepts importants du projet — les arrêts de transport public, les voyages (relations), etc. — ainsi que le code permettant de les représenter sous forme textuelle.
+</p>
+<p>
+Comme toutes les descriptions d'étapes, celle-ci commence par une introduction aux concepts nécessaires à sa réalisation (§<a href="#sec/concepts">2</a>), suivie d'une présentation de leur mise en œuvre en Java (§<a href="#sec/implementation">3</a>).
+</p>
+<p>
+Si vous travaillez en groupe, vous êtes toutefois priés de lire, avant de continuer, les guides <a href="../g/group-work.html"><i>Travailler en groupe</i></a> et <a href="../g/sync.html"><i>Synchroniser son travail</i></a>, qui vous aideront à bien vous organiser.
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-sec/concepts">
+<div class="outline-text-2" id="text-sec/concepts">
+</div>
+<div class="outline-3" id="outline-container-org02ee001">
+<h3 id="org02ee001"><span class="section-number-3">2.1.</span> Arrêt</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Un <b>arrêt</b> (<i>stop</i> en anglais) est un endroit où un véhicule de transport public peut s'arrêter afin de laisser monter et/ou descendre des passagers. Dans ce projet, nous en distinguerons deux types :
+</p>
+<ol class="org-ol">
+<li>les <b>gares</b> (<i>stations</i>), qui correspondent soit à ce que l'on entend effectivement par « gare » dans le langage courant, comme la gare de Lausanne, soit à des arrêts assez petits pour que la distinction entre les différentes voies/quais ne soit pas jugée nécessaire,</li>
+<li>les <b>voies</b> ou <b>quais</b> (<i>platforms</i>), qui correspondent aux différentes voies ou quais d'une gare ferroviaire ou routière.</li>
+</ol>
+<p>
+Les arrêts possèdent un nom (p.ex. <i>Lausanne</i>) et une position géographique, donnée par un couple longitude/latitude (p.ex. <a href="https://www.openstreetmap.org/?mlat=46.516789&amp;mlon=6.629092#map=19/46.516789/6.629092">6.62909°, 46.51679°</a>). Les voies ou quais possèdent de plus un nom de voie (ou de quai). En Suisse, ce nom est généralement — mais pas toujours — un nombre pour les voies ferroviaires, éventuellement accompagné d'une désignation de secteur (1, 3BC, etc.) et une lettre pour les quais de gare routière (A, B, etc.).
+</p>
+<p>
+Il n'est pas forcément évident de décider ce qui constitue un arrêt, et des choix qui peuvent sembler surprenants ont parfois été faits en Suisse.
+</p>
+<p>
+Par exemple, dans les données d'horaires officielles que nous utiliserons, l'arrêt du métro m1 à l'EPFL est représenté par un unique arrêt — une gare —, malgré le fait qu'il y ait deux voies.
+</p>
+<p>
+À l'inverse, de nombreux arrêts existent pour la gare de Lausanne. Non seulement l'arrêt nommé <i>Lausanne</i>, qui correspond à la gare elle-même, ainsi que des arrêts correspondants aux différentes voies ferroviaires (1, 3 à 8 et 70), mais aussi l'arrêt de bus nommé <i>Lausanne, gare</i>, qui n'est représenté que par un seul arrêt alors que les différents bus s'arrêtent à plusieurs endroits assez distants les uns des autres.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgdb45a01">
+<h3 id="orgdb45a01"><span class="section-number-3">2.2.</span> Ligne</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Un véhicule de transport public se déplace toujours en suivant une <b>ligne</b> (<i>route</i>), p. ex. la ligne de métro m1, ou alors <a href="https://network.sbb.ch/fr/ligne/IR15">la ligne IR 15 des CFF</a> qui relie <i>Genève-Aéroport</i> à <i>Lucerne</i> en desservant une dizaine d'arrêts intermédiaires entre les deux.
+</p>
+<p>
+Le sens dans lequel un véhicule se déplace sur une ligne est généralement indiqué par sa destination finale — <i>Genève-Aéroport</i> ou <i>Lucerne</i> dans le cas de la ligne IR 15.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/journey">
+<h3 id="sec/journey"><span class="section-number-3">2.3.</span> Voyage</h3>
+<div class="outline-text-3" id="text-sec/journey">
+<p>
+Nous nommerons <b>voyage</b> (<i>journey</i>) un déplacement entre deux arrêts de transports publics. Un voyage est ce que nous avons appelé une relation dans <a href="00.html">l'introduction au projet</a>, terme que nous n'utiliserons plus par la suite.
+</p>
+<p>
+Un voyage est constitué d'une ou plusieurs <b>étapes</b> (<i>legs</i>), chacune d'entre elles partant d'un arrêt de départ à un instant donné et arrivant à un arrêt d'arrivée à un instant ultérieur. Il existe deux types différents d'étapes :
+</p>
+<ol class="org-ol">
+<li>celles effectuées à pied, soit entre deux arrêts voisins ou alors au sein d'un même arrêt lors d'un changement,</li>
+<li>celles effectuées en transport public — train, bus, métro, etc.</li>
+</ol>
+<p>
+Les étapes effectuées en transport public peuvent éventuellement comporter des arrêts intermédiaires entre l'arrêt de départ de l'étape et celui d'arrivée. De plus, elles sont toujours effectuées à bord d'un unique véhicule qui suit une ligne donnée, dans une direction donnée.
+</p>
+<p>
+Un voyage est valide si et seulement si ses étapes satisfont les conditions suivantes :
+</p>
+<ol class="org-ol">
+<li>l'instant de départ d'une étape ne précède pas l'instant d'arrivée de l'étape précédente, s'il y en a une,</li>
+<li>l'arrêt de départ d'une étape est identique à l'arrêt d'arrivée de l'étape précédente, s'il y en a une,</li>
+<li>les étapes à pied alternent avec les étapes en transport public.</li>
+</ol>
+<p>
+Un exemple de voyage valide pourrait être celui présenté dans l'introduction au projet qui va de l'arrêt <i>Ecublens VD, EPFL</i> (départ à 16h13 le 18 février 2025) à l'arrêt <i>Gruyères</i> (arrivée à 17h57). Il est constitué de neuf étapes, les cinq premières étant :
+</p>
+<ol class="org-ol">
+<li>de <i>Ecublens VD, EPFL</i> (dép. à 16h13) à <i>Renens VD, gare</i> (arr. à 16h19), avec le métro de la ligne m1 en direction de <i>Renens VD, gare</i>,</li>
+<li>de <i>Renens VD, gare</i> (dép. à 16h19) à <i>Renens VD</i>, voie 4 (arr. à 16h22), à pied (trajet entre deux arrêts voisins),</li>
+<li>de <i>Renens VD</i>, voie 4 (dép. à 16h26) à <i>Lausanne</i>, voie 5 (arr. à 16h33) avec le train de la ligne R 4 en direction de <i>Bex</i>,</li>
+<li>de <i>Lausanne</i>, voie 5 (dép. à 16h33) à <i>Lausanne</i>, voie 1 (arr. à 16h38), à pied (changement au sein de la même gare),</li>
+<li>de <i>Lausanne</i>, voie 1 (dép. à 16h40) à <i>Romont FR</i>, voie 2 (arr. à 17h13) avec le train de la ligne IR 15 en direction de <i>Luzern</i> (Lucerne).</li>
+</ol>
+<p>
+Il va sans dire que les voyages jouent un rôle central dans ce projet, dont le but principal est de calculer l'ensemble des voyages permettant de relier de manière optimale deux arrêts, à une date et une heure donnée.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/text-repr">
+<h3 id="sec/text-repr"><span class="section-number-3">2.4.</span> Représentation textuelle</h3>
+<div class="outline-text-3" id="text-sec/text-repr">
+<p>
+Plusieurs des concepts décrits ci-dessus, par exemple les étapes d'un voyage, doivent pouvoir être représentés sous forme de texte afin d'être affichés à l'écran ou alors inclus dans un événement de calendrier. Les sections qui suivent décrivent la manière dont nous représenterons textuellement ces concepts — et d'autres — dans ce projet.
+</p>
+</div>
+<div class="outline-4" id="outline-container-sec/repr/duration">
+<h4 id="sec/repr/duration"><span class="section-number-4">2.4.1.</span> Durée</h4>
+<div class="outline-text-4" id="text-sec/repr/duration">
+<p>
+Une durée — p. ex. d'un voyage ou d'une de ses étapes — est représentée textuellement sous la forme d'un nombre d'heures et de minutes, ou de minutes seulement pour les durées inférieures à une heure. Les secondes ne sont jamais incluses, car toutes les durées que nous manipulons ne sont précises qu'à la minute près.
+</p>
+<p>
+Ainsi, une durée de douze minutes est représentée textuellement par la chaîne :
+</p>
+<pre class="example">
+12 min
+</pre>
+<p>
+tandis qu'une durée d'une heure et trois minutes l'est par la chaîne :
+</p>
+<pre class="example">
+1 h 3 min
+</pre>
+<p>
+Notez la présence d'espaces entre les nombres et les unités.
+</p>
+<p>
+Toutes les durées, y compris celles plus longues qu'un jour — qui devraient être rares voire inexistantes dans ce projet — sont représentées de cette manière. Ainsi, une durée de deux jours exactement est représentée textuellement par la chaîne :
+</p>
+<pre class="example">
+48 h 0 min
+</pre>
+</div>
+</div>
+<div class="outline-4" id="outline-container-sec/repr/time">
+<h4 id="sec/repr/time"><span class="section-number-4">2.4.2.</span> Heure</h4>
+<div class="outline-text-4" id="text-sec/repr/time">
+<p>
+Une heure — p. ex. de départ ou d'arrivée — est représentée textuellement en séparant par la lettre <code>h</code> le nombre d'heures pleines, sur un ou deux chiffres (de 0 à 23), du nombre de minutes dans l'heure, sur deux chiffres (de 00 à 59).
+</p>
+<p>
+Ainsi, midi et demi est représenté textuellement par la chaîne :
+</p>
+<pre class="example">
+12h30
+</pre>
+<p>
+tandis que 5 minutes après minuit l'est par la chaîne :
+</p>
+<pre class="example">
+0h05
+</pre>
+<p>
+Notez l'absence d'espaces dans cette représentation, la lettre <code>h</code> jouant ici plutôt un rôle de séparateur que d'unité.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-sec/repr/platform">
+<h4 id="sec/repr/platform"><span class="section-number-4">2.4.3.</span> Voie ou quai</h4>
+<div class="outline-text-4" id="text-sec/repr/platform">
+<p>
+Comme nous l'avons vu, la convention veut qu'en Suisse les voies de chemin de fer soient identifiées par des nombres, tandis que les quais des gares routières le soient par des lettres.
+</p>
+<p>
+Dès lors, une voie/quai dont le nom commence par un chiffre est représentée textuellement par son nom précédé de « voie », par exemple :
+</p>
+<pre class="example">
+voie 1AB
+</pre>
+<p>
+tandis qu'une voie/quai dont le nom ne commence pas par un chiffre est représentée textuellement par son nom précédé de « quai », par exemple :
+</p>
+<pre class="example">
+quai A
+</pre>
+</div>
+</div>
+<div class="outline-4" id="outline-container-sec/repr/foot">
+<h4 id="sec/repr/foot"><span class="section-number-4">2.4.4.</span> Étape à pied</h4>
+<div class="outline-text-4" id="text-sec/repr/foot">
+<p>
+Une étape à pied est représentée par une description de son type (changement ou trajet entre deux arrêts voisins) et sa durée, entre parenthèses.
+</p>
+<p>
+Ainsi, un changement d'une durée de 5 minutes est représenté par la chaîne :
+</p>
+<pre class="example">
+changement (5 min)
+</pre>
+<p>
+tandis qu'un trajet entre deux arrêts voisins, d'une durée de 3 minutes, l'est par la chaîne :
+</p>
+<pre class="example">
+trajet à pied (3 min)
+</pre>
+<p>
+Bien entendu, la durée entre parenthèses est représentée de la manière décrite à la §<a href="#sec/repr/duration">2.4.1</a> plus haut.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-sec/repr/transport">
+<h4 id="sec/repr/transport"><span class="section-number-4">2.4.5.</span> Étape en transport public</h4>
+<div class="outline-text-4" id="text-sec/repr/transport">
+<p>
+Une étape en transport public a une représentation textuelle relativement complexe, due au grand nombre d'attributs qu'elle possède. Dans l'ordre, les attributs qui font partie de sa représentation textuelle sont :
+</p>
+<ul class="org-ul">
+<li>l'heure de départ,</li>
+<li>le nom de la gare de départ,</li>
+<li>le nom de la voie/quai de départ (s'il existe),</li>
+<li>le nom de la gare d'arrivée,</li>
+<li>l'heure d'arrivée,</li>
+<li>le nom de la voie/quai d'arrivée (s'il existe).</li>
+</ul>
+<p>
+Les noms des voies ou quais sont placés entre parenthèses, de même que l'heure d'arrivée précédée de « <i>arr.</i> ». De plus, une flèche (→) sépare les informations concernant le départ de celles concernant l'arrivée.
+</p>
+<p>
+Par exemple, la troisième étape du voyage donné en exemple à la §<a href="#sec/journey">2.3</a> est représentée par la chaîne suivante :
+</p>
+<pre class="example">
+16h26 Renens VD (voie 4) → Lausanne (arr. 16h33 voie 5)
+</pre>
+<p>
+Lorsqu'un des arrêts est une gare et pas une voie (ou un quai), le nom de la voie (ou du quai) n'apparaît bien entendu pas, et si, en conséquence, la première paire de parenthèses devait être vide, elle n'apparaît simplement pas. Ainsi, la première étape du voyage d'exemple est représentée par la chaîne suivante :
+</p>
+<pre class="example">
+16h13 Ecublens VD, EPFL → Renens VD, gare (arr. 16h19)
+</pre>
+<p>
+Il faut noter que cette représentation textuelle des étapes en transport public n'est <i>pas</i> celle qui est utilisée dans l'interface graphique. Dans cette interface, une étape en transport public est représentée de manière partiellement graphique.
+</p>
+</div>
+</div>
+<div class="outline-4" id="outline-container-sec/repr/route">
+<h4 id="sec/repr/route"><span class="section-number-4">2.4.6.</span> Ligne et sens de parcours</h4>
+<div class="outline-text-4" id="text-sec/repr/route">
+<p>
+Toute étape en transport public se fait à bord d'un véhicule qui parcourt une ligne dans un sens donné. Cette information est représentée textuellement par le nom de la ligne et le nom de la destination finale précédée de « <i>Direction</i> ».
+</p>
+<p>
+Par exemple, le train parcourant la ligne IR 15 de <i>Genève-Aéroport</i> à <i>Luzern</i> est représenté textuellement par la chaîne :
+</p>
+<pre class="example">
+IR 15 Direction Luzern
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="outline-2 implementation" id="outline-container-sec/implementation">
+<div class="outline-text-2" id="text-sec/implementation">
+<p>
+Les concepts importants pour cette étape ayant été introduits, il est temps de décrire leur mise en œuvre en Java. En plus des classes spécifiques à cette étape, une classe « utilitaire » est à réaliser : <code>Preconditions</code>, qui offre une méthode de validation d'argument.
+</p>
+<p>
+Toutes les classes et interfaces de ce projet appartiendront au paquetage <code>ch.epfl.rechor</code> — qui sera désigné par le terme <b>paquetage principal</b> dans les descriptions d'étapes — ou à l'un de ses sous-paquetages.
+</p>
+<div class="cs108warning" id="orgddf0a3d">
+<p>
+Attention : jusqu'à l'étape 6 du projet (incluse), vous devez suivre à la lettre les instructions qui vous sont données dans l'énoncé, et <b>vous n'avez pas le droit d'apporter la moindre modification à l'interface publique des classes, interfaces et types énumérés décrits</b>.
+</p>
+<p>
+En d'autres termes, vous ne pouvez pas ajouter des classes, interfaces ou types énumérés publics à votre projet, ni ajouter des attributs ou méthodes publics aux classes, interfaces et types énumérés décrits dans l'énoncé. Vous pouvez par contre définir des méthodes et attributs privés si cela vous semble judicieux.
+</p>
+<p>
+Cette restriction sera levée dès l'étape 7.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org0adcf4b">
+<h3 id="org0adcf4b"><span class="section-number-3">3.1.</span> Installation de Java et d'IntelliJ</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Avant de commencer à programmer, il faut vous assurer que la version 21 de Java est bien installée sur votre ordinateur, car c'est celle qui sera utilisée pour ce projet.
+</p>
+<p>
+Si vous ne l'avez pas encore installée, rendez-vous sur <a href="https://adoptium.net/">le site Web du projet Adoptium</a>, téléchargez le programme d'installation correspondant à votre système d'exploitation (macOS, Linux ou Windows), et exécutez-le.
+</p>
+<p>
+Cela fait, si vous n'avez pas encore installé IntelliJ, téléchargez la version <b>Community Edition</b> — et <b>pas</b> la version Ultimate qui apparaît au sommet de la page — depuis <a href="https://www.jetbrains.com/idea/download/">le site de JetBrains</a> et installez-la.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org7b1f8f2">
+<h3 id="org7b1f8f2"><span class="section-number-3">3.2.</span> Importation du squelette</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Une fois Java et IntelliJ installés, vous pouvez télécharger <a href="f/rechor_skeleton.zip">le squelette de projet que nous mettons à votre disposition</a>. Il s'agit d'une archive Zip dont vous devrez tout d'abord extraire le contenu à un emplacement de votre choix sur votre ordinateur. (Notez que certains navigateurs comme Safari extraient automatiquement le contenu de telles archives.)
+</p>
+<p>
+Une fois le contenu de l'archive extrait, vous constaterez qu'il se trouve en totalité dans un dossier nommé <code>ReCHor</code>. Lancez IntelliJ, choisissez <i>Open</i>, sélectionnez ce dossier, et finalement cliquez <i>Ok</i>.
+</p>
+<p>
+Le dossier <code>ReCHor</code> contient les sous-dossiers suivants :
+</p>
+<ul class="org-ul">
+<li><code>resources</code>, destiné à contenir les « ressources » utiles au projet, en l'occurrence des icônes représentant les différents moyens de transport,</li>
+<li><code>src</code>, destiné à contenir le code source de votre projet, ainsi que divers fichiers que nous mettrons à votre disposition, et qui contient pour l'instant :
+<ul class="org-ul">
+<li><code>SignatureChecks_1.java</code>, un fichier de vérification de signatures pour l'étape 1, qui ne devrait plus contenir d'erreur lorsque vous aurez terminé la rédaction de cette étape,</li>
+<li><code>Submit.java</code>, un programme qui vous permettra de rendre votre projet à la fin de chaque semaine,</li>
+</ul></li>
+<li><code>test</code>, destiné à contenir le code des tests unitaires de votre projet que nous vous fournirons ou que vous écrirez vous-même, et qui contient pour l'instant les tests de l'étape 1 — fournis exceptionnellement pour faciliter votre démarrage.</li>
+</ul>
+<p>
+Le dossier <code>resources</code> doit être marqué comme « dossier de ressources » pour qu'il soit correctement géré par IntelliJ. Pour cela, faites un clic droit sur lui puis sélectionnez <i>Mark Directory As</i> puis <i>Resources Root</i>. Vérifiez ensuite que le panneau <i>Project</i> d'IntelliJ ressemble à l'image ci-dessous.
+</p>
+<figure id="org813da36">
+<img alt="intellij-project-skeleton;32.png" class="shadowed" src="i/intellij-project-skeleton;32.png"/>
+<figcaption><span class="figure-number">Figure 1 : </span>Projet IntelliJ après importation du squelette</figcaption>
+</figure>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgc6fd3fe">
+<div class="class-section"><a class="class-link" href="classes/class_handout_01.html_3.3._classe_preconditions.html"><div class="class-section"><a class="class-link" href="classes/class_handout_01.html_preconditions.html"><div class="class-section"><h3 id="orgc6fd3fe"><span class="section-number-3">3.3.</span> Classe <code>Preconditions</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-3">
+<p>
+Fréquemment, les méthodes d'un programme exigent que leurs arguments satisfassent certaines conditions. Par exemple, une méthode déterminant la valeur maximale d'un tableau d'entiers exige que ce tableau contienne au moins un élément.
+</p>
+<p>
+De telles conditions sont souvent appelées <b>préconditions</b> (<i>preconditions</i>) car elles doivent être satisfaites <i>avant</i> l'appel d'une méthode : c'est à l'appelant de s'assurer qu'il n'appelle la méthode qu'avec des arguments valides.
+</p>
+<p>
+En Java, la convention veut que chaque méthode vérifie, autant que possible, ses préconditions et lève une exception — souvent <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html"><code>IllegalArgumentException</code></a> — si l'une d'entre elles n'est pas satisfaite. Par exemple, une méthode <code>max</code> calculant la valeur maximale d'un tableau d'entiers, et exigeant logiquement que celui-ci contienne au moins un élément, pourrait commencer ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int max(int[] array) {
+  if (! (array.length &gt; 0))
+    throw new IllegalArgumentException();
+  // … reste du code
+}
+</pre>
+</div>
+<p>
+(Notez au passage que la méthode <code>max</code> ne déclare <i>pas</i> qu'elle lève potentiellement <code>IllegalArgumentException</code> au moyen d'une clause <code>throws</code>, car cette exception est de type <i>unchecked</i>.)
+</p>
+<p>
+La première classe à réaliser dans le cadre de ce projet a pour but de faciliter l'écriture de telles préconditions. En l'utilisant, la méthode ci-dessus pourrait être simplifiée ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">int max(int[] array) {
+  Preconditions.checkArgument(array.length &gt; 0);
+  // … reste du code
+}
+</pre>
+</div>
+<p>
+Cette classe est nommée <code>Preconditions</code> et appartient au paquetage principal. Elle est publique et finale et n'offre rien d'autre que la méthode <code>checkArgument</code> décrite plus bas. Elle a toutefois la particularité d'avoir un constructeur par défaut privé :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public final class Preconditions {
+  private Preconditions() {}
+  // … méthode(s)
+}
+</pre>
+</div>
+<p>
+Le but de ce constructeur privé est de rendre impossible la création d'instances de la classe, puisque cela n'a clairement aucun sens — elle ne sert que de conteneur à une méthode statique. Dans la suite du projet, nous définirons plusieurs autres classes du même type, que nous appellerons dès maintenant classes <b>non instanciables</b>.
+</p>
+<p>
+La méthode publique (et statique) offerte par la classe <code>Preconditions</code> est :
+</p>
+<dl class="org-dl">
+<dt><code>void checkArgument(boolean shouldBeTrue)</code></dt><dd>qui lève l'exception <code>IllegalArgumentException</code> si son argument est faux, et ne fait rien sinon.</dd>
+</dl>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org1c90f50">
+<h3 id="org1c90f50"><span class="section-number-3">3.4.</span> Type énuméré <code>Vehicle</code></h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+Le type énuméré <code>Vehicle</code> du sous-paquetage <code>journey</code> — donc du paquetage <code>ch.epfl.rechor.journey</code> — représente les différents types de véhicules de transport public en Suisse. Il comporte les sept valeurs suivantes, qui sont données ici dans l'ordre dans lequel elles doivent apparaître dans le type énuméré :
+</p>
+<dl class="org-dl">
+<dt><code>TRAM</code></dt><dd>qui représente un tram,</dd>
+<dt><code>METRO</code></dt><dd>qui représente un métro,</dd>
+<dt><code>TRAIN</code></dt><dd>qui représente un train,</dd>
+<dt><code>BUS</code></dt><dd>qui représente un bus ou un car,</dd>
+<dt><code>FERRY</code></dt><dd>qui représente un bac ou un autre type de bateau,</dd>
+<dt><code>AERIAL_LIFT</code></dt><dd>qui représente une télécabine ou un autre type de transport aérien à câble,</dd>
+<dt><code>FUNICULAR</code></dt><dd>qui représente un funiculaire.</dd>
+</dl>
+<p>
+En plus de ces valeurs, le type énuméré <code>Vehicle</code> offre l'attribut public, statique et final suivant :
+</p>
+<dl class="org-dl">
+<dt><code>List&lt;Vehicle&gt; ALL</code></dt><dd>une liste immuable contenant la totalité des valeurs du type énuméré, dans leur ordre de définition (voir les conseils de programmation ci-dessous).</dd>
+</dl>
+</div>
+<div class="outline-4" id="outline-container-orge30d9df">
+<h4 id="orge30d9df"><span class="section-number-4">3.4.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-4-1">
+<p>
+La définition de l'attribut <code>ALL</code> peut vous poser quelques problèmes, car le concept de liste, représenté en Java par l'interface <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html"><code>List</code></a>, n'a pas encore été vu au cours. Toutefois, vous avez vu au premier semestre le concept de <i>tableau dynamique</i> (<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html"><code>ArrayList</code></a>), qui est une sorte de liste. Pour l'instant, vous pouvez donc admettre que le type <code>List</code> est synonyme du type <code>ArrayList</code>, et que les méthodes offertes par une valeur de type <code>ArrayList</code> le sont aussi par une valeur de type <code>List</code>.
+</p>
+<p>
+Sachant cela, il n'est pas très difficile de définir l'attribut <code>ALL</code> en s'aidant des deux méthodes statiques suivantes :
+</p>
+<ol class="org-ol">
+<li>la méthode <code>values</code> définie pour tous les types énumérés et retournant un tableau contenant les éléments du type énuméré dans leur ordre de définition,</li>
+<li>la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#of(E...)"><code>of</code></a> de l'interface <code>List</code>, qui retourne une liste immuable ayant les mêmes éléments que le tableau qu'on lui passe en argument.</li>
+</ol>
+<p>
+L'extrait de programme ci-dessous, dont vous pouvez vous inspirer, montre comment la méthode <code>of</code> de <code>List</code> peut être utilisée pour obtenir une liste immuable (<code>seasons</code>) des noms de saisons stockés dans un tableau (<code>seasonsArray</code>) :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">String[] seasonsArray = new String[] {
+  "printemps", "été", "automne", "hiver"
+};
+List&lt;String&gt; seasons = List.of(seasonsArray);
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org5708d7b">
+<a class="class-link" href="classes/class_handout_01.html_3.5._enregistrements_java.html"><div class="class-section"><h3 id="org5708d7b"><span class="section-number-3">3.5.</span> Enregistrements Java</h3></div></a>
+<div class="outline-text-3" id="text-3-5">
+<p>
+Avant de décrire <code>Stop</code>, la prochaine classe à mettre en œuvre pour cette étape, il convient de décrire le concept de <b>classe enregistrement</b> (<i>record class</i>), ou simplement <b>enregistrement</b> (<i>record</i>), introduit dans la version 17 de Java.
+</p>
+<p>
+Un enregistrement est un type particulier de classe qui peut se définir au moyen d'une syntaxe plus concise qu'une classe normale. Dans cette syntaxe, le mot-clef <code>class</code> est remplacé par <code>record</code> et les attributs de la classe sont donnés entre parenthèses, après son nom.
+</p>
+<p>
+Par exemple, un enregistrement nommé <code>Complex</code> représentant un nombre complexe dont les attributs sont sa partie réelle <code>re</code> et sa partie imaginaire <code>im</code> — tous deux de type <code>double</code> — peut se définir ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public record Complex(double re, double im) { }
+</pre>
+</div>
+<p>
+Cette définition est équivalente à celle d'une classe finale (!) dotée de :
+</p>
+<ul class="org-ul">
+<li>deux attributs privés et finaux nommés <code>re</code> et <code>im</code> de type <code>double</code>,</li>
+<li>un constructeur prenant en argument la valeur de ces attributs et les initialisant,</li>
+<li>des méthodes d'accès (<i>getters</i>) publics nommés <code>re()</code> et <code>im()</code> pour ces attributs,</li>
+<li>une méthode <code>equals</code> retournant vrai si et seulement si l'objet qu'on lui passe est aussi une instance de <code>Complex</code> et que ses attributs sont égaux à ceux de <code>this</code>,</li>
+<li>une méthode <code>hashCode</code> compatible avec la méthode <code>equals</code> — le but de cette méthode et la signification de sa compatibilité avec <code>equals</code> seront examinés ultérieurement dans le cours,</li>
+<li>une méthode <code>toString</code> retournant une chaîne composée du nom de la classe et du nom et de la valeur des attributs de l'instance, p. ex. <code>Complex[re=1.0, im=2.0]</code>.</li>
+</ul>
+<p>
+En d'autres termes, la définition plus haut, qui tient sur une ligne, est équivalente à la définition suivante, qui n'utilise que des concepts que vous connaissez déjà :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public final class Complex {
+  private final double re;
+  private final double im;
+
+  public Complex(double re, double im) {
+    this.re = re;
+    this.im = im;
+  }
+
+  public double re() { return re; }
+  public double im() { return im; }
+
+  @Override
+  public boolean equals(Object that) {
+    // … vrai ssi that :
+    // 1. est aussi une instance de Complex, et
+    // 2. ses attributs re et im sont identiques.
+  }
+
+  @Override
+  public int hashCode() {
+    // … code omis car peu important
+  }
+
+  @Override
+  public String toString() {
+    return "Complex[re=" + re + ", im=" + im + "]";
+  }
+}
+</pre>
+</div>
+<p>
+Comme cet exemple l'illustre, les enregistrements permettent d'éviter d'écrire beaucoup de code répétitif, ce que les anglophones appellent du <a href="https://en.wikipedia.org/wiki/Boilerplate_code"><i>boilerplate code</i></a>. Il faut toutefois bien comprendre qu'en dehors d'une syntaxe très concise, les enregistrements n'apportent — pour l'instant en tout cas — rien de nouveau à Java, dans le sens où il est toujours possible de récrire un enregistrement en une classe Java équivalente, comme ci-dessus. En cela, les enregistrements sont similaires aux types énumérés.
+</p>
+<p>
+Il est bien entendu possible de définir des méthodes dans un enregistrement, qui viennent s'ajouter à celles définies automatiquement. Par exemple, pour doter l'enregistrement <code>Complex</code> d'une méthode <code>modulus</code> retournant son module, il suffit de l'ajouter entre les accolades, ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public record Complex(double re, double im) {
+  public double modulus() { return Math.hypot(re, im); }
+}
+</pre>
+</div>
+<p>
+(La méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Math.html#hypot(double,double)"><code>Math.hypot(x,y)</code></a> retourne \(\sqrt{x^2 + y^2}\)).
+</p>
+<p>
+Finalement, il est aussi possible de définir ce que l'on nomme un <b>constructeur compact</b> (<i>compact constructor</i>), qui augmente le constructeur que Java ajoute par défaut aux enregistrements. Un constructeur compact doit son nom au fait qu'il semble ne prendre aucun argument, et n'initialise pas explicitement les attributs. En réalité, il prend des arguments qui sont les mêmes que ceux de l'enregistrement (<code>re</code> et <code>im</code> dans notre exemple), et Java lui ajoute automatiquement des affectations de ces arguments aux attributs correspondants.
+</p>
+<p>
+Par exemple, on pourrait vouloir ajouter un constructeur compact à la classe <code>Complex</code> pour lever une exception si l'un des arguments passés au constructeur était une valeur <code>NaN</code> (<i>not a number</i>, une valeur invalide). On pourrait le faire ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public record Complex(double re, double im) {
+  public Complex {  // constructeur compact
+    if (Double.isNaN(re) || Double.isNaN(im))
+      throw new IllegalArgumentException();
+  }
+  // … méthode modulus
+}
+</pre>
+</div>
+<p>
+Ce constructeur compact serait automatiquement traduit en :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public final class Complex {
+  // … attributs re et im
+
+  public Complex(double re, double im) {
+    if (Double.isNaN(re) || Double.isNaN(im))
+      throw new IllegalArgumentException();
+    this.re = re;  // ajouté automatiquement
+    this.im = im;  // ajouté automatiquement
+  }
+
+  // … méthodes modulus, re, im, hashCode, etc.
+}
+</pre>
+</div>
+<p>
+Les enregistrements ne seront pas décrits en détail dans le cours, mais seront introduits au moyen d'exemples similaires à ceux ci-dessus dans la suite du projet. Les personnes intéressées par les détails de leur fonctionnement pourront se rapporter à la <a href="https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.10">§8.10 (<i>Record Classes</i>) de la spécification du langage</a>.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orged18e07">
+<a class="class-link" href="classes/class_handout_01.html_stop.html"><div class="class-section"><h3 id="orged18e07"><span class="section-number-3">3.6.</span> Enregistrement <code>Stop</code></h3></div></a>
+<div class="outline-text-3" id="text-3-6">
+<p>
+L'enregistrement <code>Stop</code> du sous-paquetage <code>journey</code>, public, représente un
+arrêt de transport public. Cet enregistrement est utilisé à la fois pour les gares et pour les voies ou quais. Il possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>String name</code></dt><dd>le nom de l'arrêt, ou le nom de la gare à laquelle appartient l'arrêt s'il représente une voie ou un quai,</dd>
+<dt><code>String platformName</code></dt><dd>le nom de la voie ou du quai de l'arrêt, ou <code>null</code> si l'arrêt correspond à une gare,</dd>
+<dt><code>double longitude</code></dt><dd>la longitude de la position de l'arrêt, en degrés,</dd>
+<dt><code>double latitude</code></dt><dd>la latitude de la position de l'arrêt, en degrés.</dd>
+</dl>
+<p>
+Par exemple, l'arrêt correspondant à la gare de Lausanne pourrait être construit ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">Stop l = new Stop("Lausanne", null, 6.62909, 46.51679);
+</pre>
+</div>
+<p>
+tandis que celui correspondant à la voie 70 de cette même gare pourrait l'être ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">Stop l70 = new Stop("Lausanne", "70", 6.62909, 46.51679);
+</pre>
+</div>
+<p>
+<code>Stop</code> possède un constructeur compact chargé de valider les arguments et qui :
+</p>
+<ul class="org-ul">
+<li>lève une <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html"><code>NullPointerException</code></a> si <code>name</code> est <code>null</code>, ou</li>
+<li>lève une <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html"><code>IllegalArgumentException</code></a> si <code>longitude</code> n'est pas compris entre ±180° (inclus) ou si <code>latitude</code> n'est pas compris entre ±90° (inclus).</li>
+</ul>
+<p>
+<code>Stop</code> ne possède aucune autre méthode que celles ajoutées automatiquement aux enregistrements par Java.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orgaabc48f">
+<h4 id="orgaabc48f"><span class="section-number-4">3.6.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-6-1">
+<p>
+Dans le constructeur compact, utilisez la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html#requireNonNull(T)"><code>requireNonNull</code></a> de <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html"><code>Objects</code></a> pour lever une <code>NullPointerException</code> lorsque <code>name</code> est <code>null</code>.
+</p>
+<p>
+Pour valider la longitude et la latitude, utilisez bien entendu la méthode <code>checkArgument</code> de <code>Preconditions</code>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org1c6c9e9">
+<a class="class-link" href="classes/class_handout_01.html_journey.html"><div class="class-section"><h3 id="org1c6c9e9"><span class="section-number-3">3.7.</span> Enregistrement <code>Journey</code></h3></div></a>
+<div class="outline-text-3" id="text-3-7">
+<p>
+L'enregistrement <code>Journey</code>, du sous-paquetage <code>journey</code>, public et immuable, représente un voyage. Il possède un unique attribut :
+</p>
+<dl class="org-dl">
+<dt><code>List&lt;Leg&gt; legs</code></dt><dd>les étapes du voyage.</dd>
+</dl>
+<p>
+Le type <code>Leg</code> est celui d'une interface imbriquée à l'intérieur de l'enregistrement <code>Journey</code> et décrite à la §<a href="#sec/java/leg">3.8</a>. Comme expliqué dans cette section et celles qui suivent, trois enregistrements (<code>IntermediateStop</code>, <code>Transport</code> et <code>Foot</code>) sont imbriqués dans <code>Leg</code>. Cela signifie que <code>Journey</code> a la structure suivante :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public record Journey(/* … attributs */) {
+  public interface Leg {
+    public record IntermediateStop(/* … attributs */) {
+      /* … constructeur et/ou méthodes */
+    }
+    /* … autres enregistrements imbriqués, méthodes */
+  }
+  /* … constructeur et/ou méthodes */
+}
+</pre>
+</div>
+<p>
+En raison de cette imbrication, la notation pointée doit être utilisée depuis l'extérieur pour accéder à l'interface <code>Leg</code> et aux enregistrements <code>IntermediateStop</code>, <code>Transport</code> et <code>Foot</code>. Par exemple, pour créer une instance de l'enregistrement <code>IntermediateStop</code>, on écrira :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">new Journey.Leg.IntermediateStop(/* … arguments */);
+</pre>
+</div>
+<p>
+<code>Journey</code> possède un constructeur compact qui valide la liste des étapes reçue  en vérifiant que :
+</p>
+<ul class="org-ul">
+<li>elle n'est pas vide,</li>
+<li>les étapes à pied alternent avec celles en transport,</li>
+<li>pour toutes les étapes sauf la première, l'instant de départ ne précède pas celui d'arrivée de la précédente,</li>
+<li>pour toutes les étapes sauf la première, l'arrêt de départ est identique à l'arrêt d'arrivée de la précédente.</li>
+</ul>
+<p>
+Si l'une de ces conditions n'est pas satisfaite, le constructeur compact lève une <code>IllegalArgumentException</code>. Sinon, dans le but de garantir l'immuabilité de la classe, il copie la liste des étapes en utilisant la technique décrite dans les conseils de programmation plus bas.
+</p>
+<p>
+<code>Journey</code> offre les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>Stop depStop()</code></dt><dd>qui retourne l'arrêt de départ du voyage, c.-à-d. celui de sa première étape,</dd>
+<dt><code>Stop arrStop()</code></dt><dd>qui retourne l'arrêt d'arrivée du voyage, c.-à-d. celui de sa dernière étape,</dd>
+<dt><code>LocalDateTime depTime()</code></dt><dd>qui retourne la date/heure de début du voyage, c.-à-d. celle de sa première étape,</dd>
+<dt><code>LocalDateTime arrTime()</code></dt><dd>qui retourne la date/heure de fin du voyage, c.-à-d. celle de sa dernière étape,</dd>
+<dt><code>Duration duration()</code></dt><dd>qui retourne la durée totale du voyage, c.-à-d. celle séparant la date/heure de fin de celle de début.</dd>
+</dl>
+<p>
+La classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html"><code>LocalDateTime</code></a>, qui représente un couple date/heure sans indication de fuseau horaire, fait partie de la bibliothèque Java. Cette classe jouera un rôle très important dans ce projet, et il est donc conseillé de prendre un moment pour lire <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html">sa documentation</a>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org503bab3">
+<h4 id="org503bab3"><span class="section-number-4">3.7.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-7-1">
+</div>
+<ol class="org-ol">
+<li><a id="orgf629433"></a>Copie des étapes à la construction<br/>
+<div class="outline-text-5" id="text-3-7-1-1">
+<p>
+Pour que la classe <code>Journey</code> soit immuable, son constructeur compact doit copier la liste des étapes reçue en argument (<code>legs</code>) dans une liste immuable.
+</p>
+<p>
+Cette copie garantit d'une part que, même si le contenu de la liste passée au constructeur change après la création d'une instance, ces changements n'affecteront pas l'instance ; et d'autre part que la liste stockée dans l'enregistrement ne peut pas être modifiée.
+</p>
+<p>
+La copie peut se faire au moyen de la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"><code>copyOf</code></a> de <code>List</code>, dont le résultat doit être stocké à nouveau dans l'argument <code>legs</code> afin d'y remplacer la liste initiale, dont le contenu est susceptible de changer :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">legs = List.copyOf(legs);
+</pre>
+</div>
+</div>
+</li>
+<li><a id="org4ac3282"></a>Accès à la première et dernière étape<br/>
+<div class="outline-text-5" id="text-3-7-1-2">
+<p>
+Pour déterminer les arrêts et dates/heures de départ et d'arrivée du voyage, il est nécessaire d'accéder à la première et à la dernière de ses étapes, ce qui peut se faire facilement au moyen des méthodes <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#getFirst()"><code>getFirst</code></a> et <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#getLast()"><code>getLast</code></a> de <code>List</code>.
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/java/leg">
+<div class="class-section"><a class="class-link" href="classes/class_handout_01.html_journey.html"><div class="class-section"><a class="class-link" href="classes/class_handout_01.html_journey.html"><div class="class-section"><h3 id="sec/java/leg"><span class="section-number-3">3.8.</span> Interface <code>Journey.Leg</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-sec/java/leg">
+<p>
+L'interface <code>Leg</code>, publique et imbriquée dans l'enregistrement <code>Journey</code>, représente une étape d'un voyage. Cette interface est implémentée par deux enregistrements, <code>Transport</code> (décrit à la §<a href="#sec/java/transport">3.10</a>) et <code>Foot</code> (décrit à la §<a href="#sec/java/foot">3.11</a>), qui correspondent aux deux types d'étapes — en transport et à pied.
+</p>
+<p>
+L'interface <code>Leg</code> offre les méthodes suivantes, toutes abstraites sauf la dernière :
+</p>
+<dl class="org-dl">
+<dt><code>Stop depStop()</code></dt><dd>qui retourne l'arrêt de départ de l'étape,</dd>
+<dt><code>LocalDateTime depTime()</code></dt><dd>qui retourne la date/heure de départ de l'étape,</dd>
+<dt><code>Stop arrStop()</code></dt><dd>qui retourne l'arrêt d'arrivée de l'étape,</dd>
+<dt><code>LocalDateTime arrTime()</code></dt><dd>qui retourne la date/heure d'arrivée de l'étape,</dd>
+<dt><code>List&lt;IntermediateStop&gt; intermediateStops()</code></dt><dd>qui retourne la liste des arrêts intermédiaires de l'étape, le type <code>IntermediateStop</code> étant décrit à la §<a href="#sec/java/intermediate-stop">3.9</a>,</dd>
+<dt><code>default Duration duration()</code></dt><dd>qui retourne la durée de l'étape.</dd>
+</dl>
+<p>
+La classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html"><code>Duration</code></a>, qui représente une durée, est une classe de la bibliothèque Java qui provient du même paquetage que <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html"><code>LocalDateTime</code></a> (<code>java.time</code>). La lecture de <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html">sa documentation</a> est aussi fortement recommandée.
+</p>
+</div>
+<div class="outline-4" id="outline-container-orgb97b3e2">
+<h4 id="orgb97b3e2"><span class="section-number-4">3.8.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-8-1">
+<p>
+La durée d'une étape est bien entendu celle qui sépare sa date/heure d'arrivée de sa date/heure de départ. La méthode statique <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html#between(java.time.temporal.Temporal,java.time.temporal.Temporal)"><code>between</code></a> de <code>Duration</code> est utile pour la déterminer.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/java/intermediate-stop">
+<a class="class-link" href="classes/class_handout_01.html_journey.html"><div class="class-section"><h3 id="sec/java/intermediate-stop"><span class="section-number-3">3.9.</span> Enregistrement <code>Journey.Leg.IntermediateStop</code></h3></div></a>
+<div class="outline-text-3" id="text-sec/java/intermediate-stop">
+<p>
+L'enregistrement <code>IntermediateStop</code>, public et imbriqué dans l'interface <code>Leg</code>, représente un arrêt intermédiaire d'une étape. Il s'agit d'un arrêt auquel le moyen de transport utilisé s'arrête effectivement, mais qui se trouve entre l'arrêt de départ et l'arrêt d'arrivée de l'étape. Cet enregistrement possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>Stop stop</code></dt><dd>l'arrêt intermédiaire en question,</dd>
+<dt><code>LocalDateTime arrTime</code></dt><dd>la date/heure d'arrivée à l'arrêt,</dd>
+<dt><code>LocalDateTime depTime</code></dt><dd>la date/heure de départ de l'arrêt.</dd>
+</dl>
+<p>
+<code>IntermediateStop</code> possède un constructeur compact qui valide les arguments en vérifiant que :
+</p>
+<ul class="org-ul">
+<li><code>stop</code> n'est pas <code>null</code> (avec <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html#requireNonNull(T)"><code>requireNonNull</code></a>),</li>
+<li>la date/heure de départ n'est pas antérieure à celle d'arrivée (attention, les deux peuvent être égales !).</li>
+</ul>
+<p>
+Notez que, comme il s'agit d'un arrêt intermédiaire, le véhicule y arrive avant d'en repartir, raison pour laquelle la date/heure d'arrivée doit précéder (ou être identique à) celle de départ.
+</p>
+<p>
+Comme d'habitude, une <code>NullPointerException</code> est levée si la première vérification échoue, et une <code>IllegalArgumentException</code> si la seconde échoue.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org091bc68">
+<h4 id="org091bc68"><span class="section-number-4">3.9.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-9-1">
+<p>
+La méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html#isBefore(java.time.chrono.ChronoLocalDateTime)"><code>isBefore</code></a> de <code>LocalDateTime</code> est utile pour valider les dates/heures de départ et d'arrivée.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/java/transport">
+<a class="class-link" href="classes/class_handout_01.html_journey.html"><div class="class-section"><h3 id="sec/java/transport"><span class="section-number-3">3.10.</span> Enregistrement <code>Journey.Leg.Transport</code></h3></div></a>
+<div class="outline-text-3" id="text-sec/java/transport">
+<p>
+L'enregistrement <code>Transport</code>, public et imbriqué dans l'interface <code>Leg</code>, représente une étape effectuée en transport public. Il implémente donc <code>Leg</code> et possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>Stop depStop</code></dt><dd>l'arrêt de départ de l'étape,</dd>
+<dt><code>LocalDateTime depTime</code></dt><dd>la date/heure de départ de l'étape,</dd>
+<dt><code>Stop arrStop</code></dt><dd>l'arrêt d'arrivée de l'étape,</dd>
+<dt><code>LocalDateTime arrTime</code></dt><dd>la date/heure d'arrivée de l'étape,</dd>
+<dt><code>List&lt;IntermediateStop&gt; intermediateStops</code></dt><dd>les éventuels arrêts intermédiaires de l'étape,</dd>
+<dt><code>Vehicle vehicle</code></dt><dd>le type de véhicule utilisé pour cette étape,</dd>
+<dt><code>String route</code></dt><dd>le nom de la ligne sur laquelle circule le véhicule utilisé pour cette étape,</dd>
+<dt><code>String destination</code></dt><dd>le nom de la destination finale du véhicule utilisé pour cette étape.</dd>
+</dl>
+<p>
+Le constructeur compact de <code>Transport</code> valide les arguments en vérifiant que :
+</p>
+<ul class="org-ul">
+<li>aucun d'entre eux n'est <code>null</code>,</li>
+<li>la date/heure d'arrivée n'est pas antérieure à celle de départ.</li>
+</ul>
+<p>
+De plus, il copie la liste des arrêts intermédiaires afin de garantir l'immuabilité de la classe.
+</p>
+<p>
+<code>Transport</code> ne possède aucune autre méthode que celles ajoutées automatiquement aux enregistrements par Java. Notez que ces méthodes ajoutées par Java sont celles qui implémentent les méthodes abstraites de l'interface <code>Leg</code>. Par exemple, la méthode d'accès pour l'attribut <code>depStop</code>, ajoutée automatiquement, implémente la méthode <code>depStop()</code> de <code>Leg</code>.
+</p>
+</div>
+<div class="outline-4" id="outline-container-org46e5aa3">
+<h4 id="org46e5aa3"><span class="section-number-4">3.10.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-10-1">
+<p>
+Notez bien que des appels à <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html#requireNonNull(T)"><code>requireNonNull</code></a> ne sont nécessaires dans le constructeur <i>que</i> pour les arguments qui ne sont pas manipulés d'une manière ou d'une autre avant d'être stockés dans l'enregistrement. Par exemple, il n'est pas nécessaire d'utiliser <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html#requireNonNull(T)"><code>requireNonNull</code></a> pour <code>intermediateStops</code> puisque cet argument est passé à <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"><code>copyOf</code></a>, qui lèvera elle-même une exception si cet argument est <code>null</code>.
+</p>
+<p>
+De manière générale, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html#requireNonNull(T)"><code>requireNonNull</code></a> n'est vraiment utile que dans les constructeurs, et uniquement lorsqu'on désire s'assurer qu'un argument qu'on se contente de stocker dans un attribut de la classe n'est pas <code>null</code>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/java/foot">
+<a class="class-link" href="classes/class_handout_01.html_journey.html"><div class="class-section"><h3 id="sec/java/foot"><span class="section-number-3">3.11.</span> Enregistrement <code>Journey.Leg.Foot</code></h3></div></a>
+<div class="outline-text-3" id="text-sec/java/foot">
+<p>
+L'enregistrement <code>Foot</code>, public et imbriqué dans l'interface <code>Leg</code>, représente une étape effectuée à pied. Il implémente donc <code>Leg</code> et possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>Stop depStop</code></dt><dd>l'arrêt de départ de l'étape,</dd>
+<dt><code>LocalDateTime depTime</code></dt><dd>la date/heure de départ de l'étape,</dd>
+<dt><code>Stop arrStop</code></dt><dd>l'arrêt d'arrivée de l'étape,</dd>
+<dt><code>LocalDateTime arrTime</code></dt><dd>la date/heure d'arrivée de l'étape.</dd>
+</dl>
+<p>
+Le constructeur compact de <code>Foot</code> fait les mêmes vérifications que celui de <code>Transport</code>. En plus de ce constructeur compact, <code>Foot</code> possède deux méthodes publiques :
+</p>
+<dl class="org-dl">
+<dt><code>List&lt;IntermediateStop&gt; intermediateStops()</code></dt><dd>qui implémente la méthode abstraite correspondante de l'interface <code>Leg</code> et retourne une liste vide, car une étape à pied ne comporte jamais d'arrêts intermédiaires,</dd>
+<dt><code>boolean isTransfer()</code></dt><dd>qui retourne vrai ssi l'étape est un changement au sein de la même gare, c.-à-d. si le <i>nom</i> (!) de l'arrêt de départ est identique à celui de l'arrêt d'arrivée.</dd>
+</dl>
+<p>
+Soyez attentifs au fait qu'une étape à pied entre deux arrêts différents peut être considérée comme un changement si ces arrêts ont le même nom. Par exemple, une étape entre la voie 70 et la voie 1 de la gare de Lausanne est un changement, même si les arrêts sont différents. Seul le fait que le nom de (la gare de) ces deux arrêts soit identique compte.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-sec/sealed-interface">
+<div class="class-section"><a class="class-link" href="classes/class_handout_01.html_3.12._interfaces_scellées_en_java.html"><div class="class-section"><a class="class-link" href="classes/class_handout_01.html_3.12._interfaces_scellées_en_java.html"><div class="class-section"><h3 id="sec/sealed-interface"><span class="section-number-3">3.12.</span> Interfaces scellées en Java</h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-sec/sealed-interface">
+<p>
+En Java, une interface peut normalement être implémentée par n'importe quelle classe. Par exemple, l'interface <code>Leg</code> déclarée ci-dessus pourrait très bien être implémentée par d'autres classes que celles déclarées à l'intérieur de <code>Leg</code> (<code>Transport</code> et <code>Foot</code>).
+</p>
+<p>
+Dans ce cas particulier, cela n'est toutefois pas souhaitable, car nous savons que les seuls types d'étapes qui existent dans le projet sont ces deux-là. Il serait donc bien de pouvoir communiquer cela à Java, afin d'interdire la définition d'autres classes implémentant l'interface <code>Leg</code>.
+</p>
+<p>
+Cela peut se faire en <b>scellant</b> (<i>seal</i>) l'interface <code>Leg</code>, simplement en ajoutant le mot-clef <code>sealed</code> à l'interface, ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public sealed interface Leg { … }
+</pre>
+</div>
+<p>
+Lorsqu'une interface est ainsi scellée, les seules classes qui ont le droit de l'implémenter sont celles se trouvant dans la même « unité de compilation », c.-à-d. le même fichier Java.
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org219b4ca">
+<div class="class-section"><a class="class-link" href="classes/class_handout_01.html_3.13._classe_formatterfr.html"><div class="class-section"><a class="class-link" href="classes/class_handout_01.html_formatterfr.html"><div class="class-section"><h3 id="org219b4ca"><span class="section-number-3">3.13.</span> Classe <code>FormatterFr</code></h3></div></a></div></a></div>
+<div class="outline-text-3" id="text-3-13">
+<p>
+La classe <code>FormatterFr</code> du paquetage principal, publique, finale et non instanciable, contient des méthodes statiques permettant d'obtenir la représentation textuelle de différents types de données, au format décrit à la §<a href="#sec/text-repr">2.4</a>. Il s'agit de :
+</p>
+<dl class="org-dl">
+<dt><code>String formatDuration(Duration duration)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/duration">2.4.1</a>, de la durée donnée,</dd>
+<dt><code>String formatTime(LocalDateTime dateTime)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/time">2.4.2</a>, de l'heure de la date/heure donnée,</dd>
+<dt><code>String formatPlatformName(Stop stop)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/platform">2.4.3</a>, de la voie ou quai de l'arrêt donné — ou une chaîne vide si l'arrêt en question est une gare, ou si son nom de voie/quai est vide,</dd>
+<dt><code>String formatLeg(Journey.Leg.Foot footLeg)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/foot">2.4.4</a>, de l'étape à pied donnée,</dd>
+<dt><code>String formatLeg(Journey.Leg.Transport leg)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/transport">2.4.5</a>, de l'étape en transport donnée,</dd>
+<dt><code>String formatRouteDestination(Journey.Leg.Transport transportLeg)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/route">2.4.6</a>, de la ligne et du sens de parcours du véhicule emprunté pour effectuer l'étape donnée.</dd>
+</dl>
+</div>
+<div class="outline-4" id="outline-container-org4f3affc">
+<h4 id="org4f3affc"><span class="section-number-4">3.13.1.</span> Conseils de programmation</h4>
+<div class="outline-text-4" id="text-3-13-1">
+</div>
+<ol class="org-ol">
+<li><a id="org615dd72"></a>Méthode <code>formatTime</code><br/>
+<div class="outline-text-5" id="text-3-13-1-1">
+<p>
+Pour formater une date/heure dans <code>formatTime</code>, il faut utiliser une instance de <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/format/DateTimeFormatter.html"><code>DateTimeFormatter</code></a> configurée correctement. La manière la plus simple et la plus propre d'en obtenir une consiste à utiliser le bâtisseur prévu pour cela, à savoir la classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/format/DateTimeFormatterBuilder.html"><code>DateTimeFormatterBuilder</code></a>. Par exemple, pour formater une date selon la convention utilisée en suisse (jour/mois/année), on pourrait créer un formateur ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">DateTimeFormatter fmt = new DateTimeFormatterBuilder()
+  .appendValue(ChronoField.DAY_OF_MONTH)
+  .appendLiteral('/')
+  .appendValue(ChronoField.MONTH_OF_YEAR)
+  .appendLiteral('/')
+  .appendValue(ChronoField.YEAR)
+  .toFormatter();
+</pre>
+</div>
+<p>
+qu'on pourrait ensuite utiliser ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">fmt.format(LocalDate.of(2025, Month.FEBRUARY, 18));
+</pre>
+</div>
+<p>
+pour obtenir la chaîne <code>18/2/2025</code>.
+</p>
+</div>
+</li>
+<li><a id="orgb8a2c39"></a>Méthode <code>formatLeg</code><br/>
+<div class="outline-text-5" id="text-3-13-1-2">
+<p>
+La manière la plus simple de construire la représentation textuelle d'une étape effectuée en transport consiste à le faire petit à petit, en y ajoutant progressivement les parties requises — nom de l'arrêt de départ, voie ou quai de ce même arrêt, etc. La classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuilder.html"><code>StringBuilder</code></a> de la bibliothèque Java est idéale pour construire de manière progressive une chaîne de caractères, et est plus efficace que l'opérateur de concaténation (<code>+</code>).
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org0eea7ff">
+<h3 id="org0eea7ff"><span class="section-number-3">3.14.</span> Tests</h3>
+<div class="outline-text-3" id="text-3-14">
+<p>
+Pour vous aider à démarrer ce projet, des tests unitaires JUnit vous sont exceptionnellement fournis pour cette étape, et se trouvent dans le dossier <code>test</code> du squelette. Une fois que vous aurez terminé la rédaction des classes de cette étape, vous pourrez les exécuter en :
+</p>
+<ul class="org-ul">
+<li>ajoutant JUnit à votre projet, comme expliqué dans <a href="../g/intellij-junit.html">notre guide à ce sujet</a>,</li>
+<li>effectuant un clic droit sur le dossier <code>test</code> du projet et sélectionnant <i>Run 'All Tests'</i>.</li>
+</ul>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgf0ca09e">
+<h3 id="orgf0ca09e"><span class="section-number-3">3.15.</span> Documentation</h3>
+<div class="outline-text-3" id="text-3-15">
+<p>
+Une fois les tests exécutés avec succès, il vous reste à documenter la totalité des entités publiques (classes, attributs et méthodes) définies dans cette étape, au moyen de commentaires Javadoc, comme décrit dans <a href="../g/javadoc.html">le guide consacré à ce sujet</a>. Vous pouvez écrire ces commentaires en français ou en anglais, en fonction de votre préférence, mais <b>vous ne devez utiliser qu'une seule langue pour tout le projet</b>.
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org3dedf20">
+<div class="outline-text-2" id="text-4">
+<p>
+Pour cette étape, vous devez :
+</p>
+<ul class="org-ul">
+<li>installer la version 21 (et ni une plus récente, ni une plus ancienne !) de Java sur votre ordinateur, ainsi que la dernière version d'IntelliJ IDEA Community Edition (<b>attention : n'installez pas la version Ultimate</b>) ,</li>
+<li>écrire les classes et interfaces <code>Preconditions</code>, <code>Vehicle</code>, <code>Stop</code>, <code>Journey</code>, <code>Journey.Leg</code>, <code>Journey.Leg.IntermediateStop</code>, <code>Journey.Leg.Transport</code>, <code>Journey.Leg.Foot</code> et <code>FormatterFr</code> selon les indications ci-dessus,</li>
+<li>vérifier que les tests que nous vous fournissons s'exécutent sans erreur, et dans le cas contraire, corriger votre code,</li>
+<li>documenter la totalité des entités publiques que vous avez définies,</li>
+<li>(optionnel mais fortement recommandé) rendre votre code au plus tard le <b>21 février 2025 à 18h00</b>, en exécutant le programme <code>Submit</code> fourni dans le squelette, après avoir modifié les définitions des variables <code>TOKEN_1</code> et <code>TOKEN_2</code> pour qu'elles contiennent les jetons individuels des deux membres du groupe, disponibles sur <a href="https://cs108.epfl.ch/my/">la page privée</a> de chacun d'eux. (Les personnes travaillant seules doivent mettre leur jeton individuel dans les deux variables.)</li>
+</ul>
+<p>
+Ce premier rendu n'est pas noté, mais celui de la prochaine étape le sera. Dès lors, il est vivement conseillé de faire un rendu de test cette semaine afin de se familiariser avec la procédure à suivre.
+</p>
+</div>
+</div>
+</div>
+<script>
+                window.addEventListener('load', function() {
+                    document.querySelectorAll('.section-header').forEach(header => {
+                        header.addEventListener('click', function() {
+                            this.classList.toggle('collapsed');
+                            const content = this.nextElementSibling;
+                            content.classList.toggle('expanded');
+                        });
+                    });
+                });
+            </script></body>
+</html>

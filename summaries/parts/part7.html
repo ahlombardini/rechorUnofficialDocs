@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 7 - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .class-card .card-title {
+            margin: 0;
+        }
+
+        .class-card, .concept-card {
+            min-height: 100px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .concept-card {
+            margin-bottom: 1rem;
+        }
+
+        .concept-card:hover, .class-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .concept-content {
+            font-size: 0.95em;
+            color: var(--text-color);
+            overflow: auto;
+            max-height: 300px;
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 0.5rem 0;
+        }
+
+        .concept-content ol, .concept-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+            list-style: none;
+            padding: 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+
+        .concepts-section {
+            margin: 2rem 0;
+        }
+
+        .concepts-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .class-card a {
+            text-decoration: none;
+        }
+
+        .introduction {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .subtitle {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin: 1rem 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h2>Étape 7 - Recherche de voyages optimaux</h2>
+<p class="subtitle">ReCHor – étape 7</p>
+            <div class="introduction">
+                <div class="outline-text-2" id="text-1">
+<p>
+Le but principal de cette étape est d'écrire l'algorithme central du projet, qui recherche les voyages optimaux permettant de se rendre à un arrêt d'arrivée donné, un jour donné. Son but secondaire est d'écrire une classe permettant de stocker les données horaires dans ce que l'on nomme un <i>cache</i>, afin d'éviter de les recharger trop fréquemment.
+</p>
+</div>
+            </div>
+        
+                <div class="concepts-section">
+                    <h3>Concepts clés</h3>
+                    <div class="concept-grid">
+            
+        <div class="concept-card">
+            <h3 class="card-title">Algorithme CSA</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-sec/csa">
+<p>
+Afin de calculer les voyages optimaux, nous utiliserons l'algorithme CSA<sup><a class="footref" href="#fn.1" id="fnr.1" role="doc-backlink">1</a></sup> (<i>connection scan algorithm</i>). Comme son nom le suggère, il effectue la recherche de voyages en parcourant la totalité des liaisons à l'horaire.
+</p>
+<p>
+Cet algorithme se base sur l'observation que, si une liaison est ajoutée à un horaire mais qu'elle part <i>avant</i> toutes les liaisons existantes, alors les seuls voyages optimaux que son ajout peut affecter sont ceux partant de la gare de départ de cette liaison, ou d'une gare dont on peut y parvenir à pied.
+</p>
+<p>
+Par exemple, admettons qu'aucune liaison ne parte avant 8h du matin, et que nous ayons établi le profil de tous les voyages optimaux permettant de se rendre de n'importe quelle gare de Suisse à Gruyères. Imaginons maintenant qu'une nouvelle liaison soit ajoutée à l'horaire, et parte de Renens à 7h59 pour arriver à Lausanne à 8h04. Il devrait être clair que cet ajout ne peut, au mieux, qu'améliorer les voyages optimaux partant de Renens ou d'une gare depuis laquelle il est possible de marcher jusqu'à celle de Renens. Aucun autre voyage optimal ne peut être affecté, car la nouvelle liaison part avant toutes les autres et n'est donc pas atteignable depuis une ancienne liaison.
+</p>
+<p>
+Dès lors, on peut déterminer la totalité des voyages optimaux permettant de se rendre à une destination donnée en partant d'un horaire vide auquel on ajoute petit à petit toutes les liaisons, par heure de départ décroissante. Ce faisant, on garde à jour l'ensemble des voyages optimaux actuels.
+</p>
+<p>
+Comme nous l'avons vu, l'information concernant les voyages optimaux est stockée dans les frontières de Pareto des critères d'optimisation attachées aux gares. Lors de l'exécution de l'algorithme, ce sont donc ces frontières de Pareto qui sont mises à jour au fur et à mesure de l'ajout des liaisons. De plus, des frontières de Pareto associées aux différentes <i>courses</i> sont tenues à jour de manière identique, pour des raisons expliquées plus bas.
+</p>
+<p>
+Pour chaque liaison ajoutée à l'horaire, l'algorithme CSA commence par déterminer la frontière de Pareto des voyages optimaux de la liaison elle-même, en utilisant le fait qu'une personne l'empruntant n'a que trois manière de continuer son voyage :
+</p>
+<ol class="org-ol">
+<li>elle peut descendre à la fin de la liaison et marcher jusqu'à la destination finale, pour peu que celle-ci soit atteignable à pied depuis là,</li>
+<li>elle peut rester dans le véhicule afin de continuer avec la prochaine liaison de la même course (s'il y en a une),</li>
+<li>elle peut changer de véhicule à la fin de la liaison.</li>
+</ol>
+<p>
+Une fois que la frontière de Pareto des voyages optimaux de la liaison a été  déterminée, elle peut être utilisée pour mettre à jour les frontières de Pareto de :
+</p>
+<ul class="org-ul">
+<li>la course à laquelle appartient la liaison, et</li>
+<li>toutes les gares depuis lesquelles il est possible de marcher pour atteindre la gare de départ de la liaison — y compris la gare de départ elle-même.</li>
+</ul>
+<p>
+Lorsque toutes les liaisons ont été ajoutées, l'algorithme se termine, son résultat étant les frontières de Pareto des voyages optimaux des gares.
+</p>
+</div></div>
+        </div>
+    
+        <div class="concept-card">
+            <h3 class="card-title">Mémoire cache</h3>
+            <div class="concept-content"><div class="outline-text-3" id="text-2-2">
+<p>
+En informatique, on nomme <b>mémoire cache</b> (<i>cache memory</i>), ou simplement <b>cache</b>, une mémoire dans laquelle on stocke une (copie d'une) donnée fréquemment utilisée, pour éviter de devoir la recalculer à chaque utilisation.
+</p>
+<p>
+Dans ce projet, nous utiliserons un cache pour accélérer l'accès aux données horaires qui dépendent du jour, c.-à-d. les courses et les liaisons. Comme nous l'avons vu à l'étape précédente, ces données sont chargées — ou, plus exactement, « mappées » en mémoire — à chaque utilisation. Or il est très probable que les données horaires du même jour soient nécessaires plusieurs fois de suite, et en les plaçant dans un cache on évite leur rechargement — ou « re-mappage » en mémoire — ce qui peut améliorer considérablement les performances du programme.
+</p>
+<p>
+Le cache que nous utiliserons est particulièrement simple, puisqu'il ne mémorise que les données horaires d'un seul jour. On aurait pu imaginer un cache plus sophistiqué, mémorisant les données des <i>n</i> derniers jours, mais étant donné la manière dont le programme est généralement utilisé, cela ne s'avère pas utile.
+</p>
+</div></div>
+        </div>
+    
+                    </div>
+                </div>
+            
+            <div class="class-section">
+                <h3>Classes et Interfaces</h3>
+                <div class="class-grid">
+        
+        <div class="class-card">
+            <a href="classes/Router.html">
+                <h3 class="card-title">Router</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.1. Enregistrement Router</p>
+        </div>
+    
+        <div class="class-card">
+            <a href="classes/CachedTimeTable.html">
+                <h3 class="card-title">CachedTimeTable</h3>
+            </a>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">3.2. Classe CachedTimeTable</p>
+        </div>
+    
+                </div>
+            </div>
+        
+            </div>
+        </body>
+        </html>
+        

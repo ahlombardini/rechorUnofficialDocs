@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- 2025-02-17 Lun 14:14 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Documenter son projet</title>
+<meta name="author" content="Michel Schinz" />
+<meta name="generator" content="Org Mode" />
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="../a/cs108.css" type="text/css"><link rel="stylesheet" href="../a/highlight/styles/github.min.css" type="text/css">
+<script src="../a/highlight/highlight.min.js"></script>
+<script>
+function orgHighlight() {
+  document
+    .querySelectorAll('pre.src, .implementation dt>code')
+    .forEach((el) => { hljs.highlightElement(el); });
+}
+addEventListener('DOMContentLoaded', orgHighlight, false);
+addEventListener('load', orgHighlight, false);
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<header>
+<h1 class="title">Documenter son projet</h1>
+<p class="subtitle" role="doc-subtitle">CS-108</p>
+</header><p>
+Toutes les entités publiques de votre projet &#x2014; classes, interfaces, attributs et méthodes publiques &#x2014; doivent être documentées au moyen de commentaires <a href="https://en.wikipedia.org/wiki/Javadoc">Javadoc</a>. Vous pouvez écrire ces commentaires en français ou en anglais, en fonction de votre préférence, mais vous ne devez utiliser qu'une seule langue pour tout le projet.
+</p>
+
+<p>
+Les commentaires Javadoc sont des commentaires structurés que l'on peut attacher aux différentes entités d'un programme. On les reconnaît au fait qu'ils commencent par une barre oblique suivie de <i>deux</i> astérisques (<code>/**</code>).
+</p>
+
+<p>
+Les commentaires Javadoc peuvent inclure des étiquettes (<i>tag</i>), qui commencent par un arobas (<code>@</code>). Même s'il existe de nombreuses étiquettes, les plus importantes sont :
+</p>
+
+<ol class="org-ol">
+<li>L'étiquette <code>@author</code>, qui est suivie du nom d'un des auteurs de la classe ou interface à laquelle elle est attachée. Peut apparaître plusieurs fois s'il y a plus d'un auteur.</li>
+
+<li>L'étiquette <code>@param</code>, qui est suivie du nom d'un paramètre de l'entité à laquelle on l'attache (méthode ou constructeur) et d'une description de la signification de ce paramètre.</li>
+
+<li>L'étiquette <code>@throws</code>, qui est suivie du nom d'une exception qui peut être levée par la méthode à laquelle on l'attache et d'une description des cas dans lesquels elle est levée.</li>
+
+<li>L'étiquette <code>@return</code>, qui est suivie d'une description de la valeur retournée par la méthode à laquelle on l'attache.</li>
+</ol>
+
+<p>
+Pour votre projet, vous avez l'obligation de lister la totalité des auteurs de chaque classe, interface ou énumération publique que vous rendez. Le prénom et le nom de chaque auteur doit être suivi de son numéro SCIPER entre parenthèses.
+</p>
+
+<p>
+Pour illustrer l'utilisation des différentes étiquettes mentionnées plus haut, voici ce à quoi la documentation d'une classe modélisant un nombre rationnel pourrait ressembler :
+</p>
+
+<div class="org-src-container">
+<pre class="src src-java">/**
+ * Un nombre rationnel.
+ *
+ * @author Marie Durand (654321)
+ * @author Jean Dupond (123456)
+ */
+public final class Rational {
+  private final int numerator, denominator;
+
+  /**
+   * Construit un nombre rationnel avec le numérateur
+   * et le dénominateur donnés.
+   *
+   * @param numerator
+   *            le numérateur
+   * @param denominator
+   *            le dénominateur (doit être non nul)
+   * @throws IllegalArgumentException
+   *             si le dénominateur est nul
+   */
+  public Rational(int numerator, int denominator) {
+    if (! (denominator != 0))
+      throw new IllegalArgumentException();
+    this.numerator = numerator;
+    this.denominator = denominator;
+  }
+
+  /**
+   * Retourne le numérateur de ce nombre rationnel.
+   * @return le numérateur de ce nombre rationnel
+   */
+  public int numerator() {
+    return numerator;
+  }
+
+  // … méthodes
+}
+</pre>
+</div>
+
+<p>
+IntelliJ insère automatiquement un certain nombre d'étiquettes (p.ex. <code>@param</code> et <code>@return</code> pour les méthodes) lorsqu'on insère un début de commentaire Javadoc (<code>/**</code>) puis qu'on presse la touche d'entrée (<code>⏎</code>).
+</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey.Leg - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 1 - Mise en place</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>Journey.Leg</h1>
+                <p>3.8. Interface Journey.Leg</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-sec/java/leg">
+<p>
+L'interface <code>Leg</code>, publique et imbriquée dans l'enregistrement <code>Journey</code>, représente une étape d'un voyage. Cette interface est implémentée par deux enregistrements, <code>Transport</code> (décrit à la §<a href="#sec/java/transport">3.10</a>) et <code>Foot</code> (décrit à la §<a href="#sec/java/foot">3.11</a>), qui correspondent aux deux types d'étapes — en transport et à pied.
+</p>
+<p>
+L'interface <code>Leg</code> offre les méthodes suivantes, toutes abstraites sauf la dernière :
+</p>
+<dl class="org-dl">
+<dt><code>Stop depStop()</code></dt><dd>qui retourne l'arrêt de départ de l'étape,</dd>
+<dt><code>LocalDateTime depTime()</code></dt><dd>qui retourne la date/heure de départ de l'étape,</dd>
+<dt><code>Stop arrStop()</code></dt><dd>qui retourne l'arrêt d'arrivée de l'étape,</dd>
+<dt><code>LocalDateTime arrTime()</code></dt><dd>qui retourne la date/heure d'arrivée de l'étape,</dd>
+<dt><code>List&lt;IntermediateStop&gt; intermediateStops()</code></dt><dd>qui retourne la liste des arrêts intermédiaires de l'étape, le type <code>IntermediateStop</code> étant décrit à la §<a href="#sec/java/intermediate-stop">3.9</a>,</dd>
+<dt><code>default Duration duration()</code></dt><dd>qui retourne la durée de l'étape.</dd>
+</dl>
+<p>
+La classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html"><code>Duration</code></a>, qui représente une durée, est une classe de la bibliothèque Java qui provient du même paquetage que <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html"><code>LocalDateTime</code></a> (<code>java.time</code>). La lecture de <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html">sa documentation</a> est aussi fortement recommandée.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

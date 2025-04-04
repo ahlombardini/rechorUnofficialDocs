@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IcalBuilder - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 2 - iCalendar et valeurs empaquetées</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>IcalBuilder</h1>
+                <p>3.1. Classe IcalBuilder</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-1">
+<p>
+La classe <code>IcalBuilder</code> du paquetage principal, publique et finale, représente un bâtisseur d'événement au format iCalendar. Elle possède deux types énumérés publics imbriqués, qui sont :
+</p>
+<dl class="org-dl">
+<dt><code>Component</code></dt><dd>qui représente un composant ou un objet, et dont les valeurs sont (dans l'ordre) : <code>VCALENDAR</code> et <code>VEVENT</code>,</dd>
+<dt><code>Name</code></dt><dd>qui représente un nom d'une ligne, et dont les valeurs sont (dans l'ordre) : <code>BEGIN</code>, <code>END</code>, <code>PRODID</code>, <code>VERSION</code>, <code>UID</code>, <code>DTSTAMP</code>, <code>DTSTART</code>, <code>DTEND</code>, <code>SUMMARY</code> et <code>DESCRIPTION</code>.</dd>
+</dl>
+<p>
+De plus, <code>IcalBuilder</code> possède les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>IcalBuilder add(Name name, String value)</code></dt><dd>qui ajoute à l'événement en cours de construction une ligne dont le nom et la valeur sont ceux donnés, en prenant garde à « plier » la ligne au besoin afin de respecter la contrainte qu'aucune ligne d'une donnée iCalendar ne devrait dépasser 75 caractères,</dd>
+<dt><code>IcalBuilder add(Name name, LocalDateTime dateTime)</code></dt><dd>qui ajoute à l'événement en cours de construction une ligne dont le nom est celui donné et la valeur est la représentation textuelle de la date/heure donnée, au format spécifié à la §<a href="#sec/ical/dt">2.1.6</a>,</dd>
+<dt><code>IcalBuilder begin(Component component)</code></dt><dd>qui commence un composant en ajoutant une ligne dont le nom est <code>BEGIN</code> et la valeur est le nom du composant donné,</dd>
+<dt><code>IcalBuilder end()</code></dt><dd>qui termine le dernier composant qui a été commencé précédemment par <code>begin</code> mais pas encore terminé par un appel à <code>end</code> précédent, ou lève une <code>IllegalArgumentException</code> s'il n'y en a aucun (voir les conseils de programmation),</dd>
+<dt><code>String build()</code></dt><dd>qui retourne la chaîne de caractères au format iCalendar représentant l'événement en cours de construction, ou lève une <code>IllegalArgumentException</code> si un composant qui a été commencé par un appel à <code>begin</code> n'a, à ce stade, pas été terminé par un appel à <code>end</code>.</dd>
+</dl>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

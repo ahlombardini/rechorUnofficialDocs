@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JourneyIcalConverter - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 2 - iCalendar et valeurs empaquetées</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>JourneyIcalConverter</h1>
+                <p>3.2. Classe JourneyIcalConverter</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-2">
+<p>
+La classe <code>JourneyIcalConverter</code> du sous-paquetage <code>journey</code>, publique et non instanciable, offre une méthode permettant de convertir un voyage en un événement :
+</p>
+<dl class="org-dl">
+<dt><code>String toIcalendar(Journey journey)</code></dt><dd>qui retourne une chaîne de caractères au format iCalendar représentant l'événement qui correspond au voyage donné.</dd>
+</dl>
+<p>
+L'événement retourné par <code>toIcalendar</code> doit avoir exactement la même structure que celui donné en exemple à la §<a href="#sec/ical/example">2.1.8</a>, et doit donc consister en :
+</p>
+<ul class="org-ul">
+<li>un objet <code>VCALENDAR</code> à la racine avec :
+<ul class="org-ul">
+<li>un attribut <code>VERSION</code> valant <code>2.0</code>,</li>
+<li>un attribut <code>PRODID</code> valant <code>ReCHor</code>,</li>
+<li>un composant <code>VEVENT</code> imbriqué avec :
+<ul class="org-ul">
+<li>un attribut <code>UID</code> dont la valeur est un UUID aléatoire (voir les conseils de programmation),</li>
+<li>un attribut <code>DTSTAMP</code> dont la valeur est la date/heure au moment de l'appel de la méthode (voir les conseils de programmation),</li>
+<li>un attribut <code>DTSTART</code> dont la valeur est la date/heure du début du voyage,</li>
+<li>un attribut <code>DTEND</code> dont la valeur est la date/heure de la fin du voyage,</li>
+<li>un attribut <code>SUMMARY</code> dont la valeur est le nom de la gare de départ et celle d'arrivée, séparés d'une flèche (<code>→</code>) entourée d'espaces,</li>
+<li>un attribut <code>DESCRIPTION</code> dont la valeur est la représentation textuelle des différentes étapes du voyage, chacune sur une ligne, obtenue au moyen des méthodes de <code>FormatterFr</code>.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>
+Pour vérifier que les événements produits par votre méthode sont syntaxiquement corrects, vous pouvez utiliser <a href="https://icalendar.org/validator.html">le validateur iCalendar en ligne</a>.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

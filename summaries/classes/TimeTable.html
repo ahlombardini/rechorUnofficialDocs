@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeTable - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 3 - Horaire et frontière de Pareto</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>TimeTable</h1>
+                <p>3.9. Interface TimeTable</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-9">
+<p>
+L'interface <code>TimeTable</code> du sous-paquetage <code>timetable</code>, publique, représente un horaire de transport public. Elle possède les méthodes abstraites suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>Stations stations()</code></dt><dd>qui retourne les gares indexées de l'horaire,</dd>
+<dt><code>StationAliases stationAliases()</code></dt><dd>qui retourne les noms alternatifs indexés des gares de l'horaire,</dd>
+<dt><code>Platforms platforms()</code></dt><dd>qui retourne les voies/quais indexées de l'horaire,</dd>
+<dt><code>Routes routes()</code></dt><dd>qui retourne les lignes indexées de l'horaire,</dd>
+<dt><code>Transfers transfers()</code></dt><dd>qui retourne les changements indexés de l'horaire,</dd>
+<dt><code>Trips tripsFor(LocalDate date)</code></dt><dd>qui retourne les courses indexées de l'horaire actives le jour donné,</dd>
+<dt><code>Connections connectionsFor(LocalDate date)</code></dt><dd>qui retourne les liaisons indexées de l'horaire actives le jour donné.</dd>
+</dl>
+<p>
+En plus de ces méthodes abstraites, <code>TimeTable</code> possède également les méthodes par défaut suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>default boolean isStationId(int stopId)</code></dt><dd>qui retourne vrai si et seulement si l'index d'arrêt donné est un index de gare (et pas un index de voie ou de quai),</dd>
+<dt><code>default boolean isPlatformId(int stopId)</code></dt><dd>qui retourne vrai si et seulement si l'index d'arrêt donné est un index de voie ou de quai (et pas un index de gare),</dd>
+<dt><code>default int stationId(int stopId)</code></dt><dd>qui retourne l'index de la gare de l'arrêt d'index donné (qui peut être identique si l'arrêt en question est une gare),</dd>
+<dt><code>default String platformName(int stopId)</code></dt><dd>qui retourne le nom de voie ou de quai de l'arrêt d'index donné, ou <code>null</code> si cet arrêt est une gare.</dd>
+</dl>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
