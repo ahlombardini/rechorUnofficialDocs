@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Représentation des frontières non immuables - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Représentation des frontières non immuables</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-4">
+<p>
+L'algorithme de recherche utilisé par ReCHor construit petit à petit les frontières de Pareto correspondant aux voyages optimaux, et ce pour chaque gare et chaque course.
+</p>
+<p>
+En d'autres termes, il commence avec des frontières de Pareto vides associées à chaque gare et course, puis leur ajoute progressivement des tuples correspondant à des voyages nouvellement découverts. Chaque fois qu'un nouveau tuple est ajouté à une frontière, deux cas peuvent se présenter :
+</p>
+<ol class="org-ol">
+<li>le nouveau tuple est dominé par au moins un tuple de la frontière, auquel cas le nouveau tuple n'appartient pas à la frontière, qui ne change donc pas,</li>
+<li>le nouveau tuple n'est dominé par aucun tuple de la frontière, auquel cas il lui est ajouté, tandis que les éventuels tuples dominés par le nouveau en sont retirés.</li>
+</ol>
+<p>
+Pour illustrer ce processus, voyons comment une frontière de Pareto initialement vide évolue si on lui ajoute les tuples plus haut, dans l'ordre 1, 2, 6, 3, 4, 5 :
+</p>
+<ol class="org-ol">
+<li>initialement, la frontière est vide : \(\{\}\),</li>
+<li>on lui ajoute le tuple 1, \((\textrm{8h00}, 3)\), qui n'est dominé par aucun de la frontière (vide), et qui n'en domine aucun autre, donc la frontière ne contient maintenant que lui : \(\{(\textrm{8h00}, 3)\}\),</li>
+<li>on lui ajoute le tuple 2, \((\textrm{8h00}, 4)\), qui est dominé par le seul tuple de la frontière, donc elle ne change pas : \(\{(\textrm{8h00}, 3)\}\),</li>
+<li>on lui ajoute le tuple 6, \((\textrm{8h04}, 1)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h04}, 1)\}\),</li>
+<li>on lui ajoute le tuple 3, \((\textrm{8h01}, 2)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h04}, 1)\}\),</li>
+<li>on lui ajoute le tuple 4, \((\textrm{8h02}, 1)\), qui n'est dominé par aucun de la frontière, mais qui domine le tuple \((\textrm{8h04}, 1)\), qui doit donc être supprimé de la frontière, qui devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h02}, 1)\}\),</li>
+<li>on lui ajoute le tuple 5, \((\textrm{8h03}, 0)\), qui n'est dominé par aucun de la frontière, et qui n'en domine aucun autre, donc la frontière devient : \(\{(\textrm{8h00}, 3), (\textrm{8h01}, 2), (\textrm{8h02}, 1), (\textrm{8h03}, 0)\}\).</li>
+</ol>
+<p>
+Dans cet exemple, les éléments de la frontière ont toujours été placés dans l'<b>ordre lexicographique</b> (<i>lexical order</i>), c.-à-d. triés d'abord par heure d'arrivée (croissante) puis par nombre de changements (croissant). Le fait de toujours ordonner les tuples de la frontière ainsi est intéressant car cela permet d'ajouter un nouvel élément de manière relativement efficace.
+</p>
+<p>
+En effet, lorsqu'on désire ajouter un nouveau tuple à une frontière dont les tuples sont ordonnés en ordre lexicographique, on sait que tous les tuples qui pourraient dominer le nouveau se trouvent forcément <i>avant</i> la position à laquelle le nouveau devrait être inséré.
+</p>
+<p>
+On peut s'en convaincre en regardant la figure <a href="#org3de609a">4</a> ci-dessous, qui montre la totalité des points entre \((\textrm{8h00}, 0)\) et \((\textrm{8h05}, 4)\). L'ordre de parcours lexicographique est indiqué par les flèches traitillées. De plus, le point correspondant à \((\textrm{8h02}, 2)\) est colorié en noir, tous ceux qui le précèdent dans l'ordre lexicographique en rouge, et tous ceux qui le suivent en bleu.
+</p>
+<figure id="org3de609a">
+<img alt="pareto-front-lexical;32.png" src="i/pareto-front-lexical;32.png"/>
+<figcaption><span class="figure-number">Figure 4 : </span>Parcours des points dans l'ordre lexicographique</figcaption>
+</figure>
+<p>
+En regardant cette figure, il devrait être clair que les seuls points qui peuvent dominer le noir sont les rouges, c.-à-d. ceux qui le précèdent dans l'ordre lexicographique. A l'inverse, les seuls points que le noir peut dominer sont les bleus, c.-à-d. ceux qui le suivent dans l'ordre lexicographique.
+</p>
+<p>
+Pour résumer, en stockant les tuples composant une frontière de Pareto dans l'ordre lexicographique, on peut ajouter un nouveau tuple de manière assez efficace en procédant ainsi :
+</p>
+<ol class="org-ol">
+<li>on parcourt tous les tuples de la frontière se trouvant avant celui à insérer dans l'ordre lexicographique,</li>
+<li>si, lors de ce parcours, un tuple dominant ou égal au nouveau est trouvé, on termine immédiatement l'ajout, car le nouveau tuple n'appartient pas à la frontière,</li>
+<li>une fois tous les tuples précédents parcourus, on parcourt tous ceux qui suivent le nouveau, et on élimine de la frontière tous ceux qui sont dominés par lui.</li>
+</ol>
+<p>
+Dès lors, dans ce projet, nous ordonnerons toujours les tuples des (bâtisseurs de) frontières de Pareto en ordre lexicographique. Il faut noter que le format d'empaquetage que nous avons choisi rend cela extrêmement simple, car un tuple \(t_1\) se trouve avant un autre tuple \(t_2\) dans l'ordre lexicographique si et seulement si la version empaquetée de \(t_1\), interprétée comme un entier, est plus petite que la version empaquetée de \(t_2\).
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

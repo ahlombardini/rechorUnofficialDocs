@@ -34,26 +34,47 @@ def load_handout_data():
 def create_class_card_html(class_name, class_data):
     """Generate HTML for a class card."""
     header = html.escape(class_data.get('header', '')) if class_data.get('header') else ''
+    content = class_data.get('content', '')
     return f"""
         <div class="class-card">
-            <a href="classes/{class_name}.html">
-                <h3 class="card-title">{html.escape(class_name)}</h3>
-            </a>
-            <p style="margin: 0.5rem 0 0 0; font-size: 0.9em;">{header}</p>
+            <h3 class="card-title">
+                <a href="classes/{class_name}.html">{html.escape(class_name)}</a>
+            </h3>
+            <div class="class-content">
+                {content}
+            </div>
         </div>
     """
 
 def create_concept_card_html(concept):
     """Generate HTML for a concept card."""
-    # Remove the section numbers (e.g., "2.1. ") from the header
-    header = re.sub(r'^\d+\.\d+\.\s*', '', concept['header'])
-    header = html.escape(header)
-    # Don't escape the content since it's already HTML
+    if not isinstance(concept, dict):
+        return ''
+
+    # Get the header and content from either direct concept or subsection
+    header = concept.get('header', '')
     content = concept.get('content', '')
+
+    # Remove the section numbers (e.g., "2.1. ") from the header
+    header = re.sub(r'^\d+\.\d+\.\s*', '', header)
+    header = html.escape(header)
+
+    # Create a URL-friendly filename for the concept page link
+    filename = header.lower().replace(' ', '_').replace('é', 'e').replace('è', 'e').replace('à', 'a')
+    filename = re.sub(r'[^a-z0-9_-]', '', filename)
+
+    # Create a preview by extracting text from the first paragraph
+    preview_text = re.sub(r'<[^>]+>', '', content)
+    preview_text = re.sub(r'\s+', ' ', preview_text).strip()
+    if len(preview_text) > 100:
+        preview_text = preview_text[:97] + '...'
+
     return f"""
         <div class="concept-card">
-            <h3 class="card-title">{header}</h3>
-            <div class="concept-content">{content}</div>
+            <h3 class="card-title">
+                <a href="../concepts/part{concept.get('part_number', '')}_{filename}.html">{header}</a>
+            </h3>
+            <div class="concept-preview">{preview_text}</div>
         </div>
     """
 
@@ -132,6 +153,63 @@ def create_project_part_html(handout, standalone=True):
             font-size: 1.2rem;
         }}
 
+        .class-card, .concept-card {{
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s ease-in-out;
+            margin-bottom: 1rem;
+        }}
+
+        .class-card:hover, .concept-card:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }}
+
+        .card-title {{
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }}
+
+        .card-title a {{
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+        }}
+
+        .card-title a:hover {{
+            color: var(--secondary-color);
+        }}
+
+        .class-content, .concept-content {{
+            font-size: 0.95em;
+            color: var(--text-color);
+            overflow: auto;
+            max-height: 500px;
+            padding-right: 1rem;
+        }}
+
+        .class-content p, .concept-content p {{
+            margin: 0.5rem 0;
+        }}
+
+        .class-content pre, .concept-content pre {{
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }}
+
+        .class-grid, .concept-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }}
+
         .class-card .card-title {{
             margin: 0;
         }}
@@ -171,15 +249,6 @@ def create_project_part_html(handout, standalone=True):
         .concept-content ol, .concept-content ul {{
             margin: 0.5rem 0;
             padding-left: 1.5rem;
-        }}
-
-        .concept-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin: 1rem 0;
-            list-style: none;
-            padding: 0;
         }}
 
         .concept-content a {{
@@ -242,6 +311,40 @@ def create_project_part_html(handout, standalone=True):
             color: var(--text-color);
             margin-top: 0.5rem;
         }}
+
+        .concept-preview {{
+            color: var(--text-color);
+            font-size: 0.9em;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }}
+
+        .concept-card {{
+            min-height: 100px;
+            height: fit-content;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s ease-in-out;
+        }}
+
+        .concept-card:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }}
+
+        .concept-card a {{
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }}
     </style>
 </head>
 <body>
@@ -274,14 +377,22 @@ def create_project_part_html(handout, standalone=True):
 
         concepts = handout['data']['concepts']
         if isinstance(concepts, dict):
-            # Handle subsections
-            for section in concepts.values():
-                for concept in section:
-                    html_content += create_concept_card_html(concept)
+            # Handle concepts with subsections
+            if concepts.get('subsections'):
+                for subsection in concepts['subsections']:
+                    if isinstance(subsection, dict):
+                        subsection['part_number'] = handout['number']
+                        html_content += create_concept_card_html(subsection)
+            else:
+                # If it's a direct concept without subsections
+                concepts['part_number'] = handout['number']
+                html_content += create_concept_card_html(concepts)
         elif isinstance(concepts, list):
             # Handle direct list of concepts
             for concept in concepts:
-                html_content += create_concept_card_html(concept)
+                if isinstance(concept, dict):
+                    concept['part_number'] = handout['number']
+                    html_content += create_concept_card_html(concept)
 
         html_content += '''
                     </div>
@@ -431,11 +542,127 @@ def generate_class_page(class_name, class_info):
 </body>
 </html>'''
 
+def generate_concept_page(concept_name, concept_data):
+    """Generate an HTML page for a single concept."""
+    return f'''<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{html.escape(concept_name)} - ReCHor Documentation</title>
+    <style>
+        :root {{
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }}
+
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }}
+
+        .header {{
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }}
+
+        .header a {{
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }}
+
+        .header a:hover {{
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }}
+
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }}
+
+        .concept-content {{
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }}
+
+        h1 {{
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }}
+
+        img {{
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }}
+
+        figure {{
+            margin: 2rem 0;
+            text-align: center;
+        }}
+
+        figcaption {{
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }}
+
+        .concept-content p {{
+            margin: 1rem 0;
+        }}
+
+        .concept-content a {{
+            color: var(--primary-color);
+            text-decoration: none;
+        }}
+
+        .concept-content a:hover {{
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>{html.escape(concept_name)}</h1>
+        <div class="concept-content">
+            {concept_data['content']}
+        </div>
+    </div>
+</body>
+</html>'''
+
 def generate_static_html():
     """Generate the complete static HTML file and class pages."""
     # Create directories if they don't exist
-    Path('../summaries/classes').mkdir(parents=True, exist_ok=True)
-    Path('../summaries/parts').mkdir(parents=True, exist_ok=True)
+    Path('../docs').mkdir(parents=True, exist_ok=True)
+    Path('../docs/classes').mkdir(parents=True, exist_ok=True)
+    Path('../docs/parts').mkdir(parents=True, exist_ok=True)
+    Path('../docs/concepts').mkdir(parents=True, exist_ok=True)
 
     # Load all handout data
     handouts, classes = load_handout_data()
@@ -543,23 +770,48 @@ def generate_static_html():
 </html>
 '''
 
-    # Write the index.html
-    with open('../summaries/index.html', 'w', encoding='utf-8') as f:
+    # Write the index.html to docs directory
+    with open('../docs/index.html', 'w', encoding='utf-8') as f:
         f.write(base_template)
 
-    # Generate individual part pages
+    # Generate individual part pages and concept pages
     for handout in handouts:
+        # Generate part page
         part_html = create_project_part_html(handout, standalone=True)
-        with open(f'../summaries/parts/part{handout["number"]}.html', 'w', encoding='utf-8') as f:
+        with open(f'../docs/parts/part{handout["number"]}.html', 'w', encoding='utf-8') as f:
             f.write(part_html)
+
+        # Generate concept pages
+        concepts = handout['data'].get('concepts', [])
+        if isinstance(concepts, dict):
+            # Handle subsections
+            if concepts.get('subsections'):
+                for concept in concepts['subsections']:
+                    if isinstance(concept, dict) and concept.get('header'):
+                        header = re.sub(r'^\d+\.\d+\.\s*', '', concept['header'])
+                        filename = header.lower().replace(' ', '_').replace('é', 'e').replace('è', 'e').replace('à', 'a')
+                        filename = re.sub(r'[^a-z0-9_-]', '', filename)
+                        concept_html = generate_concept_page(header, concept)
+                        with open(f'../docs/concepts/part{handout["number"]}_{filename}.html', 'w', encoding='utf-8') as f:
+                            f.write(concept_html)
+        elif isinstance(concepts, list):
+            # Handle direct list of concepts
+            for concept in concepts:
+                if isinstance(concept, dict) and concept.get('header'):
+                    header = re.sub(r'^\d+\.\d+\.\s*', '', concept['header'])
+                    filename = header.lower().replace(' ', '_').replace('é', 'e').replace('è', 'e').replace('à', 'a')
+                    filename = re.sub(r'[^a-z0-9_-]', '', filename)
+                    concept_html = generate_concept_page(header, concept)
+                    with open(f'../docs/concepts/part{handout["number"]}_{filename}.html', 'w', encoding='utf-8') as f:
+                        f.write(concept_html)
 
     # Generate individual class pages
     for class_name, class_info in classes.items():
         class_html = generate_class_page(class_name, class_info)
-        with open(f'../summaries/classes/{class_name}.html', 'w', encoding='utf-8') as f:
+        with open(f'../docs/classes/{class_name}.html', 'w', encoding='utf-8') as f:
             f.write(class_html)
 
-    print(f"Generated main index.html, {len(handouts)} part pages, and {len(classes)} class pages")
+    print(f"Generated documentation in docs/ directory: main index.html, {len(handouts)} part pages, and {len(classes)} class pages")
 
 if __name__ == '__main__':
     generate_static_html()

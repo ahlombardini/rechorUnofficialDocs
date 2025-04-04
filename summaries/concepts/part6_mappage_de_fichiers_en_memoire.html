@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>« Mappage » de fichiers en mémoire - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>« Mappage » de fichiers en mémoire</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-1">
+<p>
+Les deux étapes précédentes ont été consacrées à la rédaction de classes permettant de manipuler les différents éléments de l'horaire aplati — gares, voies/quais, liaisons, etc. — se trouvant dans des tableaux d'octets. Il reste à savoir comment obtenir ces tableaux d'octets.
+</p>
+<p>
+Comme expliqué à la §<a href="#sec/implementation">3</a>, nous mettons à votre disposition un certain nombre de fichiers dont le contenu correspond exactement à celui des tableaux d'octets attendus. Par exemple, un des fichiers que nous vous fournissons, nommé <code>stations.bin</code>, contient la totalité des gares aplaties au format décrit à <a href="04.html#sec/stations">la §2.3 de l'étape 4</a>.
+</p>
+<p>
+Il serait donc techniquement possible de charger le contenu de ce fichier et de le placer dans un tableau d'octets — de type <code>ByteBuffer</code> — passé ensuite à la classe <code>BufferedStations</code>.  Cette solution aurait toutefois l'inconvénient de ralentir le démarrage du programme, la quantité de données à charger étant relativement grande.
+</p>
+<p>
+Heureusement, une autre solution existe, le « mappage » de fichier en mémoire (<i>memory mapping</i>). Cet anglicisme désigne la possibilité de faire apparaître le contenu d'un fichier en mémoire, comme s'il avait effectivement été chargé, mais sans qu'il ne le soit réellement. Au lieu de cela, le contenu du fichier n'est chargé que lorsqu'on accède aux données, et seules les parties effectivement nécessaires de ce contenu sont chargées.
+</p>
+<p>
+Cette possibilité est intéressante, car elle nous permet d'écrire le programme comme si la totalité des données de l'horaire était chargée en mémoire au démarrage du programme, alors qu'en réalité seules les parties effectivement utilisées le sont, au moment de leur première utilisation.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

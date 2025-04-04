@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrêt - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Arrêt</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-1">
+<p>
+Un <b>arrêt</b> (<i>stop</i> en anglais) est un endroit où un véhicule de transport public peut s'arrêter afin de laisser monter et/ou descendre des passagers. Dans ce projet, nous en distinguerons deux types :
+</p>
+<ol class="org-ol">
+<li>les <b>gares</b> (<i>stations</i>), qui correspondent soit à ce que l'on entend effectivement par « gare » dans le langage courant, comme la gare de Lausanne, soit à des arrêts assez petits pour que la distinction entre les différentes voies/quais ne soit pas jugée nécessaire,</li>
+<li>les <b>voies</b> ou <b>quais</b> (<i>platforms</i>), qui correspondent aux différentes voies ou quais d'une gare ferroviaire ou routière.</li>
+</ol>
+<p>
+Les arrêts possèdent un nom (p.ex. <i>Lausanne</i>) et une position géographique, donnée par un couple longitude/latitude (p.ex. <a href="https://www.openstreetmap.org/?mlat=46.516789&amp;mlon=6.629092#map=19/46.516789/6.629092">6.62909°, 46.51679°</a>). Les voies ou quais possèdent de plus un nom de voie (ou de quai). En Suisse, ce nom est généralement — mais pas toujours — un nombre pour les voies ferroviaires, éventuellement accompagné d'une désignation de secteur (1, 3BC, etc.) et une lettre pour les quais de gare routière (A, B, etc.).
+</p>
+<p>
+Il n'est pas forcément évident de décider ce qui constitue un arrêt, et des choix qui peuvent sembler surprenants ont parfois été faits en Suisse.
+</p>
+<p>
+Par exemple, dans les données d'horaires officielles que nous utiliserons, l'arrêt du métro m1 à l'EPFL est représenté par un unique arrêt — une gare —, malgré le fait qu'il y ait deux voies.
+</p>
+<p>
+À l'inverse, de nombreux arrêts existent pour la gare de Lausanne. Non seulement l'arrêt nommé <i>Lausanne</i>, qui correspond à la gare elle-même, ainsi que des arrêts correspondants aux différentes voies ferroviaires (1, 3 à 8 et 70), mais aussi l'arrêt de bus nommé <i>Lausanne, gare</i>, qui n'est représenté que par un seul arrêt alors que les différents bus s'arrêtent à plusieurs endroits assez distants les uns des autres.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

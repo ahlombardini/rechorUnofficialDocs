@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stop - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 1 - Mise en place</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>Stop</h1>
+                <p>3.6. Enregistrement Stop</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-6">
+<p>
+L'enregistrement <code>Stop</code> du sous-paquetage <code>journey</code>, public, représente un
+arrêt de transport public. Cet enregistrement est utilisé à la fois pour les gares et pour les voies ou quais. Il possède les attributs suivants :
+</p>
+<dl class="org-dl">
+<dt><code>String name</code></dt><dd>le nom de l'arrêt, ou le nom de la gare à laquelle appartient l'arrêt s'il représente une voie ou un quai,</dd>
+<dt><code>String platformName</code></dt><dd>le nom de la voie ou du quai de l'arrêt, ou <code>null</code> si l'arrêt correspond à une gare,</dd>
+<dt><code>double longitude</code></dt><dd>la longitude de la position de l'arrêt, en degrés,</dd>
+<dt><code>double latitude</code></dt><dd>la latitude de la position de l'arrêt, en degrés.</dd>
+</dl>
+<p>
+Par exemple, l'arrêt correspondant à la gare de Lausanne pourrait être construit ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">Stop l = new Stop("Lausanne", null, 6.62909, 46.51679);
+</pre>
+</div>
+<p>
+tandis que celui correspondant à la voie 70 de cette même gare pourrait l'être ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">Stop l70 = new Stop("Lausanne", "70", 6.62909, 46.51679);
+</pre>
+</div>
+<p>
+<code>Stop</code> possède un constructeur compact chargé de valider les arguments et qui :
+</p>
+<ul class="org-ul">
+<li>lève une <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html"><code>NullPointerException</code></a> si <code>name</code> est <code>null</code>, ou</li>
+<li>lève une <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html"><code>IllegalArgumentException</code></a> si <code>longitude</code> n'est pas compris entre ±180° (inclus) ou si <code>latitude</code> n'est pas compris entre ±90° (inclus).</li>
+</ul>
+<p>
+<code>Stop</code> ne possède aucune autre méthode que celles ajoutées automatiquement aux enregistrements par Java.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

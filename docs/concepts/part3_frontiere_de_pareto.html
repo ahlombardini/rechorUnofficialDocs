@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontière de Pareto - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Frontière de Pareto</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-2">
+<p>
+Nous avons vu à l'étape précédente que la recherche de voyages optimaux se fait en considérant trois critères : l'heure de départ, l'heure d'arrivée et le nombre de changements. Dans certains cas, qui seront décrits ultérieurement, seuls l'heure d'arrivée et le nombre de changements sont pris en compte.
+</p>
+<p>
+Pour simplifier la discussion qui suit, nous ferons l'hypothèse que nous sommes justement dans une situation dans laquelle l'heure de départ n'est pas prise en compte. Notre but est donc uniquement d'optimiser l'heure d'arrivée \(a\) et le nombre de changements \(c\), que l'on désire tous deux minimiser afin d'arriver à destination aussi tôt, et en effectuant aussi peu de changements, que possible. Admettons maintenant que l'on ait les six possibilités suivantes pour se rendre à notre destination :
+</p>
+<ol class="org-ol">
+<li>arriver à 8h00 en faisant 3 changements,</li>
+<li>arriver à 8h00 en faisant 4 changements,</li>
+<li>arriver à 8h01 en faisant 2 changements,</li>
+<li>arriver à 8h02 en faisant 1 changement,</li>
+<li>arriver à 8h03 en ne faisant aucun changement,</li>
+<li>arriver à 8h04 en faisant 1 changement.</li>
+</ol>
+<p>
+Ces possibilités correspondent à l'ensemble de 6 paires \((a, c)\) suivant :
+</p>
+<p>
+\[\{(\textrm{8h00}, 3), (\textrm{8h00}, 4), (\textrm{8h01}, 2), (\textrm{8h02}, 1), (\textrm{8h03}, 0), (\textrm{8h04}, 1) \} \]
+</p>
+<p>
+En examinant cet ensemble, on constate que certaines paires sont dominées par d'autres. Par exemple, la paire \((\textrm{8h00}, 4)\) est dominée par la paire \((\textrm{8h00}, 3)\). De même, la paire \((\textrm{8h04}, 1)\) est dominée par les paires \((\textrm{8h03}, 0)\) et \((\textrm{8h02}, 1)\). Ces paires  dominées correspondent à des possibilités sans aucun intérêt pour le voyageur. Par exemple, la possibilité \((\textrm{8h00}, 4)\) n'a aucun intérêt car la possibilité \((\textrm{8h00}, 3)\), qui la domine, permet d'arriver à la même heure avec un changement de moins.
+</p>
+<p>
+Sachant que les paires dominées ne sont pas intéressantes pour le voyageur, il semble raisonnable de ne conserver que celles qui ne le sont pas, et qui forment ce que l'on nomme la <b>frontière de Pareto</b> (<i>Pareto front</i> ou <i>Pareto frontier</i>).
+</p>
+<p>
+La frontière de Pareto peut être visualisée sur un graphe dont l'axe horizontal représente l'heure d'arrivée et le vertical le nombre de changements, et sur lequel les différentes possibilités apparaissent comme des points. C'est ce qui a été fait à la figure <a href="#org0abd4d8">3</a> ci-dessous, sur laquelle la zone dominée par chacun des points — un rectangle infini<sup><a class="footref" href="#fn.2" id="fnr.2" role="doc-backlink">2</a></sup> dont le point constitue le coin bas-gauche — a été coloriée en rouge partiellement transparent. On constate ainsi aisément que le point 2 se trouve dans la zone dominée par le point 1, et que le point 6 se trouve dans les zones dominées par les points 4 et 5. Il est dès lors facile de déterminer que la frontière de Pareto est constituée des points 1, 3, 4 et 5.
+</p>
+<figure id="org0abd4d8">
+<img alt="pareto-front;16.png" src="i/pareto-front;16.png"/>
+<figcaption><span class="figure-number">Figure 3 : </span>Frontière de Pareto</figcaption>
+</figure>
+<p>
+Bien entendu, un graphique similaire pourrait être fait pour le cas où les critères d'optimisation incluent l'heure de départ. Il faudrait pour cela utiliser une troisième dimension, et les zones dominées seraient des cubes infinis.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

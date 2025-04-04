@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gares - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Gares</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-sec/stations">
+<p>
+Les gares sont représentées de manière aplatie au moyen des trois champs donnés dans la table ci-dessous, la colonne <code>I</code> donnant l'index du champ (à partir de 0) :
+</p>
+<table>
+<colgroup>
+<col class="org-right"/>
+<col class="org-left"/>
+<col class="org-left"/>
+<col class="org-left"/>
+</colgroup>
+<thead>
+<tr>
+<th class="org-right" scope="col"><code>I</code></th>
+<th class="org-left" scope="col">Champ</th>
+<th class="org-left" scope="col">Type</th>
+<th class="org-left" scope="col">Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-left"><code>NAME_ID</code></td>
+<td class="org-left"><code>U16</code></td>
+<td class="org-left">Index de chaîne du nom de la gare</td>
+</tr>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left"><code>LON</code></td>
+<td class="org-left"><code>S32</code></td>
+<td class="org-left">Longitude de la gare</td>
+</tr>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left"><code>LAT</code></td>
+<td class="org-left"><code>S32</code></td>
+<td class="org-left">Latitude de la gare</td>
+</tr>
+</tbody>
+</table>
+<p>
+La représentation aplatie d'une gare nécessite donc 10 octets (sans compter ceux nécessaires à la représentation des chaînes dans la table des chaînes), et le tableau d'octets contenant la totalité des gares a donc une taille égale à 10 fois le nombre de gares.
+</p>
+<p>
+La longitude et la latitude d'une gare aplatie ne sont <i>pas</i> exprimées en degrés, mais dans une unité anonyme, équivalente à \(360°\div 2^{32}\). En d'autres termes, une longitude ou une latitude \(l\) exprimée dans cette unité anonyme peut être convertie en sa version en degrés \(l°\) au moyen de la formule suivante :
+</p>
+<p>
+\[ l° = \frac{360}{2^{32}}\,l \]
+</p>
+<p>
+L'intérêt de cette unité est qu'elle permet de représenter les longitudes et latitudes au moyen d'entiers de 32 bits, avec une précision de l'ordre du centimètre. En effet, sachant qu'à l'équateur la Terre a une circonférence d'environ 40 000 km, la précision est d'au moins :
+</p>
+<p>
+\[ \frac{40\,000}{2^{32}}\,\textrm{km} \approx 0.93\,\textrm{cm} \]
+</p>
+<p>
+ce qui suffit très largement à nos besoins.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormatterFr - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 1 - Mise en place</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>FormatterFr</h1>
+                <p>3.13. Classe FormatterFr</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-13">
+<p>
+La classe <code>FormatterFr</code> du paquetage principal, publique, finale et non instanciable, contient des méthodes statiques permettant d'obtenir la représentation textuelle de différents types de données, au format décrit à la §<a href="#sec/text-repr">2.4</a>. Il s'agit de :
+</p>
+<dl class="org-dl">
+<dt><code>String formatDuration(Duration duration)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/duration">2.4.1</a>, de la durée donnée,</dd>
+<dt><code>String formatTime(LocalDateTime dateTime)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/time">2.4.2</a>, de l'heure de la date/heure donnée,</dd>
+<dt><code>String formatPlatformName(Stop stop)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/platform">2.4.3</a>, de la voie ou quai de l'arrêt donné — ou une chaîne vide si l'arrêt en question est une gare, ou si son nom de voie/quai est vide,</dd>
+<dt><code>String formatLeg(Journey.Leg.Foot footLeg)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/foot">2.4.4</a>, de l'étape à pied donnée,</dd>
+<dt><code>String formatLeg(Journey.Leg.Transport leg)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/transport">2.4.5</a>, de l'étape en transport donnée,</dd>
+<dt><code>String formatRouteDestination(Journey.Leg.Transport transportLeg)</code></dt><dd>qui retourne la représentation textuelle, décrite à la §<a href="#sec/repr/route">2.4.6</a>, de la ligne et du sens de parcours du véhicule emprunté pour effectuer l'étape donnée.</dd>
+</dl>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

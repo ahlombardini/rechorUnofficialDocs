@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParetoFront - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 3 - Horaire et frontière de Pareto</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>ParetoFront</h1>
+                <p>3.10. Classe ParetoFront</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-10">
+<p>
+La classe <code>ParetoFront</code> du sous-paquetage <code>journey</code>, publique et immuable, représente une frontière de Pareto de critères d'optimisation. Les tuples de la frontière sont stockés sous forme empaquetée, dans un tableau de type <code>long[]</code> privé.
+</p>
+<p>
+<code>ParetoFront</code> possède l'attribut public, statique et final suivant :
+</p>
+<dl class="org-dl">
+<dt><code>ParetoFront EMPTY</code></dt><dd>qui contient une frontière de Pareto vide.</dd>
+</dl>
+<p>
+<code>ParetoFront</code> ne possède pas de constructeur public, car ses instances ne sont destinées à être construites que par le bâtisseur décrit à la section suivante. Elle possède toutefois un constructeur privé qui prend en argument un tableau de type <code>long[]</code> contenant les critères empaquetés, qu'elle stocke <i>sans</i> le copier. Pour garantir l'immuabilité de la classe, il est donc fondamental que ce tableau ne change pas après l'appel du constructeur. En particulier, la méthode <code>build</code> du bâtisseur décrit plus bas doit garantir cela, en passant au constructeur une copie de son tableau interne.
+</p>
+<p>
+En plus de ce constructeur privé, <code>ParetoFront</code> offre les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int size()</code></dt><dd>qui retourne la taille de la frontière de Pareto, c.-à-d. le nombre de tuples (paires ou triplets de critères d'optimisation) qu'elle contient,</dd>
+<dt><code>long get(int arrMins, int changes)</code></dt><dd>qui retourne les critères d'optimisation empaquetés dont l'heure d'arrivée et le nombre de changements sont ceux donnés, ou lève une <code>NoSuchElementException</code> si ces critères ne font pas partie de la frontière,</dd>
+<dt><code>void forEach(LongConsumer action)</code></dt><dd>qui appelle la méthode <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/LongConsumer.html#accept(long)"><code>accept</code></a> de l'action de type <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/LongConsumer.html"><code>LongConsumer</code></a> donnée avec chacun des critères de la frontière, dans l'ordre.</dd>
+</dl>
+<p>
+En plus de ces méthodes, il est <i>très fortement</i> conseillé d'ajouter à <code>ParetoFront</code> une redéfinition de la méthode <code>toString</code> qui produit une représentation textuelle de la frontière de Pareto, afin de faciliter le débogage. Le format de cette représentation textuelle n'est pas spécifié, mais il est conseillé de présenter les critères de la frontière de manière aussi lisible que possible, en montrant pour chacun d'eux l'heure de départ (si elle est présente), l'heure d'arrivée et le nombre de changements.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

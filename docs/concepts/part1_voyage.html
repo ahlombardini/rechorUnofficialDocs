@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voyage - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Voyage</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-sec/journey">
+<p>
+Nous nommerons <b>voyage</b> (<i>journey</i>) un déplacement entre deux arrêts de transports publics. Un voyage est ce que nous avons appelé une relation dans <a href="00.html">l'introduction au projet</a>, terme que nous n'utiliserons plus par la suite.
+</p>
+<p>
+Un voyage est constitué d'une ou plusieurs <b>étapes</b> (<i>legs</i>), chacune d'entre elles partant d'un arrêt de départ à un instant donné et arrivant à un arrêt d'arrivée à un instant ultérieur. Il existe deux types différents d'étapes :
+</p>
+<ol class="org-ol">
+<li>celles effectuées à pied, soit entre deux arrêts voisins ou alors au sein d'un même arrêt lors d'un changement,</li>
+<li>celles effectuées en transport public — train, bus, métro, etc.</li>
+</ol>
+<p>
+Les étapes effectuées en transport public peuvent éventuellement comporter des arrêts intermédiaires entre l'arrêt de départ de l'étape et celui d'arrivée. De plus, elles sont toujours effectuées à bord d'un unique véhicule qui suit une ligne donnée, dans une direction donnée.
+</p>
+<p>
+Un voyage est valide si et seulement si ses étapes satisfont les conditions suivantes :
+</p>
+<ol class="org-ol">
+<li>l'instant de départ d'une étape ne précède pas l'instant d'arrivée de l'étape précédente, s'il y en a une,</li>
+<li>l'arrêt de départ d'une étape est identique à l'arrêt d'arrivée de l'étape précédente, s'il y en a une,</li>
+<li>les étapes à pied alternent avec les étapes en transport public.</li>
+</ol>
+<p>
+Un exemple de voyage valide pourrait être celui présenté dans l'introduction au projet qui va de l'arrêt <i>Ecublens VD, EPFL</i> (départ à 16h13 le 18 février 2025) à l'arrêt <i>Gruyères</i> (arrivée à 17h57). Il est constitué de neuf étapes, les cinq premières étant :
+</p>
+<ol class="org-ol">
+<li>de <i>Ecublens VD, EPFL</i> (dép. à 16h13) à <i>Renens VD, gare</i> (arr. à 16h19), avec le métro de la ligne m1 en direction de <i>Renens VD, gare</i>,</li>
+<li>de <i>Renens VD, gare</i> (dép. à 16h19) à <i>Renens VD</i>, voie 4 (arr. à 16h22), à pied (trajet entre deux arrêts voisins),</li>
+<li>de <i>Renens VD</i>, voie 4 (dép. à 16h26) à <i>Lausanne</i>, voie 5 (arr. à 16h33) avec le train de la ligne R 4 en direction de <i>Bex</i>,</li>
+<li>de <i>Lausanne</i>, voie 5 (dép. à 16h33) à <i>Lausanne</i>, voie 1 (arr. à 16h38), à pied (changement au sein de la même gare),</li>
+<li>de <i>Lausanne</i>, voie 1 (dép. à 16h40) à <i>Romont FR</i>, voie 2 (arr. à 17h13) avec le train de la ligne IR 15 en direction de <i>Luzern</i> (Lucerne).</li>
+</ol>
+<p>
+Il va sans dire que les voyages jouent un rôle central dans ce projet, dont le but principal est de calculer l'ensemble des voyages permettant de relier de manière optimale deux arrêts, à une date et une heure donnée.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PackedRange - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 2 - iCalendar et valeurs empaquetées</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>PackedRange</h1>
+                <p>3.4. Classe PackedRange</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-4">
+<p>
+La classe <code>PackedRange</code> du paquetage principal, publique et non instanciable, offre des méthodes permettant de manipuler des intervalles d'entiers empaquetés dans un entier de type <code>int</code>. Dans cette représentation, les 24 bits de poids fort contiennent la borne inférieure de l'intervalle, tandis que les 8 bits de poids faible contiennent sa longueur.
+</p>
+<p>
+<code>PackedRange</code> offre les méthodes publiques (et statiques) suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>int pack(int startInclusive, int endExclusive)</code></dt><dd>qui retourne la valeur de type <code>int</code> représentant l'intervalle d'entiers allant de <code>startInclusive</code> (inclus) à <code>endExclusive</code> (exclu), ou lève une <code>IllegalArgumentException</code> si cet intervalle ne peut pas être empaqueté (soit parce que sa borne inférieure ne peut être représentée avec 24 bits, ou parce que sa longueur ne peut être représentée avec 8 bits),</dd>
+<dt><code>int length(int interval)</code></dt><dd>qui retourne la longueur de l'intervalle d'entiers empaqueté donné,</dd>
+<dt><code>int startInclusive(int interval)</code></dt><dd>qui retourne le début de l'intervalle d'entiers empaqueté donné, c.-à-d. le plus petit entier qui en fait partie,</dd>
+<dt><code>int endExclusive(int interval)</code></dt><dd>qui retourne le plus petit entier strictement supérieur à tous les entiers de l'intervalle.</dd>
+</dl>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

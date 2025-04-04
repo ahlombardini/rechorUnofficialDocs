@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>s scellées en Java - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 1 - Mise en place</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>s scellées en Java</h1>
+                <p>3.12. Interfaces scellées en Java</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-sec/sealed-interface">
+<p>
+En Java, une interface peut normalement être implémentée par n'importe quelle classe. Par exemple, l'interface <code>Leg</code> déclarée ci-dessus pourrait très bien être implémentée par d'autres classes que celles déclarées à l'intérieur de <code>Leg</code> (<code>Transport</code> et <code>Foot</code>).
+</p>
+<p>
+Dans ce cas particulier, cela n'est toutefois pas souhaitable, car nous savons que les seuls types d'étapes qui existent dans le projet sont ces deux-là. Il serait donc bien de pouvoir communiquer cela à Java, afin d'interdire la définition d'autres classes implémentant l'interface <code>Leg</code>.
+</p>
+<p>
+Cela peut se faire en <b>scellant</b> (<i>seal</i>) l'interface <code>Leg</code>, simplement en ajoutant le mot-clef <code>sealed</code> à l'interface, ainsi :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public sealed interface Leg { … }
+</pre>
+</div>
+<p>
+Lorsqu'une interface est ainsi scellée, les seules classes qui ont le droit de l'implémenter sont celles se trouvant dans la même « unité de compilation », c.-à-d. le même fichier Java.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

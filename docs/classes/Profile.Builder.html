@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile.Builder - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 6 - Profil et extraction de voyage</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>Profile.Builder</h1>
+                <p>3.3. Classe Profile.Builder</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-3">
+<p>
+La classe <code>Builder</code>, publique, finale et imbriquée statiquement dans l'enregistrement <code>Profile</code>, représente un bâtisseur de profil. Ce bâtisseur étant destiné à être utilisé lors du calcul des voyages optimaux, il stocke non seulement les frontières de Pareto en cours de construction pour les gares, mais aussi pour les courses. En d'autres termes, il représente un profil <i>augmenté</i> en cours de construction, mais finit par bâtir un profil simple.
+</p>
+<p>
+<code>Builder</code> offre un unique constructeur public :
+</p>
+<dl class="org-dl">
+<dt><code>Builder(TimeTable timeTable, LocalDate date, int arrStationId)</code></dt><dd>qui construit un bâtisseur de profil pour l'horaire, la date et la gare de destination donnés.</dd>
+</dl>
+<p>
+Le constructeur stocke non seulement les arguments qu'on lui a passé dans des attributs, afin de pouvoir les passer plus tard au constructeur de <code>Profile</code>, mais il initialise également deux tableaux primitifs destinés à contenir les bâtisseurs des frontières de Pareto des gares et des courses. Ces tableaux ne doivent <i>pas</i> être remplis initialement, donc leurs éléments doivent tous être <code>null</code>.
+</p>
+<p>
+En plus de ce constructeur, <code>Builder</code> offre les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>ParetoFront.Builder forStation(int stationId)</code></dt><dd>qui retourne le bâtisseur de la frontière de Pareto pour la gare d'index donné, qui est <code>null</code> si aucun appel à <code>setForStation</code> n'a été fait précédemment pour cette gare, ou lève une <code>IndexOutOfBoundsException</code> si l'index est invalide,</dd>
+<dt><code>void setForStation(int stationId, ParetoFront.Builder builder)</code></dt><dd>qui associe le bâtisseur de frontière de Pareto donné à la gare d'index donné, ou lève une <code>IndexOutOfBoundsException</code> si l'index est invalide,</dd>
+<dt><code>ParetoFront.Builder forTrip(int tripId)</code></dt><dd>qui fait la même chose que <code>forStation</code> mais pour la course d'index donné,</dd>
+<dt><code>void setForTrip(int tripId, ParetoFront.Builder builder)</code></dt><dd>qui fait la même chose que <code>setForStation</code> mais pour la course d'index donné,</dd>
+<dt><code>Profile build()</code></dt><dd>qui retourne le profil simple — sans les frontières de Pareto correspondant aux courses — en cours de construction.</dd>
+</dl>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

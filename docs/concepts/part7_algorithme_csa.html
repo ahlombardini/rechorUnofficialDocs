@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithme CSA - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Algorithme CSA</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-sec/csa">
+<p>
+Afin de calculer les voyages optimaux, nous utiliserons l'algorithme CSA<sup><a class="footref" href="#fn.1" id="fnr.1" role="doc-backlink">1</a></sup> (<i>connection scan algorithm</i>). Comme son nom le suggère, il effectue la recherche de voyages en parcourant la totalité des liaisons à l'horaire.
+</p>
+<p>
+Cet algorithme se base sur l'observation que, si une liaison est ajoutée à un horaire mais qu'elle part <i>avant</i> toutes les liaisons existantes, alors les seuls voyages optimaux que son ajout peut affecter sont ceux partant de la gare de départ de cette liaison, ou d'une gare dont on peut y parvenir à pied.
+</p>
+<p>
+Par exemple, admettons qu'aucune liaison ne parte avant 8h du matin, et que nous ayons établi le profil de tous les voyages optimaux permettant de se rendre de n'importe quelle gare de Suisse à Gruyères. Imaginons maintenant qu'une nouvelle liaison soit ajoutée à l'horaire, et parte de Renens à 7h59 pour arriver à Lausanne à 8h04. Il devrait être clair que cet ajout ne peut, au mieux, qu'améliorer les voyages optimaux partant de Renens ou d'une gare depuis laquelle il est possible de marcher jusqu'à celle de Renens. Aucun autre voyage optimal ne peut être affecté, car la nouvelle liaison part avant toutes les autres et n'est donc pas atteignable depuis une ancienne liaison.
+</p>
+<p>
+Dès lors, on peut déterminer la totalité des voyages optimaux permettant de se rendre à une destination donnée en partant d'un horaire vide auquel on ajoute petit à petit toutes les liaisons, par heure de départ décroissante. Ce faisant, on garde à jour l'ensemble des voyages optimaux actuels.
+</p>
+<p>
+Comme nous l'avons vu, l'information concernant les voyages optimaux est stockée dans les frontières de Pareto des critères d'optimisation attachées aux gares. Lors de l'exécution de l'algorithme, ce sont donc ces frontières de Pareto qui sont mises à jour au fur et à mesure de l'ajout des liaisons. De plus, des frontières de Pareto associées aux différentes <i>courses</i> sont tenues à jour de manière identique, pour des raisons expliquées plus bas.
+</p>
+<p>
+Pour chaque liaison ajoutée à l'horaire, l'algorithme CSA commence par déterminer la frontière de Pareto des voyages optimaux de la liaison elle-même, en utilisant le fait qu'une personne l'empruntant n'a que trois manière de continuer son voyage :
+</p>
+<ol class="org-ol">
+<li>elle peut descendre à la fin de la liaison et marcher jusqu'à la destination finale, pour peu que celle-ci soit atteignable à pied depuis là,</li>
+<li>elle peut rester dans le véhicule afin de continuer avec la prochaine liaison de la même course (s'il y en a une),</li>
+<li>elle peut changer de véhicule à la fin de la liaison.</li>
+</ol>
+<p>
+Une fois que la frontière de Pareto des voyages optimaux de la liaison a été  déterminée, elle peut être utilisée pour mettre à jour les frontières de Pareto de :
+</p>
+<ul class="org-ul">
+<li>la course à laquelle appartient la liaison, et</li>
+<li>toutes les gares depuis lesquelles il est possible de marcher pour atteindre la gare de départ de la liaison — y compris la gare de départ elle-même.</li>
+</ul>
+<p>
+Lorsque toutes les liaisons ont été ajoutées, l'algorithme se termine, son résultat étant les frontières de Pareto des voyages optimaux des gares.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PackedCriteria - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 2 - iCalendar et valeurs empaquetées</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>PackedCriteria</h1>
+                <p>3.5. Classe PackedCriteria</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-5">
+<p>
+La classe <code>PackedCriteria</code> du sous-paquetage <code>journey</code>, publique et non instanciable, contient des méthodes statiques permettant de manipuler des critères d'optimisation augmentés, empaquetés dans des valeurs de type <code>long</code>.
+</p>
+<p>
+Plusieurs de ses méthodes reçoivent en argument ou retournent en résultat une heure de départ ou d'arrivée. Attention, ces heures sont exprimées en minutes écoulées depuis minuit (!) et ne sont valides que si elles sont comprises entre -240 (inclus) et 2880 (exclu). Ce n'est qu'au moment d'être empaquetées que ces minutes sont « translatées » afin d'être exprimées en fonction de l'origine choisie plus haut (-240). Cette « translation » garantit que les minutes empaquetées sont toujours positives, ce qui simplifie le code.
+</p>
+<p>
+<code>PackedCriteria</code> offre les méthodes publiques (et statiques) suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>long pack(int arrMins, int changes, int payload)</code></dt><dd>qui retourne la valeur de type <code>long</code> résultant de l'empaquetage de l'heure d'arrivée, du nombre de changements et de la « charge utile » donnés, selon le format décrit à la §<a href="#sec/packed/criteria">2.2.5</a> — c.-à-d. sans heure (minutes) de départ — ou lève une <code>IllegalArgumentException</code> si l'heure d'arrivée est invalide, ou si le nombre de changements ne tient pas dans 7 bits,</dd>
+<dt><code>boolean hasDepMins(long criteria)</code></dt><dd>qui retourne vrai ssi les critères empaquetés donnés incluent une heure de départ,</dd>
+<dt><code>int depMins(long criteria)</code></dt><dd>qui retourne l'heure de départ (en minutes après minuit) des critères empaquetés donnés, ou lève <code>IllegalArgumentException</code> si ces critères n'incluent pas une heure de départ,</dd>
+<dt><code>int arrMins(long criteria)</code></dt><dd>qui retourne l'heure d'arrivée (en minutes après minuit) des critères empaquetés donnés,</dd>
+<dt><code>int changes(long criteria)</code></dt><dd>qui retourne le nombre de changements des critères empaquetés donnés,</dd>
+<dt><code>int payload(long criteria)</code></dt><dd>qui retourne la « charge utile » associée aux critères empaquetés donnés,</dd>
+<dt><code>boolean dominatesOrIsEqual(long criteria1, long criteria2)</code></dt><dd>qui retourne vrai si et seulement si les premiers critères empaquetés dominent ou sont égaux aux seconds, ou lève une <code>IllegalArgumentException</code> l'un des ensembles de critères possède une heure de départ mais l'autre pas,</dd>
+<dt><code>long withoutDepMins(long criteria)</code></dt><dd>qui retourne des critères empaquetés identiques à ceux donnés, mais sans heure de départ,</dd>
+<dt><code>long withDepMins(long criteria, int depMins1)</code></dt><dd>qui retourne des critères empaquetés identiques à ceux donnés, mais avec l'heure de départ donnée,</dd>
+<dt><code>long withAdditionalChange(long criteria)</code></dt><dd>qui retourne des critères empaquetés identiques à ceux donnés, mais avec un changement de plus,</dd>
+<dt><code>long withPayload(long criteria, int payload1)</code></dt><dd>qui retourne des critères empaquetés identiques à ceux donnés, mais avec la « charge utile » donnée.</dd>
+</dl>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

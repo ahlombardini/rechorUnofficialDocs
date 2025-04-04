@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Données aplaties - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Données aplaties</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-1">
+<p>
+Comme nous l'avons vu à l'étape précédente, les données horaire utilisées dans ce projet sont représentées d'une manière un peu particulière, que nous avons appelée <b>aplatie</b>.
+</p>
+<p>
+L'idée de cette représentation est que les différents types de données de l'horaire (gares, voies/quais, liaisons, etc.) sont stockés dans des tableaux, chaque tableau contenant toutes les valeurs d'un type donné, p. ex. toutes les gares. De plus, au lieu de contenir des références vers des objets contenant les attributs des différentes instances — comme d'habitude en Java — ces tableaux contiennent directement les attributs des différentes instances.
+</p>
+<p>
+À l'étape 3, pour simplifier les choses, nous avions fait l'hypothèse que les données représentées de manière aplatie étaient homogènes, dans le sens où tous leurs attributs pouvaient être représentés au moyen d'entiers du même type. Ainsi, dans l'exemple de la §2.1.3 de cette étape, les liaisons étaient composée de 4 attributs, et chacun d'entre eux pouvait être représenté au moyen d'un entier de type <code>short</code>. La totalité des liaisons pouvait donc être stockée dans un unique tableau de type <code>short[]</code>, de taille égale à 4 fois le nombre de liaisons.
+</p>
+<p>
+En réalité, les données aplaties que nous utiliserons dans ce projet seront hétérogènes, dans le sens où elles seront constituées d'un certain nombre d'attributs ayant chacun un type potentiellement différent. Nous nommerons ces attributs des <b>champs</b> (<i>fields</i>), et ils pourront être chacun d'un des trois types entiers suivant :
+</p>
+<dl class="org-dl">
+<dt><code>U8</code></dt><dd>8 bits (1 octet) interprétés comme un entier non signé, compris donc entre 0 (inclus) et 256 (exclu),</dd>
+<dt><code>U16</code></dt><dd>16 bits (2 octets) interprétés comme un entier non signé, compris donc entre 0 (inclus) et 65 536 (exclu),</dd>
+<dt><code>S32</code></dt><dd>32 bits (4 octets) interprétés comme un entier signé, compris donc entre<br/>
+–2 147 483 648 (inclus) et 2 147 483 648 (exclu).</dd>
+</dl>
+<p>
+Ces trois types correspondent presque aux types <code>byte</code>, <code>short</code> et <code>int</code> de Java, la seule différence étant que les deux premiers sont interprétés de manière non signée.
+</p>
+<p>
+Les données hétérogènes sont stockées dans des tableaux d'octets (<i>bytes</i>), et un champ de type <code>U8</code> occupe donc un seul élément d'un tel tableau, un champ de type <code>U16</code> en occupe deux consécutifs, et un champ de type <code>S32</code> en occupe quatre consécutifs.
+</p>
+<p>
+Comme les trois types de champs sont tous des types entiers, il faut trouver une manière de représenter <i>toutes</i> les données de l'horaire au moyen d'entiers, entre autres les nombreuses chaînes de caractères qu'elles contiennent.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

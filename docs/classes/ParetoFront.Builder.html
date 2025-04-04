@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParetoFront.Builder - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 3 - Horaire et frontière de Pareto</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>ParetoFront.Builder</h1>
+                <p>3.11. Classe ParetoFront.Builder</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-11">
+<p>
+La classe <code>Builder</code> imbriquée statiquement dans <code>ParetoFront</code>, publique, représente un bâtisseur de frontière de Pareto. La frontière en cours de construction est stockée dans un tableau de type <code>long[]</code> qui contient les tuples et est « redimensionné » au besoin selon la technique décrite dans les conseils de programmation plus bas.
+</p>
+<p>
+<code>Builder</code> offre deux constructeurs publics :
+</p>
+<dl class="org-dl">
+<dt><code>Builder()</code></dt><dd>qui retourne un bâtisseur dont la frontière en cours de construction est vide,</dd>
+<dt><code>Builder(Builder that)</code></dt><dd>qui retourne un nouveau bâtisseur avec les mêmes attributs que celui reçu en argument (constructeur de copie).</dd>
+</dl>
+<p>
+En plus de ces constructeurs, <code>Builder</code> offre les méthodes publiques ci-dessous, toutes celles modifiant la frontière retournent le bâtisseur lui-même afin de permettre le chaînage des appels :
+</p>
+<dl class="org-dl">
+<dt><code>boolean isEmpty()</code></dt><dd>qui retourne vrai si et seulement si la frontière en cours de construction est vide,</dd>
+<dt><code>Builder clear()</code></dt><dd>qui vide la frontière en cours de construction en supprimant tous ses éléments,</dd>
+<dt><code>Builder add(long packedTuple)</code></dt><dd>qui ajoute à la frontière le tuple de critères empaquetés donné ; cet ajout n'est fait que si le nouveau tuple n'est pas dominé ou égal à un de la frontière, et tous les éventuels tuples existants et dominés par le nouveau en sont supprimés,</dd>
+<dt><code>Builder add(int arrMins, int changes, int payload)</code></dt><dd>qui ajoute à la frontière un tuple de critères augmentés ayant l'heure d'arrivée, le nombre de changements et la charge utile donnés, mais pas d'heure de départ ; l'ajout est fait de la même manière que dans la méthode précédente,</dd>
+<dt><code>Builder addAll(Builder that)</code></dt><dd>qui ajoute à la frontière tous les tuples présents dans la frontière en cours de construction par le bâtisseur donné,</dd>
+<dt><code>boolean fullyDominates(Builder that, int depMins)</code></dt><dd>qui retourne vrai si et seulement si chacun des tuples de la frontière donnée, une fois son heure de départ fixée sur celle donnée, est dominé par, ou égal à, au moins un tuple du récepteur (le récepteur étant l'objet auquel on applique la méthode),</dd>
+<dt><code>void forEach(LongConsumer action)</code></dt><dd>qui fait la même chose que la méthode <code>forEach</code> de <code>ParetoFront</code>,</dd>
+<dt><code>ParetoFront build()</code></dt><dd>qui retourne la frontière de Pareto en cours de construction par ce bâtisseur.</dd>
+</dl>
+<p>
+Tout comme pour <code>ParetoFront</code>, il est très fortement conseillé d'ajouter à <code>Builder</code> une redéfinition de la méthode <code>toString</code> afin de faciliter le débogage. La plupart du code peut être partagée entre les deux méthodes <code>toString</code>.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

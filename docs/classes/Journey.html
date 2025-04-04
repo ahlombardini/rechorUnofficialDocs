@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .class-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .class-header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .class-header p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        pre {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .card-title {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <p>Étape 1 - Mise en place</p>
+        </div>
+
+        <div class="class-content">
+            <div class="class-header">
+                <h1>Journey</h1>
+                <p>3.7. Enregistrement Journey</p>
+            </div>
+
+            <div class="class-body">
+                <div class="outline-text-3" id="text-3-7">
+<p>
+L'enregistrement <code>Journey</code>, du sous-paquetage <code>journey</code>, public et immuable, représente un voyage. Il possède un unique attribut :
+</p>
+<dl class="org-dl">
+<dt><code>List&lt;Leg&gt; legs</code></dt><dd>les étapes du voyage.</dd>
+</dl>
+<p>
+Le type <code>Leg</code> est celui d'une interface imbriquée à l'intérieur de l'enregistrement <code>Journey</code> et décrite à la §<a href="#sec/java/leg">3.8</a>. Comme expliqué dans cette section et celles qui suivent, trois enregistrements (<code>IntermediateStop</code>, <code>Transport</code> et <code>Foot</code>) sont imbriqués dans <code>Leg</code>. Cela signifie que <code>Journey</code> a la structure suivante :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">public record Journey(/* … attributs */) {
+  public interface Leg {
+    public record IntermediateStop(/* … attributs */) {
+      /* … constructeur et/ou méthodes */
+    }
+    /* … autres enregistrements imbriqués, méthodes */
+  }
+  /* … constructeur et/ou méthodes */
+}
+</pre>
+</div>
+<p>
+En raison de cette imbrication, la notation pointée doit être utilisée depuis l'extérieur pour accéder à l'interface <code>Leg</code> et aux enregistrements <code>IntermediateStop</code>, <code>Transport</code> et <code>Foot</code>. Par exemple, pour créer une instance de l'enregistrement <code>IntermediateStop</code>, on écrira :
+</p>
+<div class="org-src-container">
+<pre class="src src-java">new Journey.Leg.IntermediateStop(/* … arguments */);
+</pre>
+</div>
+<p>
+<code>Journey</code> possède un constructeur compact qui valide la liste des étapes reçue  en vérifiant que :
+</p>
+<ul class="org-ul">
+<li>elle n'est pas vide,</li>
+<li>les étapes à pied alternent avec celles en transport,</li>
+<li>pour toutes les étapes sauf la première, l'instant de départ ne précède pas celui d'arrivée de la précédente,</li>
+<li>pour toutes les étapes sauf la première, l'arrêt de départ est identique à l'arrêt d'arrivée de la précédente.</li>
+</ul>
+<p>
+Si l'une de ces conditions n'est pas satisfaite, le constructeur compact lève une <code>IllegalArgumentException</code>. Sinon, dans le but de garantir l'immuabilité de la classe, il copie la liste des étapes en utilisant la technique décrite dans les conseils de programmation plus bas.
+</p>
+<p>
+<code>Journey</code> offre les méthodes publiques suivantes :
+</p>
+<dl class="org-dl">
+<dt><code>Stop depStop()</code></dt><dd>qui retourne l'arrêt de départ du voyage, c.-à-d. celui de sa première étape,</dd>
+<dt><code>Stop arrStop()</code></dt><dd>qui retourne l'arrêt d'arrivée du voyage, c.-à-d. celui de sa dernière étape,</dd>
+<dt><code>LocalDateTime depTime()</code></dt><dd>qui retourne la date/heure de début du voyage, c.-à-d. celle de sa première étape,</dd>
+<dt><code>LocalDateTime arrTime()</code></dt><dd>qui retourne la date/heure de fin du voyage, c.-à-d. celle de sa dernière étape,</dd>
+<dt><code>Duration duration()</code></dt><dd>qui retourne la durée totale du voyage, c.-à-d. celle séparant la date/heure de fin de celle de début.</dd>
+</dl>
+<p>
+La classe <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html"><code>LocalDateTime</code></a>, qui représente un couple date/heure sans indication de fuseau horaire, fait partie de la bibliothèque Java. Cette classe jouera un rôle très important dans ce projet, et il est donc conseillé de prendre un moment pour lire <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDateTime.html">sa documentation</a>.
+</p>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Représentation des frontières immuables - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Représentation des frontières immuables</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-3">
+<p>
+L'algorithme de recherche de voyages optimaux que nous utiliserons calcule, étant donné un arrêt d'arrivée et une date de voyage, la frontière de Pareto de <i>tous</i> les voyages permettant d'atteindre cet arrêt ce jour-là, et ce pour chaque « gare » (au sens large) du réseau, ainsi que pour chaque course.
+</p>
+<p>
+Sachant que les données que nous utiliserons comportent plus de 30 000 « gares » et 200 000 courses par jour, il importe de représenter les frontières de Pareto de manière efficace. Nous utiliserons donc une représentation optimisée, basée bien entendu sur les critères empaquetés de l'étape précédente.
+</p>
+<p>
+Comme un tuple (paire ou triplet) de critères (augmenté) est représenté par une valeur de type <code>long</code>, et qu'une frontière de Pareto est un ensemble de critères, il semble logique d'utiliser un tableau de type <code>long[]</code> pour représenter une telle frontière. Une fois cette décision prise, la question qui se pose est de savoir si l'ordre dans lequel les critères apparaissent dans le tableau est important ou non.
+</p>
+<p>
+A priori, étant donné que les éléments d'un ensemble ne sont pas ordonnés en mathématiques, on pourrait penser que l'ordre dans lequel les tuples sont stockés dans le tableau importe peu. Et cela est effectivement le cas lorsque les frontières de Pareto que l'on désire représenter sont immuables. Toutefois, pour représenter des frontières de Pareto non immuables — des bâtisseurs de frontières, en réalité — il peut être intéressant d'ordonner les tuples de manière à obtenir des performances aussi bonnes que possible.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

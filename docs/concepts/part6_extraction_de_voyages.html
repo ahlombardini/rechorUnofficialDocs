@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extraction de voyages - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Extraction de voyages</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-4">
+<p>
+À eux seuls, les tuples associés à une gare dans un profil ne contiennent pas assez d'information pour permettre à un voyageur de déterminer comment se rendre à destination. Par exemple, le tuple \((\textrm{15h55}, \textrm{17h57}, 3)\) de la frontière de Pareto donnée en exemple plus haut permet uniquement de savoir qu'il est possible de partir de l'EPFL à 15h55 pour arriver à Gruyères à 17h57 après avoir effectué 3 changements, mais sans savoir comment. Ainsi, si deux métros partent de l'EPFL à 15h55, l'un en direction de Renens, l'autre en direction de Lausanne, il est impossible de savoir lequel prendre sans autre information que le tuple.
+</p>
+<p>
+Dès lors, pour pouvoir extraire d'un profil la totalité des voyages optimaux pour un arrêt de départ donné, des informations supplémentaires sont nécessaires. Ces informations seront calculées par l'algorithme de recherche des voyages optimaux, et stockées dans ce que nous avons appelé la charge utile (<i>payload</i>) associée aux tuples.
+</p>
+<p>
+Pour les tuples des frontières de Pareto des gares, contenant trois critères (heure de départ et d'arrivée, nombre de changements), la charge utile contient deux informations :
+</p>
+<ul class="org-ul">
+<li>l'identité de la première liaison à emprunter pour débuter le voyage,</li>
+<li>le nombre d'arrêts intermédiaires à laisser passer avant de descendre du véhicule.</li>
+</ul>
+<p>
+Ces deux informations sont empaquetées dans les 32 bits de la charge utile, les 24 bits de poids fort contenant l'identité de la liaison, les 8 bits de poids faible contenant le nombre d'arrêts intermédiaires.
+</p>
+<p>
+Par exemple, au tuple \((\textrm{15h55}, \textrm{17h57}, 3)\) mentionné plus haut pourrait être associée une charge utile contenant :
+</p>
+<ul class="org-ul">
+<li>l'identité de la liaison partant à 15h55 de <i>Ecublens VD, EPFL</i> pour arriver à 15h56 à <i>Ecublens VD, Bassenges</i>,</li>
+<li>un nombre d'arrêts intermédiaires valant 4.</li>
+</ul>
+<p>
+Grâce à cette information, on peut déterminer que la première étape du voyage part à 15h55 de <i>Ecublens VD, EPFL</i> pour arriver à 16h01 à <i>Renens VD, gare</i>, simplement en consultant les liaisons qui suivent la première dans la course à laquelle elle appartient.
+</p>
+<p>
+Une fois la première étape déterminée, on peut consulter la frontière de Pareto de sa gare d'arrivée (<i>Renens VD, gare</i>) pour déterminer comment continuer le voyage. En effet, on sait que le tuple qui nous intéresse est celui permettant d'arriver à destination à 17h57 en effectuant encore 2 changements supplémentaires — étant donné que le premier des 3 changements totaux vient d'être fait.
+</p>
+<p>
+En consultant la frontière de Pareto de <i>Renens VD, gare</i>, on y trouve le tuple \((\textrm{16h08}, \textrm{17h57}, 2)\) dont la charge utile contient :
+</p>
+<ul class="org-ul">
+<li>l'identité de la liaison partant à 16h08 de <i>Renens VD</i> pour arriver à 16h14 à <i>Lausanne</i>,</li>
+<li>un nombre d'arrêts intermédiaires valant 0.</li>
+</ul>
+<p>
+On peut en déterminer :
+</p>
+<ol class="org-ol">
+<li>la prochaine étape du voyage, qui <i>doit</i> être une étape à pied allant de <i>Renens VD, gare</i> à <i>Renens VD</i>, car pour qu'un voyage soit valide il doit alterner les étapes en véhicule et à pied,</li>
+<li>la prochaine étape en véhicule du voyage, qui part de <i>Renens VD</i> à 16h08 et arrive à <i>Lausanne</i> à 16h14.</li>
+</ol>
+<p>
+Pour continuer, il suffit de rechercher dans la frontière de Pareto associée à l'arrêt <i>Lausanne</i> le tuple permettant d'arriver à destination à 17h57 en effectuant encore 1 changement, puis de procéder comme ci-dessus. Et ainsi de suite jusqu'à ce qu'il ne reste plus de changements à effectuer.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

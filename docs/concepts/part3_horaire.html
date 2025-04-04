@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horaire - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Horaire</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-1">
+<p>
+Les données horaires que nous utiliserons dans ce projet pour rechercher les voyages optimaux sont une version légèrement simplifiée de celles de l'horaire suisse officiel. Elles sont constituées de :
+</p>
+<ul class="org-ul">
+<li>l'ensemble des liaisons (concept décrit plus bas) effectuées un jour donné,</li>
+<li>l'ensemble des courses effectuées un jour donné,</li>
+<li>l'ensemble des lignes existantes,</li>
+<li>l'ensemble des arrêts existants, constitué de deux sous-ensembles disjoints, celui des gares et celui des voies/quais,</li>
+<li>l'ensemble des noms alternatifs des gares, c.-à-d. des noms qui permettent d'identifier une gare mais qui ne sont pas son nom officiel (p. ex. <i>Losanna</i>, le nom italien de <i>Lausanne</i>, est un nom alternatif de la gare de Lausanne dans les données que nous utiliserons),</li>
+<li>l'ensemble des changements qu'il est possible d'effectuer, à pied, soit au sein d'une même gare, soit entre deux gares distinctes mais voisines.</li>
+</ul>
+<p>
+Ces différents concepts ont déjà été introduits dans les étapes précédentes, sauf celui de <b>liaison</b> (<i>connection</i>), qui est un trajet effectué par un véhicule de transport en commun entre deux arrêts successifs, c.-à-d. sans arrêt intermédiaire. Une course n'est donc rien d'autre qu'une succession de liaisons.
+</p>
+<p>
+Par exemple, nous avons vu que <a href="https://network.sbb.ch/fr/ligne/IR15">la ligne IR 15 des CFF</a> relie Genève-Aéroport à Lucerne. De nombreux trains parcourent cette ligne chaque jour, chacun effectuant une course dans l'un des deux sens possible. Par exemple, le lundi 24 février 2025, un train effectuera une course partant de Genève-Aéroport à 9h45 et arrivant à Lucerne à 13h01. Lors de cette course, il s'arrêtera à 10 arrêts intermédiaires, les 5 premiers étant Genève, Nyon, Morges, Lausanne et Palézieux. Dès lors, cette course est constituée de 11 liaisons, les cinq premières étant :
+</p>
+<ol class="org-ol">
+<li>celle partant de Genève-Aéroport à 9h45 et arrivant à Genève à 9h52,</li>
+<li>celle partant de Genève à 9h54 et arrivant à Nyon à 10h07,</li>
+<li>celle partant de Nyon à 10h09 et arrivant à Morges à 10h24,</li>
+<li>celle partant de Morges à 10h26 et arrivant à Lausanne à 10h37,</li>
+<li>celle partant de Lausanne à 10h40 et arrivant à Palézieux à 10h56.</li>
+</ol>
+<p>
+Comme cet exemple l'illustre, une course comportant un total de <i>n</i> arrêts — en comptant les deux aux extrémités — est constituée de <i>n</i> – 1 liaisons.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>

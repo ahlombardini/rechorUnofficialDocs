@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil augmenté - ReCHor Documentation</title>
+    <style>
+        :root {
+            --primary-color: #1976D2;
+            --secondary-color: #2196F3;
+            --accent-color: #4CAF50;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background: var(--background-color);
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .header a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .concept-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .concept-content p {
+            margin: 1rem 0;
+        }
+
+        .concept-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .concept-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html">← Retour à l'index</a>
+    </header>
+    <div class="container">
+        <h1>Profil augmenté</h1>
+        <div class="concept-content">
+            <div class="outline-text-3" id="text-2-3">
+<p>
+Un profil contient, pour chaque gare, la frontière de Pareto de tous les voyages optimaux permettant de se rendre de cette gare-là à la gare de destination, à la date de voyage donnée. Il permet donc à un voyageur se trouvant dans une gare quelconque du réseau ce jour-là de déterminer quand il peut arriver à la destination, et au prix de combien de changements.
+</p>
+<p>
+Lors du calcul des voyages optimaux, il se trouve qu'il est utile d'avoir cette information-là non seulement pour toutes les <i>gares</i> du réseau, mais aussi pour toutes les <i>courses</i> circulant ce jour-là. En d'autres termes, d'offrir un profil permettant également à un voyageur se trouvant à bord d'un véhicule effectuant une course donnée de déterminer quand il peut arriver à destination, et au prix de combien de changements. Contrairement aux frontières de Pareto associées aux gares, celles associées aux courses ne comportent que deux critères d'optimisation (l'heure d'arrivée et le nombre de changements), car l'heure de départ d'une course ne peut pas être choisie.
+</p>
+<p>
+Nous appellerons <b>profil augmenté</b> un profil possédant non seulement les frontières de Pareto correspondant aux gares, mais aussi celles correspondant aux courses.
+</p>
+</div>
+        </div>
+    </div>
+</body>
+</html>
